@@ -1,0 +1,19 @@
+; Core.def : Declares the module parameters for the DLL.
+
+; LIBRARY      "APPModule"
+; DESCRIPTION  'AppModule Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here
+    LiveStartup					@1
+    LiveCleanup					@2
+    LiveStartChannel			@3
+    LiveStopChannel				@4
+    LiveGetChannelStatus		@5
+    LiveGetChannelParameter		@6
+    LiveSetChannelParameter		@7
+    LiveSetChannelPlayerStatus	@8
+    LiveSetChannelCallback		@9
+    LiveSetChannelUPNP			@10
+
+
