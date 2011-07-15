@@ -6,7 +6,7 @@ LOCAL_CONFIG			:= static debug multi
 
 PROJECT_TYPE			:= lib
 
-## 生成目标名称（完整文件名称要根据类型PROJECT_TYPE、配置PROJECT_CONFIG、版本PROJECT_VERSION增加前缀、后缀）
+## 生成目标名称（完整文件名称要根据类型PROJECT_TYPE、配置LOCAL_CONFIG、版本PROJECT_VERSION增加前缀、后缀）
 
 PROJECT_TARGET			:= p2pcommon2
 
