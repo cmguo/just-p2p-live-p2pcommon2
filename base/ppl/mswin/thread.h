@@ -120,7 +120,7 @@ public:
 		if ( false == is_alive() )
 			return false;
 		BOOL success = ::TerminateThread(m_handle, 110);
-		UTIL_DEBUG("thread_base::kill 0x%p %lu %d\n", m_handle, m_id, success);
+		//UTIL_DEBUG("thread_base::kill 0x%p %lu %d\n", m_handle, m_id, success);
 		assert(success);
 		return ( FALSE != success );
 	}
