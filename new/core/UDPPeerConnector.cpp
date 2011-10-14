@@ -84,8 +84,8 @@ public:
 	/// 保存握手的信息
 	void SaveHandshakeInfo(const HandshakePacket& handshake, const PACKET_PEER_INFO& packetPeerInfo, const SimpleSocketAddress& sockAddr)
 	{
-		assert( packetPeerInfo.Address.IsFullyValid() );
-//		assert( packetPeerInfo.OuterAddress.IsAddressValid() );
+		LIVE_ASSERT( packetPeerInfo.Address.IsFullyValid() );
+//		LIVE_ASSERT( packetPeerInfo.OuterAddress.IsAddressValid() );
 		this->HandshakeInfo.Degrees = packetPeerInfo.Degrees;
 		this->HandshakeInfo.ChannelGUID = packetPeerInfo.ChannelGUID;
 		this->HandshakeInfo.PeerGUID = packetPeerInfo.PeerGUID;
@@ -133,14 +133,14 @@ public:
 
 		this->ConnectionInfo->LocalSessionKey = localSessionKey;
 		this->ConnectionInfo->RemoteSessionKey = newSessionKey;
-		assert( this->ConnectionInfo->IsBothSessionKeyValid() );
+		LIVE_ASSERT( this->ConnectionInfo->IsBothSessionKeyValid() );
 		return this->HandshakeSession(transactionID, localSessionKey, newSessionKey, false);
 	}
 	bool HandshakeThird(UINT32 transactionID)
 	{
 		VIEW_INFO("udp handshake third " << GetSocketAddress());
-		assert(this->ConnectionInfo->LocalSessionKey != 0);
-		assert( this->ConnectionInfo->IsBothSessionKeyValid() );
+		LIVE_ASSERT(this->ConnectionInfo->LocalSessionKey != 0);
+		LIVE_ASSERT( this->ConnectionInfo->IsBothSessionKeyValid() );
 		return this->HandshakeSession(transactionID, this->ConnectionInfo->LocalSessionKey, SESSION_KEY_END, false);
 	}
 
@@ -239,9 +239,9 @@ public:
 			// 是handshake的回应，可以记录RTT值
 			if ( this->ConnectionInfo->ConnectParam.IsConnectForDetect )
 			{
-				//assert( UINT_MAX == this->ConnectionInfo->ConnectParam.RTT );
+				//LIVE_ASSERT( UINT_MAX == this->ConnectionInfo->ConnectParam.RTT );
 				UINT rtt = this->m_HandshakeTime.elapsed32();
-				assert( rtt < 10000 );
+				LIVE_ASSERT( rtt < 10000 );
 				this->ConnectionInfo->ConnectParam.RTT = rtt;
 				CANDIDATE_PEER_INFO peerInfo;
 				peerInfo.Address = this->ConnectionInfo->KeyPeerAddress;
@@ -286,11 +286,11 @@ public:
 		}
 		if ( this->IsInitFromRemote() )
 		{
-			assert( GUID_NULL != this->HandshakeInfo.PeerGUID );
+			LIVE_ASSERT( GUID_NULL != this->HandshakeInfo.PeerGUID );
 			if ( packetPeerInfo.PeerGUID != this->HandshakeInfo.PeerGUID )
 			{
 				// peer guid不对，忽略此报文
-				assert( !"bad peer guid for udp handshaking" );
+				LIVE_ASSERT( !"bad peer guid for udp handshaking" );
 				return false;
 			}
 		}
@@ -305,12 +305,12 @@ public:
 			}
 			else if ( HANDSHAKE_FAILED == res )
 			{
-				assert(m_ErrorCode != 0);
+				LIVE_ASSERT(m_ErrorCode != 0);
 				this->OnUDPTHandshakeError();
 			}
 			else
 			{
-				assert( HANDSHAKE_PENDING == res );
+				LIVE_ASSERT( HANDSHAKE_PENDING == res );
 				return false;
 			}
 		}
@@ -322,7 +322,7 @@ public:
 		{
 			// 命令字不识别，忽略此报文
 			VIEW_DEBUG( "UDPPeerConnector::HandleResponse invalid action " << head.Action << " " << this->ConnectionInfo->RemoteSocketAddress );
-			assert( !"invalid packet action for udp handshaking" );
+			LIVE_ASSERT( !"invalid packet action for udp handshaking" );
 			return false;
 		}
 		return true;
@@ -334,7 +334,7 @@ public:
 		if ( is >> errorInfo && is.available() >= errorInfo.ErrorLength )
 		{
 			m_ErrorCode = errorInfo.ErrorCode;
-			assert(m_ErrorCode != 0);
+			LIVE_ASSERT(m_ErrorCode != 0);
 			m_owner.GetOwner().GetStatistics().UDPInfo.DisconnectedErrors[errorInfo.ErrorCode]++;
 			PacketInputStream errorDataIS( is.get_buffer() + is.position(), errorInfo.ErrorLength );
 			if ( errorInfo.ErrorCode == PP_LEAVE_REFUSE )
@@ -370,8 +370,8 @@ public:
 				&& this->ConnectionInfo->IsBothSessionKeyValid() 
 				&& this->ConnectionInfo->RemoteSessionKey == sessionInfo.SessionKey)
 			{
-				assert( this->HandshakeInfo.ChannelGUID == m_PeerInformation->ChannelGUID );
-				assert( this->HandshakeInfo.PeerGUID != m_PeerInformation->PeerGUID );
+				LIVE_ASSERT( this->HandshakeInfo.ChannelGUID == m_PeerInformation->ChannelGUID );
+				LIVE_ASSERT( this->HandshakeInfo.PeerGUID != m_PeerInformation->PeerGUID );
 				if ( m_PeerManager.IsPeerConnected( HandshakeInfo.PeerGUID, ConnectionInfo->ConnectParam.IsVIP, ConnectionInfo->IsInitFromRemote ) )
 				{
 					this->Disconnect( 0, PP_LEAVE_DUPLICATE_CONNECTION );
@@ -384,7 +384,7 @@ public:
 		{
 			// 命令字不识别，忽略此报文
 			VIEW_DEBUG( "UDPPeerConnector::HandleResponse invalid session action " << strings::format( "0x%04x", head.Action ) << " " << sessionInfo.SessionKey << " " << this->ConnectionInfo->RemoteSocketAddress );
-			//assert( !"invalid packet action for udp session" );
+			//LIVE_ASSERT( !"invalid packet action for udp session" );
 			return false;
 		}
 		return false;
@@ -398,14 +398,14 @@ public:
 		if ( false == packet.Read( is ) )
 		{
 			this->Disconnect( head.TransactionID, PP_LEAVE_INVALID_PACKET );
-			assert(m_ErrorCode != 0);
+			LIVE_ASSERT(m_ErrorCode != 0);
 			return HANDSHAKE_FAILED;
 		}
 		if ( this->ConnectionInfo->IsInitFromRemote )
 		{
-			assert( this->HandshakeInfo.PeerGUID != GUID_NULL );
+			LIVE_ASSERT( this->HandshakeInfo.PeerGUID != GUID_NULL );
 			//? 如果两次handshake的PeerGUID不相同，是否考虑把连接踢掉
-			assert( packetPeerInfo.PeerGUID == this->HandshakeInfo.PeerGUID );
+			LIVE_ASSERT( packetPeerInfo.PeerGUID == this->HandshakeInfo.PeerGUID );
 		}
 
 		UDPPendingPeer* peer = this;
@@ -413,7 +413,7 @@ public:
 		if ( packetPeerInfo.PeerGUID == m_PeerInformation->PeerGUID )
 		{
 			this->Disconnect( head.TransactionID, PP_LEAVE_SELF_TO_SELF );
-			assert(m_ErrorCode != 0);
+			LIVE_ASSERT(m_ErrorCode != 0);
 			return HANDSHAKE_FAILED;
 		}
 
@@ -422,7 +422,7 @@ public:
 		{
 			//*|| peer->ConnectionInfo.RemoteSessionKey != handshakePacketInfo.SessionKeyA) 
 			this->Disconnect( head.TransactionID, PP_LEAVE_INVALID_PACKET );
-			assert(m_ErrorCode != 0);
+			LIVE_ASSERT(m_ErrorCode != 0);
 			return HANDSHAKE_FAILED;
 		}
 
@@ -433,7 +433,7 @@ public:
 		if ( peer->IsInitFromRemote() )
 		{
 			// 远程发起的，2个session key应该都有了
-			assert( peer->ConnectionInfo->IsBothSessionKeyValid() );
+			LIVE_ASSERT( peer->ConnectionInfo->IsBothSessionKeyValid() );
 			if ( packet.SessionKeyB != SESSION_KEY_END )
 			{
 				//this->Disconnect( head.TransactionID, PP_LEAVE_INVALID_PACKET );
@@ -468,29 +468,29 @@ public:
 				if ( false == peer->HandshakeSecond( head.TransactionID, packet.SessionKeyA, peer->ConnectionInfo->RemoteSessionKey ) )
 				{
 					this->Disconnect( head.TransactionID, PP_LEAVE_NETWORK_ERROR );
-					assert(m_ErrorCode != 0);
+					LIVE_ASSERT(m_ErrorCode != 0);
 					return HANDSHAKE_FAILED;
 				}
 				return HANDSHAKE_PENDING;
 			}
 		}
-		assert(peer->ConnectionInfo->IsBothSessionKeyValid());
+		LIVE_ASSERT(peer->ConnectionInfo->IsBothSessionKeyValid());
 		if (!peer->IsInitFromRemote())
 		{
 			// 主动方还需回handshake
 			if (!peer->HandshakeThird(head.TransactionID))
 			{
 				this->Disconnect( head.TransactionID, PP_LEAVE_NETWORK_ERROR );
-				assert(m_ErrorCode != 0);
+				LIVE_ASSERT(m_ErrorCode != 0);
 				return HANDSHAKE_FAILED;
 			}
 		}
-		assert( this->HandshakeInfo.ChannelGUID == m_PeerInformation->ChannelGUID );
-		assert( this->HandshakeInfo.PeerGUID != m_PeerInformation->PeerGUID );
+		LIVE_ASSERT( this->HandshakeInfo.ChannelGUID == m_PeerInformation->ChannelGUID );
+		LIVE_ASSERT( this->HandshakeInfo.PeerGUID != m_PeerInformation->PeerGUID );
 		if ( m_PeerManager.IsPeerConnected( HandshakeInfo.PeerGUID, ConnectionInfo->ConnectParam.IsVIP, ConnectionInfo->IsInitFromRemote ) )
 		{
 			this->Disconnect( head.TransactionID, PP_LEAVE_DUPLICATE_CONNECTION );
-			assert(m_ErrorCode != 0);
+			LIVE_ASSERT(m_ErrorCode != 0);
 			return HANDSHAKE_FAILED;
 		}
 		return HANDSHAKE_OK;
@@ -506,7 +506,7 @@ public:
 
 	bool Disconnect( UINT32 transactionID, UINT16 errcode, serializable* errorInfo = NULL )
 	{
-		assert( errcode != 0 );
+		LIVE_ASSERT( errcode != 0 );
 		m_owner.GetOwner().GetStatistics().UDPInfo.DisconnectErrors[errcode]++;
 		VIEW_INFO( "UDP Disconnect " << this->ConnectionInfo->RemoteSocketAddress << strings::format( " 0x%04X ", errcode ) << " " << m_StartTime.elapsed32());
 		m_ErrorCode = errcode;
@@ -549,7 +549,7 @@ protected:
 
 	void OnUDPTHandshakeError()
 	{
-		assert( m_ErrorCode != 0 );
+		LIVE_ASSERT( m_ErrorCode != 0 );
 		m_owner.OnUDPTHandshakeError( this->shared_from_this(), m_ErrorCode, m_RefuseReason );
 	}
 
@@ -609,7 +609,7 @@ bool UDPPeerConnector::Connect(const PEER_ADDRESS& addr, const PeerConnectParam&
 {
 	if (param.IsConnectForDetect)
 	{
-//		assert(UINT_MAX == param.RTT);
+//		LIVE_ASSERT(UINT_MAX == param.RTT);
 	}
 	if ( addr.UdpPort == 0 )
 		return false;
@@ -644,8 +644,8 @@ bool UDPPeerConnector::HandlePacket(data_input_stream& is, const NEW_UDP_PACKET_
 {
 	m_statistics.UDPInfo.Flow.Download.Record( is.total_size() );
 
-	assert( packetPeerInfo.ChannelGUID == m_Owner.GetPeerInformation()->ChannelGUID);
-	//assert( TRANSFER_UDP == m_LiveInfo.TransferMethod || TRANSFER_ALL == m_LiveInfo.TransferMethod );
+	LIVE_ASSERT( packetPeerInfo.ChannelGUID == m_Owner.GetPeerInformation()->ChannelGUID);
+	//LIVE_ASSERT( TRANSFER_UDP == m_LiveInfo.TransferMethod || TRANSFER_ALL == m_LiveInfo.TransferMethod );
 
 	UDPPendingPeerPtr peer;
 	UDPPendingPeerCollection::const_iterator iter = m_udptHandshakingPeers.find(sockAddr);
@@ -666,9 +666,9 @@ bool UDPPeerConnector::HandlePacket(data_input_stream& is, const NEW_UDP_PACKET_
 				if ( iterKey != m_IndexedPeers.end() )
 				{
 					peer = iterKey->second;
-					assert(peer->GetSocketAddress() != sockAddr);
-					//assert(peer->GetSocketAddress().IP == sockAddr.IP);
-					//assert(peer->GetSocketAddress().Port != sockAddr.Port);
+					LIVE_ASSERT(peer->GetSocketAddress() != sockAddr);
+					//LIVE_ASSERT(peer->GetSocketAddress().IP == sockAddr.IP);
+					//LIVE_ASSERT(peer->GetSocketAddress().Port != sockAddr.Port);
 
 					m_udptHandshakingPeers.erase(peer->GetSocketAddress());
 					// 记录老的KeyPeerAddress，然后在ippool中记录此peer连接失败，然后更新地址信息（主要是端口不一样）
@@ -676,7 +676,7 @@ bool UDPPeerConnector::HandlePacket(data_input_stream& is, const NEW_UDP_PACKET_
 					m_IPPool.AddConnectFailed(oldKeyAddress, false);
 
 					peer->UpdateSocketAddress(sockAddr);
-					assert(peer->GetSocketAddress() == sockAddr);
+					LIVE_ASSERT(peer->GetSocketAddress() == sockAddr);
 					m_udptHandshakingPeers[sockAddr] = peer;
 					return peer->HandleResponse( is, head, packetPeerInfo );
 				}
@@ -687,7 +687,7 @@ bool UDPPeerConnector::HandlePacket(data_input_stream& is, const NEW_UDP_PACKET_
 		PEER_ADDRESS keyAddr = packetPeerInfo.OuterAddress;
 		if ( 0 == keyAddr.IP )
 		{
-			//assert( false );
+			//LIVE_ASSERT( false );
 			keyAddr.IP = sockAddr.IP;
 		}
 		PeerItem peerItem;
@@ -752,14 +752,14 @@ bool UDPPeerConnector::HandleSessionPacket(data_input_stream& is, const NEW_UDP_
 
 void UDPPeerConnector::OnUDPTHandshakeError(UDPPendingPeerPtr peer, UINT16 errcode, UINT32 refuseReason)
 {
-	assert( peer );
+	LIVE_ASSERT( peer );
 #ifdef _DEBUG
 	UDPPendingPeerCollection::iterator iter = m_udptHandshakingPeers.find(peer->GetSocketAddress());
-	assert( iter != m_udptHandshakingPeers.end() );
-	assert( peer == iter->second );
+	LIVE_ASSERT( iter != m_udptHandshakingPeers.end() );
+	LIVE_ASSERT( peer == iter->second );
 #endif
 
-	assert( 0 != errcode );
+	LIVE_ASSERT( 0 != errcode );
 	m_udptHandshakingPeers.erase( peer->GetSocketAddress() );
 	m_IndexedPeers.erase(peer->GetConnectionInfo()->RemoteSessionKey);
 	m_Owner.SyncPendingConnectionInfo();
@@ -768,32 +768,32 @@ void UDPPeerConnector::OnUDPTHandshakeError(UDPPendingPeerPtr peer, UINT16 errco
 
 PeerConnection* UDPPeerConnector::OnUDPTPeerHandshaked(UDPPendingPeerPtr peer)
 {
-	assert( peer );
+	LIVE_ASSERT( peer );
 	UDPT_DEBUG("PeerConnector::HandleUDPTPacket handshake3 " << peer->GetSocketAddress());
 	// 删除HandshakingPeer
 	m_udptHandshakingPeers.erase( peer->GetSocketAddress() );
 	m_IndexedPeers.erase(peer->GetConnectionInfo()->RemoteSessionKey);
 	m_Owner.SyncPendingConnectionInfo();
 	// 通知PeerManager添加peer
-	assert( peer->HandshakeInfo.Address.IsFullyValid() );
-//	assert( peer->HandshakeInfo.OuterAddress.IsAddressValid() );
+	LIVE_ASSERT( peer->HandshakeInfo.Address.IsFullyValid() );
+//	LIVE_ASSERT( peer->HandshakeInfo.OuterAddress.IsAddressValid() );
 	if ( false == peer->ConnectionInfo->IsInitFromRemote )
 		m_statistics.UDP.TotalSucceededInitiatedConnections++;
 	else
 		m_statistics.UDP.TotalSucceededRequestedConnections++;
 	PeerConnection* pc = m_PeerManager.AddUDPTPeer( peer->ConnectionInfo, peer->HandshakeInfo );
-	assert( pc );
+	LIVE_ASSERT( pc );
 	return pc;
 }
 
 void UDPPeerConnector::HandleUDPTConnectFail(boost::shared_ptr<UDPPeerConnectionInfo> connInfo, UINT16 errcode, UINT32 refuseReason)
 {
-	assert( 0 != errcode );
+	LIVE_ASSERT( 0 != errcode );
 	if( m_LiveInfo.TransferMethod == TRANSFER_TCP )
 	{
 		if ( false == connInfo->IsInitFromRemote )
 		{
-			assert( ! "invalid situation for udp connect failure" );
+			LIVE_ASSERT( ! "invalid situation for udp connect failure" );
 		}
 	}
 
@@ -882,7 +882,7 @@ void UDPPeerConnector::HandleUDPTConnectFail(boost::shared_ptr<UDPPeerConnection
 		}
 		else
 		{
-			assert(0);
+			LIVE_ASSERT(0);
 		}
 	}
 }
@@ -898,17 +898,17 @@ UDPPendingPeerPtr UDPPeerConnector::CreateUDPTPendingPeer( const SimpleSocketAdd
 		TEST_LOG_OUT_ONCE("initiate udp connection to peer " << connInfo->KeyPeerAddress);
 	}
 
-	assert( false == containers::contains(m_udptHandshakingPeers, sockAddr) );
+	LIVE_ASSERT( false == containers::contains(m_udptHandshakingPeers, sockAddr) );
 	return UDPPendingPeerPtr(new UDPPendingPeer(*this, sockAddr, connInfo, (UINT16)m_ConnectionID.New()));
 }
 
 void UDPPeerConnector::AddUDPTPendingPeer( UDPPendingPeerPtr peer )
 {
 	VIEW_DEBUG( "UDPPeerConnector::AddUDPTPendingPeer " << peer->GetSocketAddress() );
-	assert( TRANSFER_UDP == m_LiveInfo.TransferMethod || TRANSFER_ALL == m_LiveInfo.TransferMethod || TRANSFER_NO_DETECT == m_LiveInfo.TransferMethod );
+	LIVE_ASSERT( TRANSFER_UDP == m_LiveInfo.TransferMethod || TRANSFER_ALL == m_LiveInfo.TransferMethod || TRANSFER_NO_DETECT == m_LiveInfo.TransferMethod );
 	m_udptHandshakingPeers[peer->GetSocketAddress()] = peer;
 
-	assert( false == containers::contains(m_IndexedPeers, peer->GetConnectionInfo()->RemoteSessionKey) );
+	LIVE_ASSERT( false == containers::contains(m_IndexedPeers, peer->GetConnectionInfo()->RemoteSessionKey) );
 	m_IndexedPeers[peer->GetConnectionInfo()->RemoteSessionKey] = peer;
 
 	m_Owner.SyncPendingConnectionInfo();
@@ -925,7 +925,7 @@ UINT32 UDPPeerConnector::GetNewSessionKey()
 	m_MySessionKey++;
 	if (m_MySessionKey == SESSION_KEY_START || m_MySessionKey == SESSION_KEY_END)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		m_MySessionKey = SESSION_KEY_START + 1;
 	}
 	return sessionKey;

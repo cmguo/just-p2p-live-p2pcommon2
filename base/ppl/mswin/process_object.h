@@ -50,7 +50,7 @@ public:
 
 	bool kill(ULONG exitCode)
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		return FALSE != ::TerminateProcess( m_handle, exitCode );
 	}
 
@@ -74,7 +74,7 @@ public:
 			return 0;
 		DWORD exitCode = 0;
 		BOOL success = ::GetExitCodeProcess(m_handle, &exitCode);
-		assert(success);
+		LIVE_ASSERT(success);
 		return exitCode;
 	}
 
@@ -90,13 +90,13 @@ public:
 
 	bool join(DWORD milliseconds)
 	{
-		assert(is_open());
-		assert(is_alive());
+		LIVE_ASSERT(is_open());
+		LIVE_ASSERT(is_alive());
 		DWORD waitResult = ::WaitForSingleObject(m_handle, milliseconds);
 		if (WAIT_OBJECT_0 != waitResult && WAIT_TIMEOUT != waitResult)
 		{
 			TRACEOUT("process_object::join failed, handle=0x%p, id=%u, error=%d\n", m_handle, m_id, ::GetLastError());
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 		return WAIT_OBJECT_0 == waitResult;
 	}
@@ -112,7 +112,7 @@ public:
 		TCHAR path[MAX_PATH * 4 + 4] = { 0 };
 		DWORD len = ::GetModuleFileNameEx(m_handle, NULL, path, MAX_PATH * 4);
 		int errcode = ::GetLastError();
-		//assert(len > 0);
+		//LIVE_ASSERT(len > 0);
 		return tstring(path, len);
 	}
 
@@ -120,7 +120,7 @@ public:
 	{
 		TCHAR path[MAX_PATH * 4 + 4] = { 0 };
 		DWORD len = ::GetModuleBaseName(m_handle, NULL, path, MAX_PATH * 4);
-		assert(len > 0);
+		LIVE_ASSERT(len > 0);
 		return tstring(path, len);
 	}
 #endif

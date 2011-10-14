@@ -20,8 +20,8 @@ class memory_input_stream : public input_stream, private boost::noncopyable
 public:
 	explicit memory_input_stream(const void* buf, size_t size) : m_buffer(static_cast<const BYTE*>(buf)), m_size(size), m_position(0)
 	{
-		//assert(m_buffer != NULL);
-		//assert( ! ::IsBadReadPtr(m_buffer, m_size));
+		//LIVE_ASSERT(m_buffer != NULL);
+		//LIVE_ASSERT( ! ::IsBadReadPtr(m_buffer, m_size));
 	}
 
 	//size_t position() const { return m_position; }
@@ -76,7 +76,7 @@ public:
 
 	//void check_available(size_t size)
 	//{
-	//	assert( is_available( size ) );
+	//	LIVE_ASSERT( is_available( size ) );
 	//}
 
 	//template <typename ValueT>
@@ -123,7 +123,7 @@ public:
 			return true;
 		if ( false == is_available( sizeof(ValueT) * count ) )
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		// 先检查数据是否充足，再进行resize操作，避免count过大，resize耗尽内存
@@ -151,7 +151,7 @@ public:
 		// 先检查数据是否充足，再进行resize操作，避免count过大，resize耗尽内存
 		if ( false == is_available( count * sizeof(CharT) ) )
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		s.resize( count );

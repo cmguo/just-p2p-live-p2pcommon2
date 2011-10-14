@@ -37,7 +37,7 @@ public:
 
 	void EnsureLoaded()
 	{
-		assert( false == m_dllpath.empty() );
+		LIVE_ASSERT( false == m_dllpath.empty() );
 		if ( m_dllpath.empty() )
 			return;
 		if ( m_dll.is_open() )
@@ -75,13 +75,13 @@ public:
 
 		if ( len <= 0 )
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return EPI_ERROR_TRACE_FAILED;
 		}
 
 		if ( (size_t)len > max_buffer_size )
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return EPI_ERROR_LARGE_PACKET_TO_SEND;
 		}
 
@@ -93,7 +93,7 @@ public:
 		{
 			return SendMSG(appID, buf, len, dataType);
 		}
-		assert(false);
+		LIVE_ASSERT(false);
 		return EPI_ERROR_TRACE_FAILED;
 	}
 

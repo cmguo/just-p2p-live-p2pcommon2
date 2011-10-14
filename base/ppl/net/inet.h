@@ -379,14 +379,14 @@ public:
 	/// 设置IP，ip为网络字节序
 	void SetIP(u_long ip)
 	{
-		assert(ip != INADDR_NONE);
+		LIVE_ASSERT(ip != INADDR_NONE);
 		m_addr.sin_addr.s_addr = ip;
 	}
 
 	/// 设置IP，参数为ip字符串
 	void SetIP(const char* ip)
 	{
-		assert(ip != NULL);
+		LIVE_ASSERT(ip != NULL);
 		m_addr.sin_addr.s_addr = inet_addr(ip);
 	}
 
@@ -501,7 +501,7 @@ inline u_long FindRightIP(const std::vector<u_long>& ipArray, u_long ip)
 {
 	if ( ipArray.empty() )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return 0;
 	}
 	u_long i;
@@ -657,20 +657,20 @@ class InetTestCase : public ppl::util::test_case
 		ipArray.push_back(inet_addr("192.168.0.113"));
 		ipArray.push_back(inet_addr("202.168.0.1"));
 
-		assert(FindRightIP(ipArray, ip) == ip1);
+		LIVE_ASSERT(FindRightIP(ipArray, ip) == ip1);
 
 		ip = inet_addr("58.19.11.33");
 
 		ip = inet_addr("192.168.0.3");
-		assert( IsPrivateIP( ip ) );
+		LIVE_ASSERT( IsPrivateIP( ip ) );
 		ip = inet_addr("169.254.0.3");
-		assert( IsPrivateIP( ip ) );
+		LIVE_ASSERT( IsPrivateIP( ip ) );
 		ip = inet_addr("10.0.0.3");
-		assert( IsPrivateIP( ip ) );
+		LIVE_ASSERT( IsPrivateIP( ip ) );
 		ip = inet_addr("172.16.0.3");
-		assert( IsPrivateIP( ip ) );
+		LIVE_ASSERT( IsPrivateIP( ip ) );
 		ip = inet_addr("172.31.0.3");
-		assert( IsPrivateIP( ip ) );
+		LIVE_ASSERT( IsPrivateIP( ip ) );
 	}
 };
 

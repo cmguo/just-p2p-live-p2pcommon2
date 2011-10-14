@@ -35,7 +35,7 @@ public:
 		, IsVIP( isVIP )
 		, IsSpark( isSpark )
 	{
-		assert(!(IsSpark && IsVIP));
+		LIVE_ASSERT(!(IsSpark && IsVIP));
 
 		PeerItem& thisPeer = *this;
 		thisPeer = peer;

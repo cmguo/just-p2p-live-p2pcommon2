@@ -113,7 +113,7 @@ public:
 		tstring url2 = Base64Encoding::Decode(url);
 		Base64Encoding::GetDelimiter() = "";
 		tstring url3 = Base64Encoding::Encode(url2);
-		assert(url3 == url);
+		LIVE_ASSERT(url3 == url);
 		tstring result;
 		result.resize(url2.size());
 		for (size_t i = 0; i < url2.size(); ++i)
@@ -132,19 +132,19 @@ public:
 		tstring decodedUrl = Decode(body);
 		Uri uri(scheme, TEXT(""), decodedUrl);
 
-		assert(strings::lower(scheme) == TEXT("synacast"));
-		assert(!body.empty());
+		LIVE_ASSERT(strings::lower(scheme) == TEXT("synacast"));
+		LIVE_ASSERT(!body.empty());
 
 		tstring param = uri.GetParam(TEXT("channel"));
-		assert(!param.empty());
+		LIVE_ASSERT(!param.empty());
 		m_channelGUID.Parse(param);
 
 		param = uri.GetParam(TEXT("ko"));
-		assert(!param.empty());
+		LIVE_ASSERT(!param.empty());
 		ParseTrackers(param);
 
 		param = uri.GetParam(TEXT("name"));
-		//assert(!param.empty());
+		//LIVE_ASSERT(!param.empty());
 		m_name = param;
 
 		param = uri.GetParam(TEXT("M"));

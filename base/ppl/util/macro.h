@@ -50,18 +50,18 @@
 #define WRITE_MEMORY(buf, val, type2) ppl::io::write_memory<type2>(buf, val)
 
 /// 限制指定变量的最小值
-#define LIMIT_MIN(val, minVal) do { if ((val) < (minVal)) (val) = (minVal); assert((val) >= (minVal)); } while (false)
+#define LIMIT_MIN(val, minVal) do { if ((val) < (minVal)) (val) = (minVal); LIVE_ASSERT((val) >= (minVal)); } while (false)
 
 /// 限制指定变量的最大值
-#define LIMIT_MAX(val, maxVal) do { if ((val) > (maxVal)) (val) = (maxVal); assert((val) <= (maxVal)); } while (false)
+#define LIMIT_MAX(val, maxVal) do { if ((val) > (maxVal)) (val) = (maxVal); LIVE_ASSERT((val) <= (maxVal)); } while (false)
 
 /// 限制指定变量的最小值和最大值
 #define LIMIT_MIN_MAX(val, minVal, maxVal) \
 	do { \
 		if ((val) > (maxVal)) (val) = (maxVal); \
 		else if ((val) < (minVal)) (val) = (minVal); \
-		assert((val) >= (minVal)); \
-		assert((val) <= (maxVal)); \
+		LIVE_ASSERT((val) >= (minVal)); \
+		LIVE_ASSERT((val) <= (maxVal)); \
 	} while (false)
 
 

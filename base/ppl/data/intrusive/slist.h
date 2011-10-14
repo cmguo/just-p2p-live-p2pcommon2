@@ -29,7 +29,7 @@ public:
 	typedef std::forward_iterator_tag iterator_category;
 
 	explicit slist_iterator_impl(NodePtrT node = 0) : m_node(node) { }
-	void check() const { assert(m_node != 0); }
+	void check() const { LIVE_ASSERT(m_node != 0); }
 	void inc() { check(); m_node = static_cast<NodePtrT>( m_node->next ); }
 	bool operator==(const slist_iterator_impl& x) const { return m_node == x.m_node; }
 	bool operator!=(const slist_iterator_impl& x) const { return m_node != x.m_node; }
@@ -78,7 +78,7 @@ public:
 
 	slist_node_base* front()
 	{
-		assert(!empty());
+		LIVE_ASSERT(!empty());
 		return m_head.next;
 	}
 
@@ -89,28 +89,28 @@ public:
 	slist_node_base* pop()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return this->do_erase_after(&m_head);
 	}
 	slist_node_base* top()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return this->m_head.next;
 	}
 	const slist_node_base* top() const
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return this->m_head.next;
 	}
 	bool empty() const
 	{
 		check();
-		assert(m_head.size == 0 || m_head.next != 0);
+		LIVE_ASSERT(m_head.size == 0 || m_head.next != 0);
 		return m_head.next == 0;
 	}
 	void clear()
@@ -127,10 +127,10 @@ public:
 	}
 	void check() const
 	{
-		assert(m_head.size >= 0);
-	//	assert(m_head.next == m_next);
+		LIVE_ASSERT(m_head.size >= 0);
+	//	LIVE_ASSERT(m_head.next == m_next);
 	//	size_t count = calc_size();
-	//	assert(count == m_size);
+	//	LIVE_ASSERT(count == m_size);
 	}
 	int calc_size() const
 	{
@@ -150,7 +150,7 @@ protected:
 	void do_insert_after(slist_node_base* pos, slist_node_base* node)
 	{
 		check();
-		assert(pos);
+		LIVE_ASSERT(pos);
 		node->next = pos->next;
 		pos->next = node;
 		++m_head.size;
@@ -159,12 +159,12 @@ protected:
 	slist_node_base* do_erase_after(slist_node_base* pos)
 	{
 		check();
-		assert(pos);
+		LIVE_ASSERT(pos);
 		slist_node_base* node = 0;
 		if (pos->next)
 		{
-			assert(!empty());
-			assert(m_head.size > 0);
+			LIVE_ASSERT(!empty());
+			LIVE_ASSERT(m_head.size > 0);
 			node = pos->next;
 			pos->next = node->next;
 			--m_head.size;

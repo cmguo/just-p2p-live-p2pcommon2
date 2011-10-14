@@ -96,7 +96,7 @@ public:
 
 	bool create(LPCTSTR name, DWORD size)
 	{
-		assert( size < 1 * 1024 * 1024 );
+		LIVE_ASSERT( size < 1 * 1024 * 1024 );
 		m_buffer.resize(size);
 		return true;
 	}

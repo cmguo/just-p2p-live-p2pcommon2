@@ -67,7 +67,7 @@ void TrackerRequesterImpl::Start(UINT count, const TRACKER_LOGIN_ADDRESS addrs[]
 */
 void TrackerRequesterImpl::Start( TrackerRequesterListener& listener, size_t count, const TRACKER_LOGIN_ADDRESS addrs[], boost::shared_ptr<PeerInformation> peerInformation, boost::shared_ptr<TrackerPacketSender> packetSender )
 {
-	assert(!m_isStarted);
+	LIVE_ASSERT(!m_isStarted);
 	m_listener = &listener;
 	m_PeerInformation = peerInformation;
 	m_PacketSender = packetSender;
@@ -96,8 +96,8 @@ TrackerRequesterImpl::~TrackerRequesterImpl()
 
 void TrackerRequesterImpl::DoStart(size_t trackerCount, const TRACKER_LOGIN_ADDRESS addrs[])
 {
-	assert(!m_isStarted);
-	assert(trackerCount > 0 && trackerCount <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
+	LIVE_ASSERT(!m_isStarted);
+	LIVE_ASSERT(trackerCount > 0 && trackerCount <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
 	CreateClients(trackerCount, addrs);
 	DoStartClients();
 	m_isStarted = true;
@@ -114,7 +114,7 @@ bool TrackerRequesterImpl::TryHandleResponse( data_input_stream& is, const InetS
 	if ( iter == m_clientIndex.end() )
 		return false;
 	TrackerClientPtr client = iter->second;
-	assert(client);
+	LIVE_ASSERT(client);
 
 	// 需要解析头部
 	OLD_UDP_PACKET_HEAD udpHead;
@@ -123,7 +123,7 @@ bool TrackerRequesterImpl::TryHandleResponse( data_input_stream& is, const InetS
 	if ( !is )
 	{
 		// 解析头部失败
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	if ( channelGUID != m_PeerInformation->ChannelGUID )
@@ -155,14 +155,14 @@ bool TrackerRequesterImpl::TryHandleSecureResponse( data_input_stream& is, NEW_U
 	if ( iter == m_clientIndex.end() )
 		return false; // 没有找到，说明不是peer-tracker报文，返回false，由其它模块处理
 	TrackerClientPtr client = iter->second;
-	assert(client);
+	LIVE_ASSERT(client);
 
 	GUID channelGUID, peerGUID;
 	is >> channelGUID >> peerGUID;
 	if ( !is )
 	{
 		// 解析头部失败
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	if ( channelGUID != m_PeerInformation->ChannelGUID || peerGUID != m_PeerInformation->PeerGUID )
@@ -185,14 +185,14 @@ bool TrackerRequesterImpl::TryHandleSecureResponse( data_input_stream& is, NEW_U
 
 void TrackerRequesterImpl::CreateClients(size_t count, const TRACKER_LOGIN_ADDRESS addrs[])
 {
-	assert(count > 0 && count <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
-	assert(m_clients.empty());
+	LIVE_ASSERT(count > 0 && count <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
+	LIVE_ASSERT(m_clients.empty());
 	m_clients.resize(count);
 	m_clientIndex.clear();
 	for (size_t i = 0; i < count; ++i)
 	{
 		m_clients[i].reset( CreateClient() );
-		assert(m_clients[i] != NULL);
+		LIVE_ASSERT(m_clients[i] != NULL);
 		TRACKER_ADDRESS trackerAddr = addrs[i].ServerAddress;
 		trackerAddr.ReservedStatusCode = 0;
 		m_clients[i]->Init( *this, addrs[i], m_PeerInformation, m_PacketSender );
@@ -400,7 +400,7 @@ void PeerTrackerRequester::OnTrackerClientLogin(TrackerClient* sender)
 	// join成功并不禁用tcptracker，除非list成功
 	//m_UseTCP = false;
 /*	TrackerClient* currentClient = GetCurrentClient();
-//	assert(false);
+//	LIVE_ASSERT(false);
 	if (currentClient->IsOnline())
 	{
 //		sender->Stop();
@@ -471,8 +471,8 @@ void SimpleMDSTrackerRequester::DoStart(size_t trackerCount, const TRACKER_LOGIN
 
 void SparkMDSTrackerRequester::DoStart( size_t trackerCount, const TRACKER_LOGIN_ADDRESS addrs[] )
 {
-	assert(!m_isStarted);
-	assert(trackerCount > 0 && trackerCount <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
+	LIVE_ASSERT(!m_isStarted);
+	LIVE_ASSERT(trackerCount > 0 && trackerCount <= PPL_TRACKER_CLIENT_COUNT_LIMIT);
 	CreateClients(trackerCount, addrs);
 	// No JOIN, just LIST.
 //	DoStartClients();

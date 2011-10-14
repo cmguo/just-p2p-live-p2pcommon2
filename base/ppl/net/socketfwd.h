@@ -52,9 +52,9 @@ public:
 	virtual ~tcp_socket_listener() { }
 
 	/// 连接成功
-	virtual void on_socket_connect(tcp_socket* sender) { assert(false); }
+	virtual void on_socket_connect(tcp_socket* sender) { LIVE_ASSERT(false); }
 	/// 连接失败
-	virtual void on_socket_connect_failed(tcp_socket* sender, int errcode) { assert(false); }
+	virtual void on_socket_connect_failed(tcp_socket* sender, int errcode) { LIVE_ASSERT(false); }
 
 	/// 接收到数据
 	virtual void on_socket_receive(tcp_socket* sender, unsigned char* data, size_t size)  = 0;
@@ -76,7 +76,7 @@ class trivial_tcp_acceptor_listener : public tcp_acceptor_listener
 public:
 	virtual void on_socket_accept(tcp_acceptor* sender, tcp_socket* client, const InetSocketAddress& addr)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 };
 
@@ -85,27 +85,27 @@ public:
 class trivial_udp_socket_listener : public udp_socket_listener
 {
 public:
-	virtual void on_socket_receive(udp_socket* sender, const InetSocketAddress& addr, unsigned char* data, size_t size) { assert(false); }
-	virtual void on_socket_receive_failed(udp_socket* sender, int errcode) { assert(false); }
+	virtual void on_socket_receive(udp_socket* sender, const InetSocketAddress& addr, unsigned char* data, size_t size) { LIVE_ASSERT(false); }
+	virtual void on_socket_receive_failed(udp_socket* sender, int errcode) { LIVE_ASSERT(false); }
 };
 
 class trivial_tcp_socket_listener : public tcp_socket_listener
 {
 public:
 	/// 连接成功
-	virtual void on_socket_connect(tcp_socket* sender) { assert(false); }
+	virtual void on_socket_connect(tcp_socket* sender) { LIVE_ASSERT(false); }
 	/// 连接失败
-	virtual void on_socket_connect_failed(tcp_socket* sender, int errcode) { assert(false); }
+	virtual void on_socket_connect_failed(tcp_socket* sender, int errcode) { LIVE_ASSERT(false); }
 
 	/// 接收到数据
-	virtual void on_socket_receive(tcp_socket* sender, unsigned char* data, size_t size) { assert(false); }
+	virtual void on_socket_receive(tcp_socket* sender, unsigned char* data, size_t size) { LIVE_ASSERT(false); }
 	/// 接收数据失败
-	virtual void on_socket_receive_failed(tcp_socket* sender, int errcode) { assert(false); }
+	virtual void on_socket_receive_failed(tcp_socket* sender, int errcode) { LIVE_ASSERT(false); }
 
 	/// 发送数据完毕
 	virtual void on_socket_send(tcp_socket* sender) { }	// can be ignored
 	/// 发送数据失败
-	virtual void on_socket_send_failed(tcp_socket* sender, int errcode) { assert(false); }
+	virtual void on_socket_send_failed(tcp_socket* sender, int errcode) { LIVE_ASSERT(false); }
 };
 
 

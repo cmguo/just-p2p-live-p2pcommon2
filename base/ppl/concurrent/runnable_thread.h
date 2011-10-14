@@ -27,20 +27,20 @@ public:
 		this->stop( 0 );
 		m_runner = runner;
 		m_stopper = stopper;
-		assert( false == m_runner.empty() );
-		assert( false == m_stopper.empty() );
+		LIVE_ASSERT( false == m_runner.empty() );
+		LIVE_ASSERT( false == m_stopper.empty() );
 		thread::start();
 	}
 
 protected:
 	virtual void do_run()
 	{
-		assert( false == m_runner.empty() );
+		LIVE_ASSERT( false == m_runner.empty() );
 		m_runner();
 	}
 	virtual void do_interrupt()
 	{
-		assert( false == m_stopper.empty() );
+		LIVE_ASSERT( false == m_stopper.empty() );
 		if ( false == m_stopper.empty() )
 		{
 			m_stopper();

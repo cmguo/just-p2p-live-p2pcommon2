@@ -45,7 +45,7 @@ HRESULT VistaMediaClient::SetPlayableRange(
 		m_IsSending = true;
 		NETWRITER_INFO("MediaClient SetPlayableRange: StartIndex=" << StartIndex << ", MinMax=" << make_tuple(MinIndex, MaxIndex));
 	}
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	return SetPlayableRangeAfterSended(HeaderIndex, MinIndex, MaxIndex);
 }
 
@@ -147,7 +147,7 @@ HRESULT VistaMediaClient::SetPlayableRangeAfterSended(
 												 DWORD MinIndex,
 												 DWORD MaxIndex)
 {
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	//bool SendOk = true;
 
 	if( MinIndex == 0 ) return S_OK;
@@ -330,7 +330,7 @@ HRESULT CVistaNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 			m_ClientHandles.erase(iter++);
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		++iter;
 	}
 
@@ -352,7 +352,7 @@ bool CVistaNetWriter::OnClientReceive(tcp_socket_ptr s, const BYTE* data, size_t
 	// 检查 m_ClientHandles 是否有此套接字，如果有此套接字，则退出
 	if( ContainsClient(s.get()) )
 	{
-		assert( 0 );
+		LIVE_ASSERT( 0 );
 		NETWRITER_ERROR( "CNetWriter::ContainsClient has this SOCKET "<<*s );
 		return true;
 	}
@@ -487,7 +487,7 @@ bool CVistaNetWriter::ContainsClient(tcp_socket* sock)
 bool CVistaNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CVistaNetWriter::OnNewClient " << make_tuple(s, m_ClientHandles.size()));
-	assert( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
+	LIVE_ASSERT( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
 	VistaMediaClient ClientHandle( this, s, m_DataUnitSize );
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = ClientHandle;

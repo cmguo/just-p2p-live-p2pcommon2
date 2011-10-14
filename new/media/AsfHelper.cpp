@@ -26,7 +26,7 @@ bool AsfHelper::IsKeyFramePacket(const UINT8* packetBuffer, size_t packetSize)
 	size_t payloadCount = 1;
 	if (! single)
 	{
-		assert( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1;        // multi start with payloads info, 1B
 		payloadCount = packetBuffer[payloadOffset - 1] & 0x3F;
 	}
@@ -77,8 +77,8 @@ int AsfHelper::LocateTimeStampOffset( const UINT8* packetBuffer, size_t packetSi
 {
 	if ( packetSize < 5 )
 		return -1;
-	assert( ( packetBuffer[3] & 0x80 ) == 0x00 );	// no error correction
-	assert( packetBuffer[4] == 0x5D );					// payload length type OK
+	LIVE_ASSERT( ( packetBuffer[3] & 0x80 ) == 0x00 );	// no error correction
+	LIVE_ASSERT( packetBuffer[4] == 0x5D );					// payload length type OK
 
 	if(( packetBuffer[3] & 0x80 ) != 0x00 || packetBuffer[4] != 0x5D)
 	{
@@ -108,7 +108,7 @@ bool AsfHelper::ChanegeTimeStamps(UINT8* packetBuffer, const size_t maxPacketSiz
 	}
 
 	UINT32* sendTime = (UINT32*)(packetBuffer + timeStampOffset);
-	assert(*sendTime >= startTimeStamp);
+	LIVE_ASSERT(*sendTime >= startTimeStamp);
 	if (*sendTime < startTimeStamp)
 	{
 		*sendTime = 0;
@@ -121,7 +121,7 @@ bool AsfHelper::ChanegeTimeStamps(UINT8* packetBuffer, const size_t maxPacketSiz
 	UINT32 payloadCount = 1;
 	if ( ! single )
 	{
-		assert( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1;								// multi start with payloads info, 1B
 		payloadCount = packetBuffer[payloadOffset - 1] & 0x3F;
 	}
@@ -173,14 +173,14 @@ bool AsfHelper::ChanegeTimeStampsForVista(UINT8* packetBuffer, const size_t maxP
 	size_t timeStampOffset = LocateTimeStampOffset( packetBuffer, maxPacketSize );
 
 	DWORD* sendTime = (DWORD*)(packetBuffer + timeStampOffset);
-	assert(*sendTime >= startTimeStamp);
+	LIVE_ASSERT(*sendTime >= startTimeStamp);
 	*sendTime = *sendTime - startTimeStamp;
 
 	size_t payloadOffset = timeStampOffset + 4 + 2;		// send time, duration
 	size_t payloadCount = 1;
 	if ( ! single )
 	{
-		assert( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1;								// multi start with payloads info, 1B
 		payloadCount = packetBuffer[payloadOffset - 1] & 0x3F;
 	}
@@ -222,7 +222,7 @@ bool AsfHelper::ChanegeTimeStampsForVista(UINT8* packetBuffer, const size_t maxP
 		}	
 		else
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 
@@ -255,7 +255,7 @@ bool AsfHelper::ChanegeTimeStamps(UINT8* packetBuffer, const size_t maxPacketSiz
 	}
 
 	UINT32* sendTime = (UINT32*)(packetBuffer + timeStampOffset);
-	assert(*sendTime >= startTimeStamp);
+	LIVE_ASSERT(*sendTime >= startTimeStamp);
 	if (*sendTime < startTimeStamp)
 		*sendTime = (UINT32)((UINT64)0x100000000ULL + *sendTime - startTimeStamp);
 	else
@@ -281,7 +281,7 @@ bool AsfHelper::ChanegeTimeStamps(UINT8* packetBuffer, const size_t maxPacketSiz
 	UINT32 payloadCount = 1;
 	if ( ! single )
 	{
-		assert( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1; // multi start with payloads info, 1B
 		payloadCount = packetBuffer[payloadOffset - 1] & 0x3F;
 	}
@@ -388,7 +388,7 @@ UINT32 AsfHelper::GetPresentTime(const UINT8* packetBuffer, size_t packetSize)
 	UINT32 payloadCount = 1;
 	if ( ! single )
 	{
-		assert( ( buffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( buffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1; // multi start with payloads info, 1B
 		payloadCount = buffer[payloadOffset - 1] & 0x3F;
 	}

@@ -134,7 +134,7 @@ public:
 
 	BOOL EnumSymbol()
 	{
-		assert(IsValid());
+		LIVE_ASSERT(IsValid());
 		return m_viewer.EnumSymbol(GetBaseAddress(), EnumSymbolsProc, this);
 	}
 	void SetListener(SymbolModuleListener* listener)

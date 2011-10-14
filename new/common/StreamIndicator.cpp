@@ -34,20 +34,20 @@ void StreamIndicator::Update(MediaDataPiecePtr piece, UINT64 receiveTime, bool u
 	CheckDataPiece(piece);
 	if (m_pieceIndex == 0 && m_timeStamp == 0)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		Reset(piece);
 		return;
 	}
 	UINT newPieceIndex = piece->GetPieceIndex();
 	UINT64 newTimeStamp = piece->GetTimeStamp();
-	assert(newPieceIndex > m_pieceIndex);
+	LIVE_ASSERT(newPieceIndex > m_pieceIndex);
 	// 按时间戳来推算正常的接收时间
 	UINT64 newReceiveTime = m_receiveTime + static_cast<DWORD>(newTimeStamp - m_timeStamp);
-	assert(newTimeStamp - m_timeStamp < INT_MAX);
+	LIVE_ASSERT(newTimeStamp - m_timeStamp < INT_MAX);
 	STREAMBUFFER_DEBUG("StreamIndicator::Update " << make_tuple(m_pieceIndex, m_timeStamp, m_receiveTime) 
 		<< " " << make_tuple(newPieceIndex, newTimeStamp, newReceiveTime) 
 		<< " " << make_tuple(newPieceIndex - m_pieceIndex, newTimeStamp - m_timeStamp, newReceiveTime - m_receiveTime));
-	assert(m_receiveTime.get_realtime_count() - newReceiveTime < INT_MAX);
+	LIVE_ASSERT(m_receiveTime.get_realtime_count() - newReceiveTime < INT_MAX);
 	m_pieceIndex = newPieceIndex;
 	m_timeStamp = newTimeStamp;
 	if (useNewPiece)
@@ -114,7 +114,7 @@ void StreamFeedback::Discard(size_t count)
 	}
 	else
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		m_pushedPieceCount = 0;
 	}
 	if (m_downloadedPieceCount >= (int)count)
@@ -123,7 +123,7 @@ void StreamFeedback::Discard(size_t count)
 	}
 	else
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		m_downloadedPieceCount = 0;
 	}
 }

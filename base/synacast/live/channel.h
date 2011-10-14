@@ -28,7 +28,7 @@ public:
 
 	void SetLiveInfoTagName(const tstring& tagName)
 	{
-		assert(!tagName.empty());
+		LIVE_ASSERT(!tagName.empty());
 		m_LiveInfoTagName = tagName;
 	}
 
@@ -89,14 +89,14 @@ public:
 	{
 		if (!m_SysInfoMapping.is_mapped() && !this->OpenSysInfo())
 			return NULL;
-		assert(m_SysInfoMapping.is_mapped());
+		LIVE_ASSERT(m_SysInfoMapping.is_mapped());
 		return static_cast<SYSINFO*>(m_SysInfoMapping.get_view());
 	}
 	LIVE_INFO* GetLiveInfo()
 	{
 		if (!m_LiveInfoMapping.is_mapped() && !this->OpenLiveInfo())
 			return NULL;
-		assert(m_LiveInfoMapping.is_mapped());
+		LIVE_ASSERT(m_LiveInfoMapping.is_mapped());
 		return static_cast<LIVE_INFO*>(m_LiveInfoMapping.get_view());
 	}
 
@@ -105,7 +105,7 @@ protected:
 	{
 		if (m_SysInfoMapping.is_mapped())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return true;
 		}
 		tstring sysInfoName = strings::format(TEXT("%dOS_SYS_INFO"), ::GetCurrentProcessId());
@@ -119,7 +119,7 @@ protected:
 	{
 		if (m_LiveInfoMapping.is_mapped())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return true;
 		}
 		tstring liveInfoName = m_LiveInfoTagName + m_StartupInfo.ChannelGUID.ToString();

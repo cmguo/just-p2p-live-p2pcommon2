@@ -117,7 +117,7 @@ private:
 	public:
 		host_byte_order_checker()
 		{
-			assert( ppl_host_byte_order_is_big_endian == big_endian() );
+			LIVE_ASSERT( ppl_host_byte_order_is_big_endian == big_endian() );
 		}
 		static bool big_endian()
 		{
@@ -144,12 +144,12 @@ protected:
 	}
 	void test_reverse()
 	{
-		assert(byte_order::reverse_word(0x1234) == 0x3412);
-		assert(byte_order::reverse_dword(0x12345678UL) == 0x78563412UL);
+		LIVE_ASSERT(byte_order::reverse_word(0x1234) == 0x3412);
+		LIVE_ASSERT(byte_order::reverse_dword(0x12345678UL) == 0x78563412UL);
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		assert(byte_order::reverse_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
+		LIVE_ASSERT(byte_order::reverse_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
 #else
-		assert(byte_order::reverse_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
+		LIVE_ASSERT(byte_order::reverse_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
 #endif
 	}
 
@@ -159,22 +159,22 @@ protected:
 		{
 			{
 				byte_order hbc(true);
-				assert(hbc.convert_word(0x1234) == 0x1234);
-				assert(hbc.convert_dword(0x12345678UL) == 0x12345678UL);
+				LIVE_ASSERT(hbc.convert_word(0x1234) == 0x1234);
+				LIVE_ASSERT(hbc.convert_dword(0x12345678UL) == 0x12345678UL);
 #if defined(_MSC_VER) && _MSC_VER < 1300
-				assert(hbc.convert_qword(0x1234567890abcdefUI64) == 0x1234567890abcdefUI64);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefUI64) == 0x1234567890abcdefUI64);
 #else
-				assert(hbc.convert_qword(0x1234567890abcdefULL) == 0x1234567890abcdefULL);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefULL) == 0x1234567890abcdefULL);
 #endif
 			}
 			{
 				byte_order hbc(false);
-				assert(hbc.convert_word(0x1234) == 0x3412);
-				assert(hbc.convert_dword(0x12345678UL) == 0x78563412UL);
+				LIVE_ASSERT(hbc.convert_word(0x1234) == 0x3412);
+				LIVE_ASSERT(hbc.convert_dword(0x12345678UL) == 0x78563412UL);
 #if defined(_MSC_VER) && _MSC_VER < 1300
-				assert(hbc.convert_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
 #else
-				assert(hbc.convert_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
 #endif
 			}
 		}
@@ -182,22 +182,22 @@ protected:
 		{
 			{
 				byte_order hbc(false);
-				assert(hbc.convert_word(0x1234) == 0x1234);
-				assert(hbc.convert_dword(0x12345678UL) == 0x12345678UL);
+				LIVE_ASSERT(hbc.convert_word(0x1234) == 0x1234);
+				LIVE_ASSERT(hbc.convert_dword(0x12345678UL) == 0x12345678UL);
 #if defined(_MSC_VER) && _MSC_VER < 1300
-				assert(hbc.convert_qword(0x1234567890abcdefUI64) == 0x1234567890abcdefUI64);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefUI64) == 0x1234567890abcdefUI64);
 #else
-				assert(hbc.convert_qword(0x1234567890abcdefULL) == 0x1234567890abcdefULL);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefULL) == 0x1234567890abcdefULL);
 #endif
 			}
 			{
 				byte_order hbc(true);
-				assert(hbc.convert_word(0x1234) == 0x3412);
-				assert(hbc.convert_dword(0x12345678UL) == 0x78563412UL);
+				LIVE_ASSERT(hbc.convert_word(0x1234) == 0x3412);
+				LIVE_ASSERT(hbc.convert_dword(0x12345678UL) == 0x78563412UL);
 #if defined(_MSC_VER) && _MSC_VER < 1300
-				assert(hbc.convert_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefUI64) == 0xefcdab9078563412UI64);
 #else
-				assert(hbc.convert_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
+				LIVE_ASSERT(hbc.convert_qword(0x1234567890abcdefULL) == 0xefcdab9078563412ULL);
 #endif
 			}
 		}

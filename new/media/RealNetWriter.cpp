@@ -99,8 +99,8 @@ HRESULT RealMediaClient::SetPlayableRange(
 					VIEW_INFO("PieceSend "<<i<<" End");
 					m_LastPlayIndex = m_WillPlayIndex;
 					m_WillPlayIndex = m_LastPlayIndex + 1;
-					assert( m_WillPlayIndex != m_LastPlayIndex );
-					assert( m_WillPlayIndex > m_LastPlayIndex );
+					LIVE_ASSERT( m_WillPlayIndex != m_LastPlayIndex );
+					LIVE_ASSERT( m_WillPlayIndex > m_LastPlayIndex );
 					m_IsSending = true;
 					break;	// 如果成功定位到了音频关键帧，就跳出这个循环-----
 				}			//                                               |
@@ -176,7 +176,7 @@ HRESULT CRealNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 			m_ClientHandles.erase(iter++);
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		iter ++;
 	}
 
@@ -187,7 +187,7 @@ HRESULT CRealNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 bool CRealNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CRealNetWriter::OnNewClient " << s);
-	assert( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
+	LIVE_ASSERT( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
 	RealMediaClient ClientHandle( this, s);
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = ClientHandle;

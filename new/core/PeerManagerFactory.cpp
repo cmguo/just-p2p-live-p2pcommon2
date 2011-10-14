@@ -201,7 +201,7 @@ void ClientPeerManager::InitiateConnections(UINT times, UINT maxTCPPendingCount,
 			}
 		}
 
-//		assert(localPeerCount == m_statistics.Degrees.All.Out);
+//		LIVE_ASSERT(localPeerCount == m_statistics.Degrees.All.Out);
 		// 计算应该发起的连接数
 // 		int connectCount = (int) (
 // 			maxLocalPeerCount
@@ -296,7 +296,7 @@ void ClientPeerManager::KickConnections(UINT seconds)
 	int maxReservedCount = GetMaxReservedDegree();
 	if (degreeLeft < maxReservedCount)//degreeLeft可能<0，默认情况，当剩余连接数小于最大连接数的1/10的时候,开启踢连接的策略
 	{
-//		assert(false == m_Connections.empty());//DegreeLeft的初始值是不是太小了？或者计算DegreeLeft有问题？
+//		LIVE_ASSERT(false == m_Connections.empty());//DegreeLeft的初始值是不是太小了？或者计算DegreeLeft有问题？
 		typedef std::multimap<UINT,PeerConnection*> SpeedBasedPeerConnectionIndex;
 		SpeedBasedPeerConnectionIndex DelPeerMapBySpeed;
 		PeerConnection* pc = NULL;
@@ -304,7 +304,7 @@ void ClientPeerManager::KickConnections(UINT seconds)
 		for(PeerConnectionCollection::iterator itrOfPCSet = m_Connections.begin(); itrOfPCSet != m_Connections.end(); itrOfPCSet++)
 		{
 			pc = *itrOfPCSet;
-			assert(pc != NULL);
+			LIVE_ASSERT(pc != NULL);
 			// 只踢自己主动发起的连接
 			// 2006-09-08 cmp 尝试不管是否是主动发起的连接，都可以踢除
 			if (CanKick(pc) && pc->GetConnectionTime() > m_config.InitialPeerProtectionTime * 1000)
@@ -362,7 +362,7 @@ void ClientPeerManager::KickConnections2(UINT seconds)
 
 	if (m_Connections.size() >(size_t) curMaxConnections)
 	{
-		// assert(false == m_Connections.empty());//DegreeLeft的初始值是不是太小了？或者计算DegreeLeft有问题？
+		// LIVE_ASSERT(false == m_Connections.empty());//DegreeLeft的初始值是不是太小了？或者计算DegreeLeft有问题？
 		typedef std::multimap<UINT,PeerConnection*> SpeedBasedPeerConnectionIndex;
 		SpeedBasedPeerConnectionIndex DelPeerMapBySpeed;
 		PeerConnection* pc = NULL;
@@ -370,7 +370,7 @@ void ClientPeerManager::KickConnections2(UINT seconds)
 		for(PeerConnectionCollection::iterator itrOfPCSet = m_Connections.begin(); itrOfPCSet != m_Connections.end(); itrOfPCSet++)
 		{ 
 			pc = *itrOfPCSet;
-			assert(pc != NULL);
+			LIVE_ASSERT(pc != NULL);
 			// 只踢自己主动发起的连接
 			// 2006-09-08 cmp 尝试不管是否是主动发起的连接，都可以踢除
 			if (CanKick(pc) && pc->GetConnectionTime() > m_config.InitialPeerProtectionTime * 1000
@@ -496,7 +496,7 @@ void ClientPeerManager::CalcMaxPFPSBandWidth(UINT seconds)
 			UINT rangeCount = m_streamBuffer.GetRangeCount(referredMinIndex,resourceMaxIndex);
 			UINT rangeSize = resourceMaxIndex - referredMinIndex + 1;
 			LIMIT_MIN( rangeSize, sourceLength*1/12);
-			assert(rangeCount <= rangeSize );
+			LIVE_ASSERT(rangeCount <= rangeSize );
 			maxPFPSBandWidth = (referredMaxSpeed - nowSpeed) * rangeCount / rangeSize;
 			VIEW_INFO("RangeInfo "<<referredMinIndex<<" "<<resourceMaxIndex<<" "<<rangeCount<<" "<<rangeSize<<" "<<referredMaxSpeed<<" "<<maxPFPSBandWidth<<" End");
 		}
@@ -583,12 +583,12 @@ UINT32 SourcePeerManager::CheckAcceptHandshake(bool isVIP, UINT32 externalIP, co
 	if (isExternalIP)
 		return 0;
 	size_t maxPeerCount = m_PeerModule.GetMaxConnectionCount();
-	assert(maxPeerCount > 3);
+	LIVE_ASSERT(maxPeerCount > 3);
 	int maxInternalPeerCount = (int) ( maxPeerCount / 3 );
 	LIMIT_MIN_MAX(maxInternalPeerCount, 10, 20);
 	size_t externalPeerCount = GetExternalPeerCount();
 	int internalPeerCount = (int) ( m_Connections.size() - externalPeerCount );
-	assert(internalPeerCount >= 0);
+	LIVE_ASSERT(internalPeerCount >= 0);
 	if (externalPeerCount >= maxPeerCount / 2 || internalPeerCount >= maxInternalPeerCount)
 	{
 		// 如果外网peer已经足够多，则拒绝内网peer
@@ -614,7 +614,7 @@ void SourcePeerManager::DoKickConnections(UINT seconds)
 	STL_FOR_EACH_CONST(PeerConnectionCollection, m_Connections, itr)
 	{
 		PeerConnection* pc = *itr;
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 		if (CanKick(pc))
 		{
 			//VIEW_INFO("PeerSpeedOneMinutes "<<*pc<<pc->GetAverageUploadSpeed()<<" End");
@@ -669,13 +669,13 @@ bool SourcePeerManager::CanAcceptConnection( UINT ip ) const
 		return true;
 	}
 	int degreeLeft = GetDegreeLeft();
-	assert(degreeLeft > 0);
+	LIVE_ASSERT(degreeLeft > 0);
 	int maxCount = 1 + degreeLeft / 2;
 	int count = 0;
 	STL_FOR_EACH_CONST(PeerConnectionCollection, m_Connections, itr)
 	{
 		PeerConnection *pc = *itr;
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 		//未连接的也要检查，需要根据SocketAddress，而不是握手时汇报过来的地址来进行检查
 		SimpleSocketAddress thisAddr = pc->GetSocketAddress();
 		MANAGER_EVENT("CPeerManager::CanAcceptConnection " << thisAddr << " " << count);
@@ -720,7 +720,7 @@ void SourcePeerManager::KickInternalPeers()
 	{
 		PeerConnection* pc = *itr;
 		itr++;
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 		if (CanKick(pc) && pc->IsInnerIP())
 		{
 			KickPeer(pc, PP_KICK_LAN);
@@ -742,7 +742,7 @@ void SourcePeerManager::KickBadPeers()
 		// 缓冲时间大于10秒
 		 localSpeed = 1.0 * m_storage.GetPieceSize() * m_storage.GetPieceCount() / bufferTime;
 	}
-	assert( localSpeed == 1000 || (localSpeed > 30 * 1024 && localSpeed < 80 * 1024) );
+	LIVE_ASSERT( localSpeed == 1000 || (localSpeed > 30 * 1024 && localSpeed < 80 * 1024) );
 	// 最低速度限制为平均码流率的1/50
 	if (localSpeed > 50)
 	{
@@ -764,7 +764,7 @@ void SourcePeerManager::KickBadPeers()
 	{
 		PeerConnection* pc = *itr;
 		itr++;
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 
 		// 检查保护时间
 		if (!CanKick(pc) || pc->GetConnectionTime() <= 10 * 1000)
@@ -912,7 +912,7 @@ bool SourceAgentPeerManager::NeedContinueServing(DWORD serveTime) const
 
 int SourceAgentPeerManager::CalcExtraCount() const
 {
-//	assert(m_ReservedConnectionPercent > 0 && m_ReservedConnectionPercent <= 100);
+//	LIVE_ASSERT(m_ReservedConnectionPercent > 0 && m_ReservedConnectionPercent <= 100);
 	int degreeLeft = GetDegreeLeft();
 
 	int maxCount = max(m_PeerModule.GetSysInfo().MaxAppPeerCount, static_cast<WORD>(1)); // 预防MaxAppPeerCount为0的情况
@@ -944,7 +944,7 @@ void SourceAgentPeerManager::KickConnections(UINT seconds)
 
 void SourceAgentPeerManager::AddExtraPeer(PeerConnectionQOSCollection& qosColl, PeerConnection* pc, size_t maxCount)
 {
-	assert(maxCount > 0);
+	LIVE_ASSERT(maxCount > 0);
 	// 超过最小服务时间，需要检查
 	UINT qos = pc->GetQOS();
 	if (qosColl.size() < maxCount)
@@ -955,7 +955,7 @@ void SourceAgentPeerManager::AddExtraPeer(PeerConnectionQOSCollection& qosColl, 
 	}
 
 	// maxCount > 0，所以qosColl.size() > 0
-	assert(!qosColl.empty());
+	LIVE_ASSERT(!qosColl.empty());
 	PeerConnectionQOSCollection::iterator iterMinQos = qosColl.end();
 	--iterMinQos;
 //	PeerConnection* tempConn = iterMinQos->second;
@@ -1049,7 +1049,7 @@ void SourceAgentPeerManager::LoadInputSources( const PeerAddressArray &addresses
 		}
 
 		PEER_ADDRESS outterAddress = *outterPointer;
-		assert( outterAddress.IP );					// 检验地址
+		LIVE_ASSERT( outterAddress.IP );					// 检验地址
 		if ( innerAddress.IP == 0 || outterAddress.IP == 0 )
 		{
 			break;

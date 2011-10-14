@@ -28,14 +28,14 @@ namespace ppl_detail {
 inline bool api_copy_file( const TCHAR* srcFilePath, const TCHAR* destFilePath )
 {
 	BOOL success = ::CopyFile(srcFilePath, destFilePath, FALSE);
-	assert(success);
+	LIVE_ASSERT(success);
 	return FALSE != success;
 }
 
 inline bool api_create_directory( const TCHAR* dir )
 {
 	bool success = (FALSE != ::CreateDirectory( dir, NULL ));
-	assert( success );
+	LIVE_ASSERT( success );
 	return success;
 }
 
@@ -91,7 +91,7 @@ inline bool api_copy_file( const char* srcFilePath, const char* destFilePath )
 		ostringstream sout;
 		sout << err;
 		printf("failed to invoke FileInfo::CopyTo %s %s %s\n", srcFilePath, destFilePath, sout.str().c_str());
-		assert(false);
+		LIVE_ASSERT(false);
 		}
 #endif
 	return !err;
@@ -100,7 +100,7 @@ inline bool api_copy_file( const char* srcFilePath, const char* destFilePath )
 inline bool api_create_directory( const char* dir )
 {
 	bool success = (0 == mkdir( dir, 0770 ));
-	assert( success );
+	LIVE_ASSERT( success );
 	return success;
 }
 

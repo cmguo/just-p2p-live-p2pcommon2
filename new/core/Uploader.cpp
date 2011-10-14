@@ -121,7 +121,7 @@ void Uploader::UploadSubPiece(SubPieceUnit subPieceUnit, PeerConnection* pc)
 		return;
 	}
 
-	//assert(subPieceUnit.SubPieceIndex != -1);
+	//LIVE_ASSERT(subPieceUnit.SubPieceIndex != -1);
 	SubMediaPiecePtr subPiece = m_Storage.GetSubPiece(subPieceUnit.PieceIndex, subPieceUnit.SubPieceIndex);
 	if (subPiece && CanUploadSubPiece(subPiece))
 	{
@@ -138,7 +138,7 @@ void Uploader::UploadSubPiece(UINT64 inTS, PeerConnection* pc)
 	CheckUploadCounts();
 
 	
-	//assert(subPieceUnit.SubPieceIndex != -1);
+	//LIVE_ASSERT(subPieceUnit.SubPieceIndex != -1);
 	SubMediaPiecePtr subPiece = m_Storage.GetSubPiece(inTS);
 	if (subPiece && CanUploadSubPiece(subPiece))
 	{
@@ -281,7 +281,7 @@ bool Uploader::CanUploadSubPiece( SubMediaPiecePtr subPiece )
 
 bool Uploader::CanUploadSubPiece( SubPieceUnit subPieceUnit )
 {
-	assert(m_MaxUploadTimes > 0);
+	LIVE_ASSERT(m_MaxUploadTimes > 0);
 	// return m_UploadTimes[subPieceUnit] <= m_MaxUploadTimes;
 	if ( m_UploadInfo[subPieceUnit].UploadTimes < m_MaxUploadTimes )
 		return true;
@@ -295,7 +295,7 @@ bool Uploader::CanUploadSubPiece( SubPieceUnit subPieceUnit )
 
 void Uploader::CheckMaxUploadTimes()
 {
-	assert(m_MaxUploadTimes > 0);
+	LIVE_ASSERT(m_MaxUploadTimes > 0);
 }
 
 bool Uploader::CanUploadPiece( MediaPiecePtr piece )
@@ -334,7 +334,7 @@ bool Uploader::SendMonoPiece( MediaPiecePtr piece, PeerConnection* pc )
 		}
 		else
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 	}
 	return true;

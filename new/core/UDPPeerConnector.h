@@ -53,7 +53,7 @@ public:
 
 	size_t GetPendingPeerCount() const
 	{
-		assert(m_IndexedPeers.size() <= m_udptHandshakingPeers.size());
+		LIVE_ASSERT(m_IndexedPeers.size() <= m_udptHandshakingPeers.size());
 		return m_udptHandshakingPeers.size();
 	}
 

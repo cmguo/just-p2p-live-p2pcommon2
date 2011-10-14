@@ -134,7 +134,7 @@ public:
 	{
 		if (DetectTimes >= DetectSucceededTimes)
 			return DetectTimes - DetectSucceededTimes;
-//		assert(false);
+//		LIVE_ASSERT(false);
 		return 0;
 	}
 
@@ -143,7 +143,7 @@ public:
 	{
 		if (ConnectTimes >= ConnectSucceededTimes)
 			return ConnectTimes - ConnectSucceededTimes;
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 		return 0;
 	}
 

@@ -83,7 +83,7 @@ public:
 	{
 		if (index >= m_subPieces.size())
 			return SubMediaPiecePtr();
-		assert(m_subPieces[index]);
+		LIVE_ASSERT(m_subPieces[index]);
 		return m_subPieces[index];
 	}
 	const std::vector<SubMediaPiecePtr>& GetSubPieces() const { return m_subPieces; }
@@ -178,7 +178,7 @@ public:
 
 	UINT8 GetSubPieceCount() const
 	{
-		assert( m_subPiece->GetSubPieceCount() < 255 && m_subPiece->GetSubPieceCount() > 0 );
+		LIVE_ASSERT( m_subPiece->GetSubPieceCount() < 255 && m_subPiece->GetSubPieceCount() > 0 );
 		return static_cast<UINT8>( m_subPiece->GetSubPieceCount() );
 	}
 	SubMediaPiecePtr GetSubPiece(UINT8 subPieceIndex) const

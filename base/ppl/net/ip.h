@@ -38,7 +38,7 @@ inline u_long GetLocalIP()
 {
 	char hostname[513] = { 0 };
 	int res = ::gethostname(hostname, 512);
-	assert(res == 0);
+	LIVE_ASSERT(res == 0);
 	return ResolveHostName(hostname);
 }
 
@@ -98,7 +98,7 @@ inline void LoadLocalIPs(std::vector<u_long>& ipArray)
 	size_t count = LoadLocalIPs(max_count, &ipArray[0]);
 
 
-	assert(count <= max_count);
+	LIVE_ASSERT(count <= max_count);
 	if (count < max_count)
 	{
 		ipArray.resize(count);
@@ -203,12 +203,12 @@ public:
 		UINT count = DoLoadLocalIPs(ipArray, maxIPCount);
 		if (count > 0)
 			return count;
-		assert(false);
+		LIVE_ASSERT(false);
 		count = LoadLocalIPsFromIPTable(ipArray, maxIPCount);
 		if (count == 0)
 		{
 			APP_ERROR("CIPTable::LoadLocal: GetIpAddrTable failed.");
-			assert(false);
+			LIVE_ASSERT(false);
 			return 0;
 		}
 		return count;
@@ -219,7 +219,7 @@ public:
 		DWORD ipArray[64 + 1] = { 0 };
 		if ( 0 == LoadLocalIPs(ipArray, 64) )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return 0;
 		}
 		return ipArray[0];

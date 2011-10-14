@@ -67,10 +67,10 @@ inline int ostream::outputv(const char* format, va_list args)
 	const size_t max_buffer_size = 2 * 1024;
 	char str[max_buffer_size + 1];
 	int count = vsnprintf(str, max_buffer_size, format, args);
-	assert(count > 0);
+	LIVE_ASSERT(count > 0);
 	if (count > 0)
 	{
-		assert(count < max_buffer_size);
+		LIVE_ASSERT(count < max_buffer_size);
 		this->write(str, count);
 	}
 	return count;
@@ -78,8 +78,8 @@ inline int ostream::outputv(const char* format, va_list args)
 
 inline int ostringstream::write(const char* str, int count)
 {
-	assert(str != NULL);
-	assert(count > 0);
+	LIVE_ASSERT(str != NULL);
+	LIVE_ASSERT(count > 0);
 	m_str.append(str, count);
 	return count;
 }
@@ -126,10 +126,10 @@ inline int wostream::outputv(const wchar_t* format, va_list args)
 	const size_t max_buffer_size = 2 * 1024;
 	wchar_t str[max_buffer_size + 1];
 	int count = _vsnwprintf(str, max_buffer_size, format, args);
-	assert(count > 0);
+	LIVE_ASSERT(count > 0);
 	if (count > 0)
 	{
-		assert(count < max_buffer_size);
+		LIVE_ASSERT(count < max_buffer_size);
 		this->write(str, count);
 	}
 	return count;
@@ -137,8 +137,8 @@ inline int wostream::outputv(const wchar_t* format, va_list args)
 
 inline int wostringstream::write(const wchar_t* str, int count)
 {
-	assert(str != NULL);
-	assert(count > 0);
+	LIVE_ASSERT(str != NULL);
+	LIVE_ASSERT(count > 0);
 	m_str.append(str, count);
 	return count;
 }

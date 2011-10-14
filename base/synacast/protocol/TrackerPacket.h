@@ -38,7 +38,7 @@ inline data_input_stream& operator>>( data_input_stream& is, CANDIDATE_PEER_INFO
 
 inline data_output_stream& operator<<( data_output_stream& os, const INNER_CANDIDATE_PEER_INFO& info )
 {
-	assert( 0 == info.PublicHostCount );
+	LIVE_ASSERT( 0 == info.PublicHostCount );
 	return os << info.DetectedAddress << info.StunServerAddress << info.CoreInfo << info.PublicHostCount;
 }
 inline data_input_stream& operator>>( data_input_stream& is, INNER_CANDIDATE_PEER_INFO& info )
@@ -443,8 +443,8 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert(LocalAddresses.size() <= 15);
-		assert(LocalAddresses.size() > 0);
+		LIVE_ASSERT(LocalAddresses.size() <= 15);
+		LIVE_ASSERT(LocalAddresses.size() > 0);
 		os  << variant_writer_uint8::make(LocalAddresses) 
 			<< CookieValue 
 			<< TimeFromStart;
@@ -516,8 +516,8 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert(LocalAddresses.size() < 15);
-		assert(LocalAddresses.size() > 0);
+		LIVE_ASSERT(LocalAddresses.size() < 15);
+		LIVE_ASSERT(LocalAddresses.size() > 0);
 		os  << RequestPeerCount 
 			<< RequestPeerTimes 
 			<< variant_writer_uint8::make(LocalAddresses);
@@ -657,7 +657,7 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert(StunAddresses.size() == 0 || StunAddresses.size() == 2);
+		LIVE_ASSERT(StunAddresses.size() == 0 || StunAddresses.size() == 2);
 		os  << Status 
 			<< MinMax 
 			<< PieceSize 
@@ -739,10 +739,10 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert( Username.size() < 250 && Password.size() < 250 );
-		assert( Username.size() > 0 && Password.size() > 0 );
-		assert(LocalAddresses.size() < 15);
-		assert(LocalAddresses.size() > 0);
+		LIVE_ASSERT( Username.size() < 250 && Password.size() < 250 );
+		LIVE_ASSERT( Username.size() > 0 && Password.size() > 0 );
+		LIVE_ASSERT(LocalAddresses.size() < 15);
+		LIVE_ASSERT(LocalAddresses.size() > 0);
 		os  << variant_writer_uint8::make(LocalAddresses) 
 			<< variant_writer_uint8::make(Username) 
 			<< variant_writer_uint8::make(Password) 
@@ -792,15 +792,15 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert( Username.size() < 250 && Password.size() < 250 );
-		assert( Username.size() > 0 && Password.size() > 0 );
-		assert( Password.size() == 32 );
+		LIVE_ASSERT( Username.size() < 250 && Password.size() < 250 );
+		LIVE_ASSERT( Username.size() > 0 && Password.size() > 0 );
+		LIVE_ASSERT( Password.size() == 32 );
 		os  << variant_writer_uint8::make(Username) 
 			<< variant_writer_uint8::make(Password);
 	}
 	virtual size_t get_object_size() const
 	{
-		assert( Password.size() == 32 );
+		LIVE_ASSERT( Password.size() == 32 );
 		return sizeof(UINT8) + Username.size() 
 			+ sizeof(UINT8) + Password.size();
 	}
@@ -834,14 +834,14 @@ public:
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert( ErrorLength == 0 );
+		LIVE_ASSERT( ErrorLength == 0 );
 		os  << ErrorAction 
 			<< ErrorIndex 
 			<< ErrorLength;
 	}
 	virtual size_t get_object_size() const
 	{
-		assert( ErrorLength == 0 );
+		LIVE_ASSERT( ErrorLength == 0 );
 		return sizeof(UINT8) 
 			+ sizeof(INT8) 
 			+ sizeof(UINT16);

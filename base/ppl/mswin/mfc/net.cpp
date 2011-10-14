@@ -64,7 +64,7 @@ InetSocketAddress SocketBase::GetLocalAddress() const
 	InetSocketAddress addr;
 	int addrlen = addr.GetAddressLength();
 	VERIFY(m_impl->GetSockName(addr.GetAddress(), &addrlen));
-	assert(addrlen == addr.GetAddressLength());
+	LIVE_ASSERT(addrlen == addr.GetAddressLength());
 	return addr;
 }
 
@@ -80,7 +80,7 @@ UDPSocket::~UDPSocket()
 
 bool UDPSocket::Open(u_short port)
 {
-	assert(!IsValid());
+	LIVE_ASSERT(!IsValid());
 	if (m_impl->Create(port, SOCK_DGRAM))
 		return true;
 	TRACE(TEXT("UDPSocket::Open(%d) failed. errcode=%d\n"), port, ::WSAGetLastError());
@@ -99,10 +99,10 @@ bool UDPSocket::Send(const void* data, size_t size, const InetSocketAddress& add
 	if (len == -1 || len == 0)
 	{
 		UTIL_ERROR("UDPSocket::Send failed. " << make_pair(len, ::WSAGetLastError()));
-		//assert(false);
+		//LIVE_ASSERT(false);
 		return false;
 	}
-	assert(len == size);
+	LIVE_ASSERT(len == size);
 	return len == size;
 }
 
@@ -130,8 +130,8 @@ void UDPSocket::OnReceive(long errcode)
 	int len = m_impl->ReceiveFrom(m_buffer, MAX_PACKET_SIZE, addr.GetAddress(), &addrlen);
 	if (len > 0)
 	{
-		assert(len <= MAX_PACKET_SIZE);
-		assert(addrlen == addr.GetAddressLength());
+		LIVE_ASSERT(len <= MAX_PACKET_SIZE);
+		LIVE_ASSERT(addrlen == addr.GetAddressLength());
 		m_buffer[len] = '\0';
 		GetListener()->OnSocketReceive(this, addr, m_buffer, len);
 	}
@@ -147,7 +147,7 @@ void UDPSocket::OnReceive(long errcode)
 
 bool RawSocket::Create()
 {
-	assert(!IsValid());
+	LIVE_ASSERT(!IsValid());
 	if (!m_impl->Socket(SOCK_RAW, FD_READ, IPPROTO_ICMP, AF_INET))
 	{
 		TRACE(TEXT("RawSocket::Open(%d) failed. errcode=%d\n"), 0, ::WSAGetLastError());
@@ -175,7 +175,7 @@ TCPServerSocket::~TCPServerSocket()
 
 bool TCPServerSocket::Open(u_short port)
 {
-	assert(!IsValid());
+	LIVE_ASSERT(!IsValid());
 	if (!m_impl->Create(port))
 	{
 		TRACE(TEXT("TCPServerSocket::Open(%d) -- Create failed. errcode=%d\n"), port, ::WSAGetLastError());
@@ -196,7 +196,7 @@ void TCPServerSocket::OnAccept(long errcode)
 		InetSocketAddress addr;
 		int addrlen = addr.GetAddressLength();
 		SOCKET hTemp = accept(m_impl->m_hSocket, addr.GetAddress(), &addrlen);
-		assert(addrlen);
+		LIVE_ASSERT(addrlen);
 		if (hTemp != INVALID_SOCKET)
 		{
 			GetListener()->OnSocketAccept(this, new TCPClientSocket(hTemp), addr);
@@ -244,7 +244,7 @@ bool TCPClientSocket::Connect(const InetSocketAddress& addr)
 		m_pendingConnectionCount++;
 		return true;
 	}
-	assert(false);
+	LIVE_ASSERT(false);
 	return false;
 }
 
@@ -265,7 +265,7 @@ InetSocketAddress TCPClientSocket::GetRemoteAddress() const
 	BOOL success = m_impl->GetPeerName(addr.GetAddress(), &addrlen);
 	if (success)
 	{
-		assert(addrlen == addr.GetAddressLength());
+		LIVE_ASSERT(addrlen == addr.GetAddressLength());
 	}
 	return addr;
 }
@@ -275,7 +275,7 @@ InetSocketAddress TCPClientSocket::GetLocalAddress() const
 	InetSocketAddress addr;
 	int addrlen = addr.GetAddressLength();
 	VERIFY(m_impl->GetSockName(addr.GetAddress(), &addrlen));
-	assert(addrlen == addr.GetAddressLength());
+	LIVE_ASSERT(addrlen == addr.GetAddressLength());
 	return addr;
 }
 
@@ -298,12 +298,12 @@ bool TCPClientSocket::DoSend(const void* data, size_t size)
 		}
 		else
 		{
-			assert(len == -1);
+			LIVE_ASSERT(len == -1);
 		}
 	}
 	else
 	{
-		assert(len == size);
+		LIVE_ASSERT(len == size);
 	}
 	return true;
 }
@@ -367,7 +367,7 @@ void TCPClientSocket::ReceiveAvailableData()
 	}
 	GetListener()->OnSocketReceiveFailed(this, (len == 0) ? len : ::WSAGetLastError());
 	Close();
-	assert(false);
+	LIVE_ASSERT(false);
 }
 
 int TCPClientSocket::m_pendingConnectionCount = 0;
@@ -397,7 +397,7 @@ void PeerClientSocket::DoClose()
 
 int PeerClientSocket::DoReceive(unsigned char* buffer, size_t size)
 {
-	assert(false);
+	LIVE_ASSERT(false);
 	return 0;
 }
 bool PeerClientSocket::DoSend(const void* data, size_t size)
@@ -412,7 +412,7 @@ bool PeerClientSocket::DoSend(const void* data, size_t size)
 			return false;
 		}
 	}
-	assert(len == MAX_HEAD_SIZE);
+	LIVE_ASSERT(len == MAX_HEAD_SIZE);
 	int len2 = m_impl->Send(data, size);
 	if (len2 == -1 || len2 == 0)
 	{
@@ -423,7 +423,7 @@ bool PeerClientSocket::DoSend(const void* data, size_t size)
 			return false;
 		}
 	}
-	assert(len2 == size);
+	LIVE_ASSERT(len2 == size);
 	return true;
 }
 
@@ -457,7 +457,7 @@ void PeerClientSocket::OnReceive(long errcode)
 
 bool PeerClientSocket::IsHeadReceived() const
 {
-	assert(m_headLength <= MAX_HEAD_SIZE);
+	LIVE_ASSERT(m_headLength <= MAX_HEAD_SIZE);
 	return m_headLength == MAX_HEAD_SIZE;
 }
 void PeerClientSocket::ReceiveHead()
@@ -473,10 +473,10 @@ void PeerClientSocket::ReceiveHead()
 	}
 	if (len == 0)
 	{
-		assert(len == 0);
+		LIVE_ASSERT(len == 0);
 		return;
 	}
-	assert(len > 0 && len <= maxLen);
+	LIVE_ASSERT(len > 0 && len <= maxLen);
 	m_headLength += len;
 	PPL_LOG("PeerClientSocket::ReceiveHead " << make_pair(m_headLength, m_bodyLength));
 	if (IsHeadReceived())
@@ -487,21 +487,21 @@ void PeerClientSocket::ReceiveHead()
 			Close();
 			PPL_LOG("PeerClientSocket::ReceiveHead m_bodyLength > MAX_PACKET_SIZE " << make_pair(m_bodyLength, int(MAX_PACKET_SIZE)));
 			GetListener()->OnSocketReceiveFailed(this, -1);
-			//assert(false);
+			//LIVE_ASSERT(false);
 		}
 		else if (m_bodyLength == 0)
 		{
 			PPL_LOG("PeerClientSocket::ReceiveHead m_bodyLength == 0 ");
 			Close();
 			GetListener()->OnSocketReceiveFailed(this, -2);
-			//assert(false);
+			//LIVE_ASSERT(false);
 		}
 	}
 }
 void PeerClientSocket::ReceiveBody()
 {
-	assert(IsHeadReceived());
-	assert(m_len < m_bodyLength);
+	LIVE_ASSERT(IsHeadReceived());
+	LIVE_ASSERT(m_len < m_bodyLength);
 	int maxLen = m_bodyLength - m_len;
 	int len = m_impl->Receive(m_buffer + m_len, maxLen);
 	if (len < 0)
@@ -512,10 +512,10 @@ void PeerClientSocket::ReceiveBody()
 	}
 	if (len == 0)
 	{
-		assert(len == 0);
+		LIVE_ASSERT(len == 0);
 		return;
 	}
-	assert(len > 0 && len <= maxLen);
+	LIVE_ASSERT(len > 0 && len <= maxLen);
 	m_len += len;
 	PPL_LOG("PeerClientSocket::ReceiveBody " << make_pair(m_len, m_bodyLength));
 	if (m_len == m_bodyLength)

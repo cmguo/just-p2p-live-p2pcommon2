@@ -47,7 +47,7 @@ public:
 	explicit variant_vector_reader( std::vector<T, AllocT>& d, size_t itemSize, size_t blockSize, size_t maxCount ) 
 		: items( d ),max_count( maxCount ), item_size( itemSize ), block_size( blockSize)
 	{
-		assert( 0 == block_size || block_size >= item_size );
+		LIVE_ASSERT( 0 == block_size || block_size >= item_size );
 	}
 };
 
@@ -94,8 +94,8 @@ public:
 			}
 			return is;
 		}
-		assert( itemSize > 0 );
-		assert( itemSize <= blockSize );
+		LIVE_ASSERT( itemSize > 0 );
+		LIVE_ASSERT( itemSize <= blockSize );
 		size_t skippedSize = blockSize - itemSize;
 		// 先检查数据是否充足，再进行resize操作，避免count过大，resize耗尽内存
 		// 并且如果m_good为false,即使count为0，也返回false，表示失败
@@ -119,7 +119,7 @@ public:
 			}
 			else
 			{
-				assert(false);
+				LIVE_ASSERT(false);
 				return false;
 			}
 		}

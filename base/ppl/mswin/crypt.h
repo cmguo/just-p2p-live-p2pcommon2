@@ -24,7 +24,7 @@ public:
 			BOOL success = ::CryptReleaseContext(m_handle, 0);
 			m_handle = NULL;
 			m_isOpen = false;
-			assert(success);
+			LIVE_ASSERT(success);
 		}
 	}
 
@@ -38,7 +38,7 @@ public:
 			if (errcode == NTE_BAD_KEYSET)
 			{
 				success = ::CryptAcquireContext(&m_handle, NULL, NULL, type, flags | CRYPT_NEWKEYSET);
-				assert(success);
+				LIVE_ASSERT(success);
 			}
 		}
 		m_isOpen = (success != FALSE);
@@ -70,13 +70,13 @@ public:
 			BOOL success = ::CryptDestroyHash(m_handle);
 			m_isOpen = true;
 			m_handle = NULL;
-			assert(success);
+			LIVE_ASSERT(success);
 		}
 	}
 
 	bool Open(const CryptProvider& provider, ALG_ID algID, HCRYPTKEY key)
 	{
-		assert(provider.IsOpen());
+		LIVE_ASSERT(provider.IsOpen());
 		Close();
 		BOOL success = ::CryptCreateHash(provider.GetHandle(), algID, key, 0, &m_handle);
 		m_isOpen = (success != FALSE);
@@ -94,9 +94,9 @@ public:
 
 	bool HashData(const void* data, size_t size)
 	{
-		assert(IsOpen());
+		LIVE_ASSERT(IsOpen());
 		BOOL success = ::CryptHashData(m_handle, static_cast<const BYTE*>(data), size, 0);
-		assert(success);
+		LIVE_ASSERT(success);
 		return success != FALSE;
 	}
 	bool HashData(const string& data)
@@ -105,9 +105,9 @@ public:
 	}
 	bool GetParam(DWORD param, BYTE* data, DWORD* len)
 	{
-		assert(IsOpen());
+		LIVE_ASSERT(IsOpen());
 		BOOL success = ::CryptGetHashParam(m_handle, param, data, len, 0);
-		assert(success);
+		LIVE_ASSERT(success);
 		return success != FALSE;
 	}
 	size_t GetDigestSize()
@@ -140,7 +140,7 @@ public:
 		hashing.OpenMD5(provider);
 		hashing.HashData(data, size);
 		string digest = hashing.GetDigest();
-		assert(digest.size() == 16);
+		LIVE_ASSERT(digest.size() == 16);
 		return digest;
 	}
 	static string SHA(const void* data, size_t size)
@@ -151,7 +151,7 @@ public:
 		hashing.OpenSHA(provider);
 		hashing.HashData(data, size);
 		string digest = hashing.GetDigest();
-		assert(digest.size() == 20);
+		LIVE_ASSERT(digest.size() == 20);
 		return digest;
 	}
 	static string MD5(const string& data)

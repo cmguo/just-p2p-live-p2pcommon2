@@ -20,7 +20,7 @@ public:
 		if (m_dll.load(dllPath.c_str()))
 		{
 			m_funcLocateIP = reinterpret_cast<FUNC_LocateIP>(m_dll.get_export_item("Locate"));
-			assert(m_funcLocateIP != NULL);
+			LIVE_ASSERT(m_funcLocateIP != NULL);
 			return m_funcLocateIP != NULL;
 		}
 		return false;

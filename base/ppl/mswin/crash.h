@@ -303,7 +303,7 @@ protected:
 
 	static bool IsFlagSet(UINT flag)
 	{
-		assert(flag > 0);
+		LIVE_ASSERT(flag > 0);
 		UINT mode = GetMode();
 		return (mode & flag) != 0;
 	}
@@ -493,7 +493,7 @@ protected:
 		for (ModuleWalker walker; walker.HasMore(); walker.MoveNext())
 		{
 			const MODULEENTRY32& item = walker.Current();
-			assert((void*)item.hModule == item.modBaseAddr);
+			LIVE_ASSERT((void*)item.hModule == item.modBaseAddr);
 			// item.szExePath中可能是短路径
 			bool success = (::GetLongPathName(item.szExePath, path, MAX_PATH * 4) > 0);
 			LogModule(item.hModule, success ? path : item.szExePath, item.modBaseSize);

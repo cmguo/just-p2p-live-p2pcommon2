@@ -27,9 +27,9 @@ bool Storage::AddDataPiece(MediaDataPiecePtr piece)
 	CheckDataPiece(piece);
 //	const BYTE* packetBuffer = packet->GetMediaData();
 
-//	assert( packetBuffer[0] == (char)0x82 && packetBuffer[1] == (char)0 && packetBuffer[2] == (char)0 );
-//	assert( ( packetBuffer[3] & (char)0x80 ) == (char)0x00 );	// no error correction
-//	assert( packetBuffer[4] == (char)0x5D );					// payload length type OK
+//	LIVE_ASSERT( packetBuffer[0] == (char)0x82 && packetBuffer[1] == (char)0 && packetBuffer[2] == (char)0 );
+//	LIVE_ASSERT( ( packetBuffer[3] & (char)0x80 ) == (char)0x00 );	// no error correction
+//	LIVE_ASSERT( packetBuffer[4] == (char)0x5D );					// payload length type OK
 
 	UINT pieceIndex = piece->GetPieceIndex();
 	//m_unfinishedDataPieces.Remove(pieceIndex);
@@ -57,7 +57,7 @@ pair<bool, UINT> Storage::Delete(PieceInfoCollection::iterator iter)
 
 pair<bool, UINT> Storage::DoDelete(PieceInfoCollection::iterator iter)
 {
-	assert(iter != m_dataPieces.end());
+	LIVE_ASSERT(iter != m_dataPieces.end());
 	MediaDataPiecePtr piece = iter->second.GetPiece();
 	UINT pieceIndex = 0;
 	if (piece)
@@ -132,7 +132,7 @@ MediaDataPiecePtr Storage::GetNext(UINT pieceIndex) const
 size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBufferTime)
 {
 	UINT64 elapsedTime = baseIndicator.GetElapsedTime();
-	assert(elapsedTime <= INT_MAX);
+	LIVE_ASSERT(elapsedTime <= INT_MAX);
 	if (elapsedTime <= minBufferTime)
 	{
 		return 0;
@@ -148,12 +148,12 @@ size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBuff
 		CheckDataPiece(piece);
 		UINT pieceIndex = iter->first;
 		// 可能删掉upperBound对应的piece
-		//assert(pieceIndex < upperBound);
+		//LIVE_ASSERT(pieceIndex < upperBound);
 		// 如果upperBound以后一直没有数据，或者距离很远才遇到下一片，则可能会发生upperBound对应的片也过时的情况
 		if (pieceIndex >= baseIndicator.GetPieceIndex())
 		{
 			// peer端的BaseIndex不一定是最小的，需要加以检查
-			assert( piece->GetTimeStamp() >= baseIndicator.GetTimeStamp() );
+			LIVE_ASSERT( piece->GetTimeStamp() >= baseIndicator.GetTimeStamp() );
 			UINT64 elapsedTimeStamp = piece->GetTimeStamp() - baseIndicator.GetTimeStamp();
 			if (elapsedTimeStamp >= elapsedTime)
 			{
@@ -179,12 +179,12 @@ size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBuff
 
 size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBufferTime, UINT upperBound, UINT lowerBound)
 {
-	assert(upperBound >= lowerBound);
+	LIVE_ASSERT(upperBound >= lowerBound);
 	size_t deletedCount = 0;
 	// 根据 base 计算出来了删除时间
 	UINT64 elapsedTime = baseIndicator.GetElapsedTime();
 	UINT64 elapsedTimeStamp = 0;
-	assert(elapsedTime <= INT_MAX);
+	LIVE_ASSERT(elapsedTime <= INT_MAX);
 	if (elapsedTime > minBufferTime)
 	{
 		// 现在 elapsedTime 就是 理论推进时间戳 - 70s
@@ -197,7 +197,7 @@ size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBuff
 			return 0;
 		}
 		PieceInfoCollection::iterator skipIter = m_dataPieces.find(skipIndex);
-		assert( skipIter != m_dataPieces.end());
+		LIVE_ASSERT( skipIter != m_dataPieces.end());
 		MediaDataPiecePtr skipPiece = skipIter->second.GetPiece();
 		CheckDataPiece(skipPiece);
 		if( skipPiece->GetTimeStamp() - baseIndicator.GetTimeStamp() <= STORAGE_MIN_EXPIRE_REFER_TIME)
@@ -217,7 +217,7 @@ size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBuff
 			CheckDataPiece(piece);
 			UINT pieceIndex = iter->first;
 			// 可能删掉upperBound对应的piece
-			//assert(pieceIndex < upperBound);
+			//LIVE_ASSERT(pieceIndex < upperBound);
 			// 如果upperBound以后一直没有数据，或者距离很远才遇到下一片，则可能会发生upperBound对应的片也过时的情况
 			if (pieceIndex > upperBound)
 				break;
@@ -236,7 +236,7 @@ size_t Storage::RemoveExpired(const StreamIndicator& baseIndicator, UINT minBuff
 			++deletedCount;
 			if (m_dataPieces.size() < 400)
 			{
-			//	assert(false);
+			//	LIVE_ASSERT(false);
 			}
 		}
 	}
@@ -311,8 +311,8 @@ BitMap Storage::BuildBitmap() const
 	UINT maxIndex = GetMaxIndex();
 	if ((minIndex == 0) && (maxIndex == 0))
 		return BitMap();
-	assert(minIndex > 0);
-	assert(minIndex <= maxIndex);
+	LIVE_ASSERT(minIndex > 0);
+	LIVE_ASSERT(minIndex <= maxIndex);
 	UINT length = maxIndex - minIndex + 1;
 	const PieceInfoCollection& pieceColl = m_dataPieces;
 	PieceInfoCollection::const_iterator BeginItr = pieceColl.find(minIndex);
@@ -327,7 +327,7 @@ BitMap Storage::BuildBitmap() const
 	//2.生成Bitmap
 	for (PieceInfoCollection::const_iterator itr = BeginItr; itr != EndItr; itr++ )
 	{
-		assert(bitmap.IsInRange(itr->first));
+		LIVE_ASSERT(bitmap.IsInRange(itr->first));
 		bitmap.SetBit(itr->first);
 	}
 
@@ -336,15 +336,15 @@ BitMap Storage::BuildBitmap() const
 
 BitMap Storage::BuildBitmap(UINT maxLength) const
 {
-	assert(maxLength > 0);
+	LIVE_ASSERT(maxLength > 0);
 	if (IsEmpty())
 		return BitMap();
 	UINT minIndex = GetMinIndex();
 	UINT maxIndex = GetMaxIndex();
 	if ((minIndex == 0) && (maxIndex == 0))
 		return BitMap();
-	assert(minIndex > 0);
-	assert(minIndex <= maxIndex);
+	LIVE_ASSERT(minIndex > 0);
+	LIVE_ASSERT(minIndex <= maxIndex);
 	UINT length = maxIndex - minIndex + 1;
 	LIMIT_MAX(length, maxLength);
 	maxIndex = minIndex + length - 1;
@@ -356,7 +356,7 @@ BitMap Storage::BuildBitmap(UINT maxLength) const
 	//2.生成Bitmap
 	for (PieceInfoCollection::const_iterator itr = BeginItr; itr != EndItr; itr++ )
 	{
-		assert(bitmap.IsInRange(itr->first));
+		LIVE_ASSERT(bitmap.IsInRange(itr->first));
 		bitmap.SetBit(itr->first);
 	}
 	return bitmap;
@@ -414,7 +414,7 @@ SubMediaPiecePtr Storage::GetSubPiece(UINT pieceIndex, UINT8 subPieceIndex) cons
 	{
 		// 从piece中提取sub piece
 		subPiece = pieceInfo.GetSubPiece(subPieceIndex);
-		//assert( subPiece );
+		//LIVE_ASSERT( subPiece );
 	}
 	else
 	{
@@ -426,7 +426,7 @@ SubMediaPiecePtr Storage::GetSubPiece(UINT pieceIndex, UINT8 subPieceIndex) cons
 		if ( headerPiece )
 		{
 			subPiece = SubMediaPiecePtr(headerPiece->GetSubPiece(subPieceIndex));
-			//assert( subPiece );
+			//LIVE_ASSERT( subPiece );
 		}
 	}
 	return subPiece;
@@ -447,7 +447,7 @@ SubMediaPiecePtr Storage::GetSubPiece(UINT64 inTS) const
 			LIMIT_MIN_MAX(iterIndex, minPiece->GetPieceIndex(), maxPiece->GetPieceIndex());
 			PieceInfoCollection::const_iterator iter = m_dataPieces.lower_bound(iterIndex);
 
-			assert( iter != m_dataPieces.end() );
+			LIVE_ASSERT( iter != m_dataPieces.end() );
 			while (iter != m_dataPieces.begin() && inTS < iter->second.GetPiece()->GetTimeStamp())
 			{
 				iter--;
@@ -543,7 +543,7 @@ class MediaDataStorageTestCase : public ppl::util::test_case
 	virtual void DoRun()
 	{
 /*		Storage stg;
-		assert(stg.GetPieceCount() == 0);
+		LIVE_ASSERT(stg.GetPieceCount() == 0);
 
 		string dataPacketHeader = "11111";
 #pragma warning(disable:4309)
@@ -555,67 +555,67 @@ class MediaDataStorageTestCase : public ppl::util::test_case
 		dataPacketHeader[4] = 0x5d;
 
 		//bool success = stg.AddRequest(1, 0);
-		//assert(success);
-		//assert(stg.GetSize() == 1);
+		//LIVE_ASSERT(success);
+		//LIVE_ASSERT(stg.GetSize() == 1);
 		string data1 = dataPacketHeader + "4444";
 		PPMediaDataPacketPtr piece1(new PPMediaDataPacket(2342, 23420, 3, data1.size(), data1.data()));
 		bool success = stg.AddDataPiece(piece1);
-		assert(success);
-		assert(stg.GetPieceCount() == 1);
-		assert(stg.GetDataPiece(2342) == piece1);
-		assert(stg.GetFirst(2) == piece1);
-		assert(stg.GetNext(2) == piece1);
-		assert(stg.GetFirst(2342) == piece1);
-		assert(!stg.GetNext(2342));
-		assert(!stg.GetFirst(2343));
+		LIVE_ASSERT(success);
+		LIVE_ASSERT(stg.GetPieceCount() == 1);
+		LIVE_ASSERT(stg.GetDataPiece(2342) == piece1);
+		LIVE_ASSERT(stg.GetFirst(2) == piece1);
+		LIVE_ASSERT(stg.GetNext(2) == piece1);
+		LIVE_ASSERT(stg.GetFirst(2342) == piece1);
+		LIVE_ASSERT(!stg.GetNext(2342));
+		LIVE_ASSERT(!stg.GetFirst(2343));
 
 		PPMediaDataPacketPtr piece2(new PPMediaDataPacket(3, 20, 2, data1.size(), data1.data()));
 		PPMediaHeaderPacketPtr headerPiece(new PPMediaHeaderPacket(112, PPMT_MEDIA_WMF2, 0, NULL, 4, "5555", 0, NULL));
 		success = stg.AddDataPiece(piece2);
-		assert(success);
-		assert(stg.GetPieceCount() == 2);
-		assert(stg.GetDataPiece(3) == piece2);
-		assert(stg.GetFirst(3) == piece2);
-		assert(stg.GetNext(3) == piece1);
-		assert(stg.GetSubPieceCount(3) == 1);
-		assert(stg.GetPossibleSubPieceCount(3, 0) == 1);
-		assert(stg.GetSubPieceCount(132) == 0);
-		assert(stg.GetPossibleSubPieceCount(132, 0) == 1);
+		LIVE_ASSERT(success);
+		LIVE_ASSERT(stg.GetPieceCount() == 2);
+		LIVE_ASSERT(stg.GetDataPiece(3) == piece2);
+		LIVE_ASSERT(stg.GetFirst(3) == piece2);
+		LIVE_ASSERT(stg.GetNext(3) == piece1);
+		LIVE_ASSERT(stg.GetSubPieceCount(3) == 1);
+		LIVE_ASSERT(stg.GetPossibleSubPieceCount(3, 0) == 1);
+		LIVE_ASSERT(stg.GetSubPieceCount(132) == 0);
+		LIVE_ASSERT(stg.GetPossibleSubPieceCount(132, 0) == 1);
 
 		success = stg.AddHeaderPiece(headerPiece);
-		assert(success);
-		assert(stg.GetPieceCount() == 2);
-		assert(stg.GetHeader(112) == headerPiece);
-		assert(stg.GetBufferSize() == 2342 - 2 + 1);
-		assert(stg.GetBufferTime() == 23420 - 20);
-		assert(stg.GetMinIndex() == 2);
-		assert(stg.GetMaxIndex() == 2342);
+		LIVE_ASSERT(success);
+		LIVE_ASSERT(stg.GetPieceCount() == 2);
+		LIVE_ASSERT(stg.GetHeader(112) == headerPiece);
+		LIVE_ASSERT(stg.GetBufferSize() == 2342 - 2 + 1);
+		LIVE_ASSERT(stg.GetBufferTime() == 23420 - 20);
+		LIVE_ASSERT(stg.GetMinIndex() == 2);
+		LIVE_ASSERT(stg.GetMaxIndex() == 2342);
 */
-/*		assert(stg.CountPieces(5, 500) == 0);
-		assert(stg.CountPieces(4, 2341) == 0);
-		assert(stg.CountPieces(3, 2341) == 1);
-		assert(stg.CountPieces(2, 2341) == 1);
-		assert(stg.CountPieces(1, 2341) == 1);
-		assert(stg.CountPieces(1, 2342) == 2);
-		assert(stg.CountPieces(1, 5000) == 2);
+/*		LIVE_ASSERT(stg.CountPieces(5, 500) == 0);
+		LIVE_ASSERT(stg.CountPieces(4, 2341) == 0);
+		LIVE_ASSERT(stg.CountPieces(3, 2341) == 1);
+		LIVE_ASSERT(stg.CountPieces(2, 2341) == 1);
+		LIVE_ASSERT(stg.CountPieces(1, 2341) == 1);
+		LIVE_ASSERT(stg.CountPieces(1, 2342) == 2);
+		LIVE_ASSERT(stg.CountPieces(1, 5000) == 2);
 
 		success = stg.AddDataPiece(piece2);
-		assert(!success);
-		assert(stg.GetPieceCount() == 2);
+		LIVE_ASSERT(!success);
+		LIVE_ASSERT(stg.GetPieceCount() == 2);
 
-		assert(!stg.GetDataPiece(0));
-		assert(!stg.GetDataPiece(1));
-		assert(!stg.GetDataPiece(2));
-		assert(stg.GetDataPiece(3));
-		assert(!stg.GetDataPiece(4));
+		LIVE_ASSERT(!stg.GetDataPiece(0));
+		LIVE_ASSERT(!stg.GetDataPiece(1));
+		LIVE_ASSERT(!stg.GetDataPiece(2));
+		LIVE_ASSERT(stg.GetDataPiece(3));
+		LIVE_ASSERT(!stg.GetDataPiece(4));
 
-		assert(!stg.HasDataPiece(0));
-		assert(!stg.HasDataPiece(1));
-		assert(!stg.HasDataPiece(2));
-		assert(stg.HasDataPiece(3));
-		assert(!stg.HasDataPiece(4));
-		assert(stg.HasDataPiece(112) == false);
-	//	assert(stg.HasHeader(112) == true);
+		LIVE_ASSERT(!stg.HasDataPiece(0));
+		LIVE_ASSERT(!stg.HasDataPiece(1));
+		LIVE_ASSERT(!stg.HasDataPiece(2));
+		LIVE_ASSERT(stg.HasDataPiece(3));
+		LIVE_ASSERT(!stg.HasDataPiece(4));
+		LIVE_ASSERT(stg.HasDataPiece(112) == false);
+	//	LIVE_ASSERT(stg.HasHeader(112) == true);
 
 //		SubMediaPiecePtr subPiece0(new SubMediaPiece(145, 233, 112, 3, 0, 1, "1"));
 //		SubMediaPiecePtr subPiece1(new SubMediaPiece(145, 233, 112, 3, 1, 2, "22"));
@@ -624,56 +624,56 @@ class MediaDataStorageTestCase : public ppl::util::test_case
 		{
 			Storage stg;
 			pair<bool, PPMediaDataPacketPtr> result = stg.AddSubPiece(subPiece2);
-			assert(result.first == true);
-			assert(! result.second);
-			assert(stg.GetUnfinished().HasSubPiece(145) == true);
-			assert(stg.GetUnfinished().HasSubPiece(145, 2) == true);
-			assert(stg.GetUnfinished().HasSubPiece(145, 1) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 0) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 3) == false);
-			assert(stg.GetUnfinished().GetSubPiece(145, 2) == subPiece2);
+			LIVE_ASSERT(result.first == true);
+			LIVE_ASSERT(! result.second);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145) == true);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 2) == true);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 1) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 0) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 3) == false);
+			LIVE_ASSERT(stg.GetUnfinished().GetSubPiece(145, 2) == subPiece2);
 			vector<UINT8> interests;
 			stg.GetUnfinished().GetInterested(145, interests);
-			assert(interests.size() == 2);
-			assert(interests[0] == 0);
-			assert(interests[1] == 1);
+			LIVE_ASSERT(interests.size() == 2);
+			LIVE_ASSERT(interests[0] == 0);
+			LIVE_ASSERT(interests[1] == 1);
 
 			result = stg.AddSubPiece(subPiece2);
-			assert(result.first == false);
-			assert(!result.second);
+			LIVE_ASSERT(result.first == false);
+			LIVE_ASSERT(!result.second);
 
 			result = stg.AddSubPiece(subPiece0);
-			assert(result.first == true);
-			assert(!result.second);
-			assert(stg.GetUnfinished().HasSubPiece(145) == true);
-			assert(stg.GetUnfinished().HasSubPiece(145, 1) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 2) == true);
-			assert(stg.GetUnfinished().HasSubPiece(145, 0) == true);
-			assert(stg.GetUnfinished().HasSubPiece(145, 3) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145) == false);
+			LIVE_ASSERT(result.first == true);
+			LIVE_ASSERT(!result.second);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145) == true);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 1) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 2) == true);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 0) == true);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 3) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145) == false);
 			stg.GetUnfinished().GetInterested(145, interests);
-			assert(interests.size() == 1);
-			assert(interests[0] == 1);
+			LIVE_ASSERT(interests.size() == 1);
+			LIVE_ASSERT(interests[0] == 1);
 
 
 			result = stg.AddSubPiece(subPiece1);
-			assert(result.first == true);
-			assert(result.second);
-			assert(stg.GetUnfinished().HasSubPiece(145) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 1) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 2) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 0) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145, 3) == false);
-			assert(stg.GetUnfinished().HasSubPiece(145) == false);
+			LIVE_ASSERT(result.first == true);
+			LIVE_ASSERT(result.second);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 1) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 2) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 0) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145, 3) == false);
+			LIVE_ASSERT(stg.GetUnfinished().HasSubPiece(145) == false);
 			stg.GetUnfinished().GetInterested(145, interests);
-			assert(interests.size() == 0);
+			LIVE_ASSERT(interests.size() == 0);
 
-			assert(result.second->GetMediaDataLength() == 6);
-			assert(memcmp(result.second->GetMediaData(), "122333", 6) == 0);
+			LIVE_ASSERT(result.second->GetMediaDataLength() == 6);
+			LIVE_ASSERT(memcmp(result.second->GetMediaData(), "122333", 6) == 0);
 		}
 
 		stg.Clear();
-		assert(stg.GetPieceCount() == 0);
+		LIVE_ASSERT(stg.GetPieceCount() == 0);
 
 		piece2.reset();
 		piece1.reset();

@@ -90,7 +90,7 @@ void BootModule::OnServerNameResolved( u_long ip )
 void BootModule::DoQueryNTSList()
 {
 	m_TimeoutTimer.start(6000);
-	assert(m_ServerIP != 0 && m_ServerIP != INADDR_BROADCAST);
+	LIVE_ASSERT(m_ServerIP != 0 && m_ServerIP != INADDR_BROADCAST);
 	m_PacketBuilder.Build();
 	m_PacketSender->Send(m_PacketBuilder.GetData(), m_PacketBuilder.GetSize(), InetSocketAddress(m_ServerIP, PPL_BOOT_SERVER_PORT));
 }
@@ -154,7 +154,7 @@ bool BootModule::HandlePacket( BYTE* data, size_t size, const InetSocketAddress&
 						}
 						else
 						{
-							assert(false);
+							LIVE_ASSERT(false);
 						}
 					}
 					m_TimeoutTimer.stop();
@@ -164,7 +164,7 @@ bool BootModule::HandlePacket( BYTE* data, size_t size, const InetSocketAddress&
 			}
 		}
 	}
-	assert(false);
+	LIVE_ASSERT(false);
 	return false;
 }
 

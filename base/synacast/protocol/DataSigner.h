@@ -20,17 +20,17 @@ class SignAlgorithm
 public:
 	bool Sign(const BYTE* data, size_t len, const std::vector<BYTE>& key, SignatureData& result)
 	{
-		assert(!key.empty());
+		LIVE_ASSERT(!key.empty());
 		bool res = GetHasher().HashData(&key[0], static_cast<DWORD>( key.size() ), data, static_cast<DWORD>( len ), result.c_array());
-		assert(res);
+		LIVE_ASSERT(res);
 		return res;
 	}
 	bool Verify(const BYTE* data, size_t len, const std::vector<BYTE>& key, const BYTE* signature)
 	{
-		assert(!key.empty());
+		LIVE_ASSERT(!key.empty());
 		SignatureData result;
 		bool res = this->Sign(data, static_cast<DWORD>( len ), key, result);
-		assert(res);
+		LIVE_ASSERT(res);
 		if (!res)
 		{
 			// 如果签名失败，一般可能是系统的加解密模块有问题，这里忽略这种问题，认为验证成功

@@ -54,9 +54,9 @@ struct TCP_PACKET_HEAD
 
 	void CheckValid( UINT16 protocolVer ) const
 	{
-		assert( 0 == this->ReservedActionType );
-		assert( protocolVer == this->ProtocolVersion );
-		assert( this->Action > 0 );
+		LIVE_ASSERT( 0 == this->ReservedActionType );
+		LIVE_ASSERT( protocolVer == this->ProtocolVersion );
+		LIVE_ASSERT( this->Action > 0 );
 	}
 };
 
@@ -83,10 +83,10 @@ struct NEW_UDP_PACKET_HEAD
 
 	void CheckValid( UINT16 protocolVer ) const
 	{
-		assert( 0 == this->ReservedActionType );
-		assert( protocolVer == this->ProtocolVersion );
-		assert( this->Action > 0 );
-		assert( this->TransactionID != 0 );
+		LIVE_ASSERT( 0 == this->ReservedActionType );
+		LIVE_ASSERT( protocolVer == this->ProtocolVersion );
+		LIVE_ASSERT( this->Action > 0 );
+		LIVE_ASSERT( this->TransactionID != 0 );
 	}
 };
 

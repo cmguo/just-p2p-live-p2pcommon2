@@ -76,8 +76,8 @@ public:
 
 	void receive_n(byte_buffer_ptr buf)
 	{
-		assert(buf->size() > 0);
-		assert(m_receive_callback);
+		LIVE_ASSERT(buf->size() > 0);
+		LIVE_ASSERT(m_receive_callback);
 		boost::asio::async_read(
 			m_impl, 
 			boost::asio::buffer( buf->data(), buf->size() ),
@@ -94,8 +94,8 @@ public:
 
 	void send_n(byte_buffer_ptr buf)
 	{
-		assert(buf->size() > 0);
-		assert(m_send_callback);
+		LIVE_ASSERT(buf->size() > 0);
+		LIVE_ASSERT(m_send_callback);
 		boost::asio::async_write(
 			m_impl,
 			boost::asio::buffer( buf->data(), buf->size() ),
@@ -114,9 +114,9 @@ public:
 
 	bool connect(const InetSocketAddress& addr)
 	{
-		assert(addr.GetIP() != 0 && addr.GetPort() != 0);
-		assert(m_connect_callback);
-		assert( m_impl.is_open() );
+		LIVE_ASSERT(addr.GetIP() != 0 && addr.GetPort() != 0);
+		LIVE_ASSERT(m_connect_callback);
+		LIVE_ASSERT( m_impl.is_open() );
 		tcp_endpoint ep = ppl::boostlib::make_tcp_endpoint( addr );
 
 		m_impl.async_connect(

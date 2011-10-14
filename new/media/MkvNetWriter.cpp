@@ -48,7 +48,7 @@ HRESULT MkvMediaClient::SetPlayableRange(UINT HeaderIndex, DWORD MinIndex, DWORD
 		m_WillPlayIndex = StartIndex;
 		m_IsSending = true;
 	}
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 
 	return MkvMediaClient::SetPlayableRangeAfterSended(HeaderIndex,MinIndex,MaxIndex);
 }
@@ -75,7 +75,7 @@ bool MkvMediaClient::SendToClient(UINT32 PacketIndex)
 
 HRESULT MkvMediaClient::SetPlayableRangeAfterSended(UINT HeaderIndex, DWORD MinIndex, DWORD MaxIndex)
 {
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	for ( MediaDataPiecePtr dataPiece = m_NetWriter->GetFirst(m_WillPlayIndex);
 		dataPiece && dataPiece->GetPieceIndex() <= MaxIndex;
 		dataPiece = m_NetWriter->GetNext(dataPiece->GetPieceIndex()))
@@ -184,7 +184,7 @@ HRESULT MkvMediaClient::SetPlayableRangeAfterSended(UINT HeaderIndex, DWORD MinI
 				return E_SEND_ERROR;
 			}
 		}
-		assert(off == length);
+		LIVE_ASSERT(off == length);
 		//send complete data units to client
 		if(!IsInDataUnit())
 		{
@@ -199,7 +199,7 @@ HRESULT MkvMediaClient::SetPlayableRangeAfterSended(UINT HeaderIndex, DWORD MinI
 	}
 	m_WillPlayIndex = m_LastPlayIndex + 1;
 	m_NetWriter->SavePlaytoIndex(m_LastPlayIndex);
-	assert( m_WillPlayIndex > m_LastPlayIndex );
+	LIVE_ASSERT( m_WillPlayIndex > m_LastPlayIndex );
 	return S_OK;
 }
 
@@ -257,7 +257,7 @@ HRESULT CMkvNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		iter ++;
 	}
 
@@ -278,7 +278,7 @@ void CMkvNetWriter::DisconnectAllMediaClient()
 bool CMkvNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CMkvNetWriter::OnNewClient " << s);
-	assert(m_ClientHandles.find(s.get()) == m_ClientHandles.end());
+	LIVE_ASSERT(m_ClientHandles.find(s.get()) == m_ClientHandles.end());
 	MkvMediaClient* pClientHandle = new MkvMediaClient(this, s);
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = pClientHandle;
@@ -291,7 +291,7 @@ void CMkvNetWriter::OnClientError(tcp_socket* sock, long errcode)
 	MkvMediaClientCollection::iterator iter = m_ClientHandles.find(sock);
 	if ( iter == m_ClientHandles.end() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return;
 	}
 	delete iter->second;

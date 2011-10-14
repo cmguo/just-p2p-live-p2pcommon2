@@ -57,7 +57,7 @@ public:
 		m_handle = query_module_handle(address);
 		if (m_handle != NULL)
 		{
-			assert( false == get_file_path().empty() );
+			LIVE_ASSERT( false == get_file_path().empty() );
 		}
 		return this->is_open();
 	}
@@ -87,7 +87,7 @@ public:
 			TRACE(_T("GetModuleFileName failed %p %lu %d\n"), m_handle, len, ::GetLastError());
 			return tstring();
 		}
-		assert( '\0' == pathstr[len] );
+		LIVE_ASSERT( '\0' == pathstr[len] );
 		return tstring(pathstr, len);
 	}
 
@@ -136,7 +136,7 @@ public:
 
 	bool load(LPCTSTR filename)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		close();
 		m_handle = ::LoadLibrary(filename);
 		return is_open();
@@ -219,7 +219,7 @@ public:
 
 	bool load(LPCTSTR filename)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		close();
 		m_handle = ::dlopen(filename, RTLD_NOW);
 		return is_open();
@@ -232,7 +232,7 @@ public:
 		{
 			int err = ::dlclose(m_handle);
 			m_handle = NULL;
-			assert(0 == err);
+			LIVE_ASSERT(0 == err);
 		}
 	}
 };

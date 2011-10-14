@@ -41,7 +41,7 @@ public:
 		, m_ErrorCode( 0 )
 		, m_IsHandshaking( false )
 	{
-	//	assert(m_connInfo->Socket.unique());
+	//	LIVE_ASSERT(m_connInfo->Socket.unique());
 		m_connInfo->Socket->set_listener(this);
 		m_KeyAddress = m_connInfo->KeyPeerAddress.ToTCPAddress();
 		m_timer.set_callback(boost::bind(&TCPPendingPeer::OnTimeout, this));
@@ -208,7 +208,7 @@ public:
 		{
 			VIEW_ERROR( "TCPPeerConnector unshuffle failed 0 " << make_tuple( size, unshuffleLen ) << *sock << " action=" << strings::format( "0x%02X%02X 0x%02X", data[0], data[1], data[2] ) );
 			peer->Disconnect( PP_LEAVE_INVALID_PACKET );
-			//assert( false );
+			//LIVE_ASSERT( false );
 			return false;
 		}
 		size_t len = static_cast<size_t>( unshuffleLen );
@@ -318,11 +318,11 @@ public:
 		handshakeInfo.OuterAddress = packetPeerInfo.OuterAddress;
 		handshakeInfo.DetectedRemoteAddress = packetPeerInfo.DetectedRemoteAddress;
 		handshakeInfo.Degrees = packetPeerInfo.Degrees;
-		assert( handshakeInfo.Address.IsFullyValid() );
-		//	assert( handshakeInfo.OuterAddress.IsAddressValid() );
+		LIVE_ASSERT( handshakeInfo.Address.IsFullyValid() );
+		//	LIVE_ASSERT( handshakeInfo.OuterAddress.IsAddressValid() );
 		{
 			handshakeInfo.AppVersion = packetPeerInfo.AppVersion;
-			assert( handshakeInfo.AppVersion != 0xB72A33A1 );
+			LIVE_ASSERT( handshakeInfo.AppVersion != 0xB72A33A1 );
 
 			handshakeInfo.IsEmbedded = packetPeerInfo.IsEmbedded > 0;
 			handshakeInfo.CoreInfo = packetPeerInfo.CoreInfo;
@@ -489,7 +489,7 @@ bool TCPPeerConnector::Connect(const PEER_ADDRESS& addr, UINT16 realPort, const 
 		return false;
 	}
 
-	assert( false == containers::contains(m_ConnectingPeers, peer->GetKeyAddress()) );
+	LIVE_ASSERT( false == containers::contains(m_ConnectingPeers, peer->GetKeyAddress()) );
 	m_ConnectingPeers[peer->GetKeyAddress()] = peer;
 	m_statistics.TCP.TotalInitiatedConnections++;
 	m_Owner.SyncPendingConnectionInfo();
@@ -538,14 +538,14 @@ void TCPPeerConnector::OnSocketAccept(tcp_socket_ptr sock, const InetSocketAddre
 	}
 	else
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 	}
 	m_Owner.SyncPendingConnectionInfo();
 }
 
 void TCPPeerConnector::HandlePeerHandshake( TCPPendingPeerPtr peer, int errcode )
 {
-	assert( peer->IsHandshaking() );
+	LIVE_ASSERT( peer->IsHandshaking() );
 	//PEERCON_DEBUG("PeerConnector::HandlePeerHandshake " << *peer->GetConnectionInfo()->Socket << " " << errcode);
 	if ( 0 == errcode )
 	{
@@ -559,16 +559,16 @@ void TCPPeerConnector::HandlePeerHandshake( TCPPendingPeerPtr peer, int errcode 
 		m_IPPool.AddDisconnected( peer->GetConnectionInfo()->RemoteAddress, 0, errcode, 0, 0, 0, 0 );
 	}
 	size_t erasedCount = m_HandshakingPeers.erase(peer->GetKeyAddress());
-	assert( erasedCount == 1 );
+	LIVE_ASSERT( erasedCount == 1 );
 	m_Owner.SyncPendingConnectionInfo();
 }
 
 void TCPPeerConnector::OnPeerConnected(TCPPendingPeerPtr peer)
 {
 	// peer 由正在连接状态转换到正在握手状态
-	assert( peer );
-	assert( peer->IsHandshaking() );
-	assert( containers::contains( m_ConnectingPeers, peer->GetKeyAddress() ) );
+	LIVE_ASSERT( peer );
+	LIVE_ASSERT( peer->IsHandshaking() );
+	LIVE_ASSERT( containers::contains( m_ConnectingPeers, peer->GetKeyAddress() ) );
 	m_ConnectingPeers.erase( peer->GetKeyAddress() );
 	if ( false == containers::contains( m_HandshakingPeers, peer->GetKeyAddress() ) )
 	{
@@ -580,15 +580,15 @@ void TCPPeerConnector::OnPeerConnected(TCPPendingPeerPtr peer)
 
 void TCPPeerConnector::HandleConnectError( TCPPendingPeerPtr peer, int errcode )
 {
-	assert( peer );
-	assert( errcode != 0 );
-	assert( false == peer->IsHandshaking() );
+	LIVE_ASSERT( peer );
+	LIVE_ASSERT( errcode != 0 );
+	LIVE_ASSERT( false == peer->IsHandshaking() );
 	PEERCON_DEBUG("PeerConnector::HandleConnectError " << peer->GetConnectionInfo()->KeyPeerAddress << " " << errcode);
 
-	assert( containers::contains( m_ConnectingPeers, peer->GetKeyAddress() ) );
+	LIVE_ASSERT( containers::contains( m_ConnectingPeers, peer->GetKeyAddress() ) );
 	boost::shared_ptr<TCPPeerConnectionInfo> connInfo = peer->GetConnectionInfo();
 	size_t erasedCount = m_ConnectingPeers.erase(peer->GetKeyAddress());
-	assert( erasedCount == 1 );
+	LIVE_ASSERT( erasedCount == 1 );
 
 	this->HandleTCPConnectFail(connInfo);
 	m_Owner.SyncPendingConnectionInfo();
@@ -600,7 +600,7 @@ void TCPPeerConnector::HandleTCPConnectFail(boost::shared_ptr<TCPPeerConnectionI
 	{
 		if ( false == connInfo->IsInitFromRemote )
 		{
-			assert( ! "invalid situation for tcp connect failure" );
+			LIVE_ASSERT( ! "invalid situation for tcp connect failure" );
 		}
 	}
 
@@ -627,7 +627,7 @@ void TCPPeerConnector::HandleTCPConnectFail(boost::shared_ptr<TCPPeerConnectionI
 		}
 		else
 		{
-			assert(0);
+			LIVE_ASSERT(0);
 		}
 	}
 }

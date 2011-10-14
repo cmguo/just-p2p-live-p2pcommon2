@@ -50,7 +50,7 @@ public:
 	/// 设置状态为有问题，以禁止后续的读取操作
 	void set_bad()
 	{
-		//assert(m_good);
+		//LIVE_ASSERT(m_good);
 		m_good = false;
 	}
 
@@ -117,7 +117,7 @@ public:
 		if ( is_available( size ) )
 			return true;
 		m_good = false;
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
@@ -162,7 +162,7 @@ public:
 			}
 			else
 			{
-				assert(false);
+				LIVE_ASSERT(false);
 				return false;
 			}
 		}
@@ -195,7 +195,7 @@ public:
 		s.resize( count );
 		if ( read_raw_buffer( s.data(), count ) )
 			return true;
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
@@ -215,7 +215,7 @@ public:
 		s.resize( count );
 		if ( read_raw_buffer( &s[0], count ) )
 			return true;
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
@@ -223,7 +223,7 @@ public:
 	template<typename T, typename AllocT>
 	bool read_vector(size_t count, std::vector<T, AllocT>& items, size_t itemSize)
 	{
-		assert( itemSize > 0 );
+		LIVE_ASSERT( itemSize > 0 );
 		// 先检查数据是否充足，再进行resize操作，避免count过大，resize耗尽内存
 		// 并且如果m_good为false,即使count为0，也返回false，表示失败
 		if ( false == try_read_n( count * itemSize ) )

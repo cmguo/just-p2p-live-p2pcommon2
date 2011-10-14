@@ -43,7 +43,7 @@ protected:
 		if (false == do_initialize())
 		{
 			::OutputDebugString(_T("failed to initialize message thread\n"));
-			assert(false);
+			LIVE_ASSERT(false);
 			return;
 		}
 		MSG msg;

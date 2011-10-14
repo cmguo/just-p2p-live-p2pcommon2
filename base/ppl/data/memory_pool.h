@@ -22,7 +22,7 @@ typedef lightweight_mutex::scoped_lock AutoLightMutex;
 
 inline void dbgCheckHeap()
 {
-	//assert( _heapchk() == _HEAPOK );
+	//LIVE_ASSERT( _heapchk() == _HEAPOK );
 }
 
 
@@ -112,10 +112,10 @@ protected:
 	}
 	void DecTotal( UINT32 bytes )
 	{
-		assert(m_status.TotalCount > 0);
+		LIVE_ASSERT(m_status.TotalCount > 0);
 		m_status.TotalCount--;
 
-		assert(m_status.TotalBytes > bytes);
+		LIVE_ASSERT(m_status.TotalBytes > bytes);
 		m_status.TotalBytes -= bytes;
 
 	}
@@ -131,52 +131,52 @@ protected:
 	}
 	void DecUsed(UINT32 bytes)
 	{
-		assert(m_status.UsedCount > 0);
+		LIVE_ASSERT(m_status.UsedCount > 0);
 		m_status.UsedCount--;
 
-		assert(m_status.UsedBytes >= bytes);
+		LIVE_ASSERT(m_status.UsedBytes >= bytes);
 		m_status.UsedBytes -= bytes;
 		//if ( isFreed )								全局分配就由全局减少
 		//{
-		//	assert( m_Info.TotalBytes >= bytes );
+		//	LIVE_ASSERT( m_Info.TotalBytes >= bytes );
 		//	m_Info.TotalBytes -= bytes;
 		//}
 	}
 
 	void Check()
 	{
-		//assert(m_Info.UsedCount >= 0);
-		//assert(m_Info.TotalCount >= 0);
+		//LIVE_ASSERT(m_Info.UsedCount >= 0);
+		//LIVE_ASSERT(m_Info.TotalCount >= 0);
 
-		//assert( m_Info.TotalCount >= m_Info.UsedCount );
-		//assert( m_Info.TotalBytes >= m_Info.UsedBytes );
+		//LIVE_ASSERT( m_Info.TotalCount >= m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.TotalBytes >= m_Info.UsedBytes );
 
-		//assert( m_Info.PeakUsedCount >= m_Info.UsedCount );
-		//assert( m_Info.PeakUsedBytes >= m_Info.UsedBytes );
+		//LIVE_ASSERT( m_Info.PeakUsedCount >= m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.PeakUsedBytes >= m_Info.UsedBytes );
 
-		//assert( m_Info.PeakTotalBytes >= m_Info.TotalBytes );
-		//assert( m_Info.PeakTotalCount >= m_Info.TotalCount );
+		//LIVE_ASSERT( m_Info.PeakTotalBytes >= m_Info.TotalBytes );
+		//LIVE_ASSERT( m_Info.PeakTotalCount >= m_Info.TotalCount );
 
-		//assert( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.PeakUsedCount );
-		//assert( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.PeakUsedCount );
+		//LIVE_ASSERT( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.UsedCount );
 	}
 
 	void Check2()
 	{
-		//assert(m_Info.UsedCount > 0);
-		//assert(m_Info.TotalCount > 0);
+		//LIVE_ASSERT(m_Info.UsedCount > 0);
+		//LIVE_ASSERT(m_Info.TotalCount > 0);
 
-		//assert( m_Info.TotalCount > m_Info.UsedCount );
-		//assert( m_Info.TotalBytes > m_Info.UsedBytes );
+		//LIVE_ASSERT( m_Info.TotalCount > m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.TotalBytes > m_Info.UsedBytes );
 
-		//assert( m_Info.PeakUsedCount >= m_Info.UsedCount );
-		//assert( m_Info.PeakUsedBytes >= m_Info.UsedBytes );
+		//LIVE_ASSERT( m_Info.PeakUsedCount >= m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.PeakUsedBytes >= m_Info.UsedBytes );
 
-		//assert( m_Info.PeakTotalBytes >= m_Info.TotalBytes );
-		//assert( m_Info.PeakTotalCount >= m_Info.TotalCount );
+		//LIVE_ASSERT( m_Info.PeakTotalBytes >= m_Info.TotalBytes );
+		//LIVE_ASSERT( m_Info.PeakTotalCount >= m_Info.TotalCount );
 
-		//assert( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.PeakUsedCount );
-		//assert( m_Info.AllocateSystemCount + m_Info.LargeAllocCount > m_Info.UsedCount );
+		//LIVE_ASSERT( m_Info.AllocateSystemCount + m_Info.LargeAllocCount >= m_Info.PeakUsedCount );
+		//LIVE_ASSERT( m_Info.AllocateSystemCount + m_Info.LargeAllocCount > m_Info.UsedCount );
 	}
 
 private:
@@ -244,21 +244,21 @@ const size_t POOL_SMALL_START_SIZE = 64;
 
 inline bool GetPosBlockSize(int size, int &pos, int &blockSize)
 {
-	assert( size > 0 );
+	LIVE_ASSERT( size > 0 );
 	if ((size_t) size > SECOND_LEVEL_MAX_SIZE )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	if ( (size_t)size > FIRST_LEVEL_MAX_SIZE )
 	{
-		assert((size_t) size >= FIRST_LEVEL_MAX_SIZE + 1 );
+		LIVE_ASSERT((size_t) size >= FIRST_LEVEL_MAX_SIZE + 1 );
 		pos = ( size - 1 - FIRST_LEVEL_MAX_SIZE ) / SECOND_LEVEL_BLOCK_SIZE;
-		assert( pos >= 0 &&(size_t) pos < POOL_MEDIUM_COUNT );
+		LIVE_ASSERT( pos >= 0 &&(size_t) pos < POOL_MEDIUM_COUNT );
 		blockSize = (pos + 1) * SECOND_LEVEL_BLOCK_SIZE + FIRST_LEVEL_MAX_SIZE;
 		pos += POOL_SMALL_COUNT;
-		assert( (size_t)pos >= POOL_SMALL_COUNT &&(size_t)pos < POOL_SMALL_COUNT + POOL_MEDIUM_COUNT );	// 64-70
-		assert(blockSize>=size &&(size_t) blockSize > FIRST_LEVEL_MAX_SIZE && (size_t)blockSize <= SECOND_LEVEL_MAX_SIZE );
+		LIVE_ASSERT( (size_t)pos >= POOL_SMALL_COUNT &&(size_t)pos < POOL_SMALL_COUNT + POOL_MEDIUM_COUNT );	// 64-70
+		LIVE_ASSERT(blockSize>=size &&(size_t) blockSize > FIRST_LEVEL_MAX_SIZE && (size_t)blockSize <= SECOND_LEVEL_MAX_SIZE );
 		return true;
 	}
 	int smallSize = POOL_SMALL_START_SIZE;
@@ -271,7 +271,7 @@ inline bool GetPosBlockSize(int size, int &pos, int &blockSize)
 			return true;
 		}
 	}
-	assert( false );
+	LIVE_ASSERT( false );
 	return false;
 }
 
@@ -279,7 +279,7 @@ inline bool GetPosBlockSize(int size, int &pos, int &blockSize)
 /*
 int GetSizeFromPos(int pos)
 {
-assert( pos >= 0 );
+LIVE_ASSERT( pos >= 0 );
 if (pos<POOL_SMALL_COUNT)
 {
 return (pos)*FIRST_LEVEL_BLOCK_SIZE;
@@ -294,7 +294,7 @@ return (pos-POOL_SMALL_COUNT - POOL_MEDIUM_COUNT)*THIRD_LEVEL_BLOCK_SIZE;
 }
 else
 {
-assert(0);
+LIVE_ASSERT(0);
 //位置>388是错误的
 return 0;
 }
@@ -339,8 +339,8 @@ public:
 	{
 		//AutoLightMutex lock(_lock);
 
-		assert( 0 == this->_block_size );
-		assert( 0 == this->_max_free_count );
+		LIVE_ASSERT( 0 == this->_block_size );
+		LIVE_ASSERT( 0 == this->_max_free_count );
 		this->_block_size = block_size;
 		this->_max_free_count = max_free_count;
 	}
@@ -350,8 +350,8 @@ public:
 		AutoLightMutex lock(_lock);
 		//ScopedTracer _tracer(strings::format("mempool scope block_alloc.allocate %d %s %d %d", size, filename, line, this->_blocks.size()));
 
-		assert( this->_block_size > 0 );
-		assert( size == this->_block_size );
+		LIVE_ASSERT( this->_block_size > 0 );
+		LIVE_ASSERT( size == this->_block_size );
 
 		block_header* p = NULL;
 		if ( _blocks.empty() )
@@ -366,7 +366,7 @@ public:
 		else
 		{
 			p = this->_blocks.pop();
-			assert( MEM_AVAILABLE_TAG == p->tag );
+			LIVE_ASSERT( MEM_AVAILABLE_TAG == p->tag );
 			p->tag = MEM_IN_USE_TAG;	// available to in use
 			reallyAllocated = false;
 		}
@@ -381,10 +381,10 @@ public:
 		AutoLightMutex lock(_lock);
 		//ScopedTracer _tracer(strings::format("mempool scope block_alloc.deallocate 0x%p %d %s %d %d", p, this->_block_size, filename, line, this->_blocks.size()));
 
-		assert( p );
+		LIVE_ASSERT( p );
 		block_header* header = static_cast<block_header*>( p );
 		header--;
-		assert( MEM_IN_USE_TAG == header->tag || MEM_ALLOCATED_TAG == header->tag );
+		LIVE_ASSERT( MEM_IN_USE_TAG == header->tag || MEM_ALLOCATED_TAG == header->tag );
 
 		//TRACE("mempool block.deallocate 0x%p %s %d %d\n", p, filename, line, this->_block_size);
 
@@ -400,13 +400,13 @@ public:
 		{
 			// 加入到空闲队列
 			header->tag = MEM_AVAILABLE_TAG;	// 标记可用
-			assert( _blocks.empty() || FALSE == ::IsBadReadPtr( _blocks.top(), sizeof( block_header ) ) );
-			//assert( _blocks.empty() || _CrtIsValidHeapPointer( _blocks.top() ) );
+			LIVE_ASSERT( _blocks.empty() || FALSE == ::IsBadReadPtr( _blocks.top(), sizeof( block_header ) ) );
+			//LIVE_ASSERT( _blocks.empty() || _CrtIsValidHeapPointer( _blocks.top() ) );
 			_blocks.push(header);
-			assert( false == _blocks.empty() && FALSE == ::IsBadReadPtr( _blocks.top(), sizeof( block_header ) ) );
-			//assert( false == _blocks.empty() && _CrtIsValidHeapPointer( _blocks.top() ) );
+			LIVE_ASSERT( false == _blocks.empty() && FALSE == ::IsBadReadPtr( _blocks.top(), sizeof( block_header ) ) );
+			//LIVE_ASSERT( false == _blocks.empty() && _CrtIsValidHeapPointer( _blocks.top() ) );
 		}
-		assert( this->_used_count > 0 );
+		LIVE_ASSERT( this->_used_count > 0 );
 		this->_used_count--;
 		this->check();
 		return reallyFreed;
@@ -421,12 +421,12 @@ public:
 		while ( false == _blocks.empty() )
 		{
 			block_header* p = _blocks.pop();
-			assert( MEM_AVAILABLE_TAG == p->tag );
-			assert( FALSE == ::IsBadReadPtr( p, sizeof( block_header ) ) );
-			//assert( _CrtIsValidHeapPointer( p ) );
+			LIVE_ASSERT( MEM_AVAILABLE_TAG == p->tag );
+			LIVE_ASSERT( FALSE == ::IsBadReadPtr( p, sizeof( block_header ) ) );
+			//LIVE_ASSERT( _CrtIsValidHeapPointer( p ) );
 			free( p );
 		}
-		assert( _blocks.empty() );
+		LIVE_ASSERT( _blocks.empty() );
 		this->_blocks.clear();
 	}
 	void check() const
@@ -435,9 +435,9 @@ public:
 		STL_FOR_EACH_CONST(block_list, _blocks, iter)
 		{
 			const block_header* p = &(*iter);
-			assert( MEM_IN_USE_TAG == p->tag || MEM_ALLOCATED_TAG == p->tag || MEM_AVAILABLE_TAG == p->tag );
-			assert( FALSE == ::IsBadReadPtr( p, sizeof( block_header ) ) );
-			//assert( _CrtIsValidHeapPointer( p ) );
+			LIVE_ASSERT( MEM_IN_USE_TAG == p->tag || MEM_ALLOCATED_TAG == p->tag || MEM_AVAILABLE_TAG == p->tag );
+			LIVE_ASSERT( FALSE == ::IsBadReadPtr( p, sizeof( block_header ) ) );
+			//LIVE_ASSERT( _CrtIsValidHeapPointer( p ) );
 		}
 #endif
 	}
@@ -494,7 +494,7 @@ public:
 
 		if ( size < 0 )
 		{
-			assert( !"negative size for pool allocate" );
+			LIVE_ASSERT( !"negative size for pool allocate" );
 			return NULL;
 		}
 
@@ -524,7 +524,7 @@ public:
 		else
 		{
 			GetPosBlockSize(realSize, pos, blockSize);
-			assert( pos >= 0 && (size_t)pos < POOL_SIZE );
+			LIVE_ASSERT( pos >= 0 && (size_t)pos < POOL_SIZE );
 			//判断是否有空闲的内存块可用，如果没有分配之
 			//AutoLightMutex lock(m_lock);
 #ifdef _DEBUG
@@ -539,7 +539,7 @@ public:
 			// 			}
 		}
 
-		assert( p );
+		LIVE_ASSERT( p );
 		pool_block_header* header = static_cast<pool_block_header*>( p );
 		header->pos = pos;
 		header->tag = MEM_TAG;
@@ -568,7 +568,7 @@ public:
 	{
 		dbgCheckHeap();
 
-		assert( lpbuf != NULL );
+		LIVE_ASSERT( lpbuf != NULL );
 		pool_block_header* header = static_cast<pool_block_header*>( lpbuf );
 		header--;
 
@@ -585,7 +585,7 @@ public:
 				bool largeFree = false;
 				if ( -1 == pos )
 				{
-					assert( blockSize >= MAX_BLOCK_ALLOC_SIZE - 1000 );
+					LIVE_ASSERT( blockSize >= MAX_BLOCK_ALLOC_SIZE - 1000 );
 					free( header );
 					reallyFreed = true;
 					largeFree = true;
@@ -610,7 +610,7 @@ public:
 				else
 				{
 					TRACEOUT("pool_free exception: pos %d\n", pos);
-					assert(false);
+					LIVE_ASSERT(false);
 				}
 				//				s_MemoryPoolInfo.SyncTo(s_MemorySyncTime, g_Statistics->MemoryPool);
 				s_MemoryPoolInfo.RecordDeallocate(blockSize, reallyFreed, largeFree);
@@ -620,7 +620,7 @@ public:
 			else
 			{
 				//如果不是真实的内存块，是不能加入空闲列表的
-				assert(0);
+				LIVE_ASSERT(0);
 			}
 		//}
 		//__except ( MemExcepFilter(lpbuf))
@@ -629,9 +629,9 @@ public:
 		//	//m_allocs[pos]的值无需保存和恢复，所以这里什么都不作也是可以的
 		//	success = false;
 		//	TRACEOUT("pool_free exception: 0x%p\n", lpbuf);
-		//	assert(false);
+		//	LIVE_ASSERT(false);
 		//}
-		assert( success );
+		LIVE_ASSERT( success );
 		dbgCheckHeap();
 
 		return reallyFreed;
@@ -655,7 +655,7 @@ public:
 // 			__except (EXCEPTION_EXECUTE_HANDLER)
 // 			{
 // 				TRACEOUT("pool_clear exception: %d\n", i);
-// 				assert(false);
+// 				LIVE_ASSERT(false);
 // 			}
 		}
 		m_lock.unlock();
@@ -730,15 +730,15 @@ public:
 	{
 		AutoLightMutex lock(m_lock);
 		//ScopedTracer _tracer(strings::format("mempool scope debug_alloc.allocate %d %s %d", size, filename, line));
-		assert( size > 0 );
+		LIVE_ASSERT( size > 0 );
 		void* p = m_impl.allocate( sizeof(debug_header) + size + sizeof(unsigned long), reallyAllocated );
-		assert( p );
+		LIVE_ASSERT( p );
 		debug_header* header = static_cast<debug_header*>( p );
 		header->size = size;
 		header->alloc_time = ppl::util::detail::GetTickCount();
 		header->filename = filename;
 		header->line = line;
-		assert(header->tag != MEM_TAG);
+		LIVE_ASSERT(header->tag != MEM_TAG);
 		header->tag = MEM_TAG;
 		header->front_guard = MEM_GUARD;
 		char* buf = reinterpret_cast<char*>(header + 1);
@@ -751,7 +751,7 @@ public:
 			{
 				//TRACE("mempool invalid used block 0x%p\n", p);
 			}
-			assert(success);
+			LIVE_ASSERT(success);
 		}
 		return buf;
 	}
@@ -759,27 +759,27 @@ public:
 	{
 		AutoLightMutex lock(m_lock);
 		//ScopedTracer _tracer(strings::format("mempool scope debug_alloc.deallocate 0x%p %d %s %d", p, 0, filename, line));
-		assert( p != NULL );
+		LIVE_ASSERT( p != NULL );
 		debug_header* header = static_cast<debug_header*>(p);
 		--header;
 		if (header->tag != MEM_TAG)
 		{
 //			CORE_EVENT("debug_alloc: deallcate error " << p);
 			TRACEOUT("debug_alloc: deallcate error %s" , p);
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
-		assert(header->tag == MEM_TAG);
-		assert(header->front_guard == MEM_GUARD);
+		LIVE_ASSERT(header->tag == MEM_TAG);
+		LIVE_ASSERT(header->front_guard == MEM_GUARD);
 		const char* buf = reinterpret_cast<const char*>(p);
-		assert(READ_MEMORY(buf + header->size, unsigned long) == MEM_GUARD);
+		LIVE_ASSERT(READ_MEMORY(buf + header->size, unsigned long) == MEM_GUARD);
 		header->tag = MEM_CLEAR_TAG;
 		memset(p, MEM_FREED, header->size);
 		bool res = m_impl.deallocate(header);
 		{
 			//TRACE("mempool m_UsedBlocks.erase 0x%p\n", header);
 			size_t count = m_UsedBlocks.erase( header );
-			assert( 1 == count );
+			LIVE_ASSERT( 1 == count );
 		}
 		return res;
 	}
@@ -794,10 +794,10 @@ public:
 		STL_FOR_EACH_CONST(typename debug_header_collection, m_UsedBlocks, iter )
 		{
 			debug_header* header = *iter;
-			assert(header->tag == MEM_TAG);
-			assert(header->front_guard == MEM_GUARD);
+			LIVE_ASSERT(header->tag == MEM_TAG);
+			LIVE_ASSERT(header->front_guard == MEM_GUARD);
 			const char* buf = reinterpret_cast<const char*>(header + 1);
-			assert(READ_MEMORY(buf + header->size, unsigned long) == MEM_GUARD);
+			LIVE_ASSERT(READ_MEMORY(buf + header->size, unsigned long) == MEM_GUARD);
 
 			TRACEOUT("memory leak: size=%u,AllocTime=%u,line=%d,file=", header->size, header->alloc_time, header->line);
 			::OutputDebugString(header->filename);

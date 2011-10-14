@@ -33,7 +33,7 @@ using ppl::io::variant_reader_util;
 
 inline data_output_stream& operator<<( data_output_stream& os, const PeerExchangeItem& info )
 {
-	assert( info.PeerType <= 15 );
+	LIVE_ASSERT( info.PeerType <= 15 );
 	// ÏÞÖÆÎªLSB 4bits
 	UINT8 val = info.PeerType & 0x0F;
 	return os << info.Address << val;
@@ -211,7 +211,7 @@ public:
 
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert(ResourceData->size() <= 4500);
+		LIVE_ASSERT(ResourceData->size() <= 4500);
 		os  << Status 
 			<< MinIndex 
 			<< HuffmanTimes 
@@ -306,7 +306,7 @@ public:
 			>> PeerNetInfoSize;
 		if ( is && PeerNetInfoSize >= PeerExchangeItem::object_size )
 		{
-			assert(PeerNetInfoSize == PeerExchangeItem::object_size);
+			LIVE_ASSERT(PeerNetInfoSize == PeerExchangeItem::object_size);
 			// MSB 1bit
 			IsResponse = ((val & 0x80) != 0);
 			// LSB 6bits
@@ -318,8 +318,8 @@ public:
 
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert(PeerNetInfoSize == PeerExchangeItem::object_size);
-		assert( Peers.size() <= 63 );
+		LIVE_ASSERT(PeerNetInfoSize == PeerExchangeItem::object_size);
+		LIVE_ASSERT( Peers.size() <= 63 );
 		UINT8 itemSize = PeerExchangeItem::object_size;
 		UINT8 val = static_cast<UINT8>( Peers.size() );
 		if ( IsResponse )
@@ -334,7 +334,7 @@ public:
 
 	virtual size_t get_object_size() const
 	{
-		assert(PeerNetInfoSize == PeerExchangeItem::object_size);
+		LIVE_ASSERT(PeerNetInfoSize == PeerExchangeItem::object_size);
 		return sizeof(UINT32) 
 			+ sizeof(UINT8) 
 			+ sizeof(UINT8) 
@@ -427,14 +427,14 @@ public:
 			UINT8 peerCount = val & 0x3F;
 			return variant_reader_util::read_padded_vector( is, peerCount, Peers, REDIRECT_PEER_INFO::object_size, PeerInfoSize );
 		}
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert( Peers.size() < 30 );
-		assert(PeerInfoSize == REDIRECT_PEER_INFO::object_size);
-		assert(Peers.size() < 30);
+		LIVE_ASSERT( Peers.size() < 30 );
+		LIVE_ASSERT(PeerInfoSize == REDIRECT_PEER_INFO::object_size);
+		LIVE_ASSERT(Peers.size() < 30);
 		UINT8 itemSize = REDIRECT_PEER_INFO::object_size;
 		UINT8 val = static_cast<UINT8>( Peers.size() );
 		val &= 0x3F;
@@ -442,8 +442,8 @@ public:
 	}
 	virtual size_t get_object_size() const
 	{
-		assert( Peers.size() < 30 );
-		assert(PeerInfoSize == REDIRECT_PEER_INFO::object_size);
+		LIVE_ASSERT( Peers.size() < 30 );
+		LIVE_ASSERT(PeerInfoSize == REDIRECT_PEER_INFO::object_size);
 		return sizeof(UINT8) * 2 + REDIRECT_PEER_INFO::object_size * Peers.size();
 	}
 };
@@ -478,7 +478,7 @@ public:
 
 	virtual bool read_object( data_input_stream& is )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	virtual void write_object(data_output_stream& os) const
@@ -503,7 +503,7 @@ public:
 
 	virtual bool read_object( data_input_stream& is )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	virtual void write_object(data_output_stream& os) const

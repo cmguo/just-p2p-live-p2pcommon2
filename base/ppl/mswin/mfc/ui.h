@@ -169,9 +169,9 @@ inline void AppendText(TextBoxT& textBox, LPCTSTR msg, bool lineFeed = true)
 
 inline bool CopyToClipboard(LPCTSTR str, HWND hwnd)
 {
-	assert(str != NULL);
+	LIVE_ASSERT(str != NULL);
 	size_t len = ::lstrlen(str);
-	assert(len < USHRT_MAX);
+	LIVE_ASSERT(len < USHRT_MAX);
 	//put your text in source
 	if (!::OpenClipboard(hwnd))
 		return false;
@@ -179,14 +179,14 @@ inline bool CopyToClipboard(LPCTSTR str, HWND hwnd)
 	HGLOBAL clipbuffer = GlobalAlloc(GMEM_DDESHARE | GMEM_ZEROINIT, len+1);
 	if (clipbuffer == NULL)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	void* buffer = GlobalLock(clipbuffer);
 	if (buffer == NULL)
 	{
 		::GlobalFree(clipbuffer);
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	memcpy(buffer, str, len);

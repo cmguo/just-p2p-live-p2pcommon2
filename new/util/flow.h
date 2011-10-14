@@ -50,8 +50,8 @@ struct MeasureUnitT
 	}
 	void operator-=(const this_type& mu)
 	{
-		assert(this->Bytes >= mu.Bytes);
-		assert(this->Packets >= mu.Packets);
+		LIVE_ASSERT(this->Bytes >= mu.Bytes);
+		LIVE_ASSERT(this->Packets >= mu.Packets);
 		this->Bytes -= mu.Bytes;
 		this->Packets -= mu.Packets;
 	}
@@ -61,7 +61,7 @@ struct MeasureUnitT
 	}
 	this_type operator/(size_t count) const
 	{
-		assert(count > 0);
+		LIVE_ASSERT(count > 0);
 		return MeasureUnitT(this->Bytes / count, this->Packets / count);
 	}
 	this_type operator+(const this_type& mu) const
@@ -95,7 +95,7 @@ public:
 	//}
 	void Record(UINT amount)
 	{
-		assert(m_CurrentUnit < m_Units.size());
+		LIVE_ASSERT(m_CurrentUnit < m_Units.size());
 		m_Total.Record( amount );
 		m_Units[m_CurrentUnit].Record( amount );
 	}

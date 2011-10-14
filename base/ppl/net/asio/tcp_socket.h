@@ -82,7 +82,7 @@ public:
 		this->close();
 		if (false == create())
 			return false;
-		assert( this->is_open() );
+		LIVE_ASSERT( this->is_open() );
 		m_ConnectTimer.start(m_ConnectTimeout * 1000);
 		m_impl->connect(addr);
 		return true;
@@ -105,10 +105,10 @@ public:
 
 	bool receive_n(size_t size)
 	{
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		if ( size > 10 * 1024 * 1024 )
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		
@@ -123,7 +123,7 @@ public:
 
 	virtual bool receive()
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
@@ -173,7 +173,7 @@ protected:
 	}
 	void init()
 	{
-		assert(m_impl);
+		LIVE_ASSERT(m_impl);
 		m_ConnectTimeout = 60;m_SendTimeout = 0;
 		m_ConnectTimer.set_callback(boost::bind(&tcp_socket::on_connect_timeout, this));
 		m_impl->set_connect_callback(boost::bind(&tcp_socket::on_connect, this, _1));
@@ -184,7 +184,7 @@ protected:
 	void on_connect_timeout()
 	{
 		//this->on_connect(boost::asio::error::timed_out);
-		//assert(m_SendQueue.empty());
+		//LIVE_ASSERT(m_SendQueue.empty());
 		// 关闭socket，会触发连接失败
 		m_impl->get_socket().close(m_last_error);
 	}
@@ -211,14 +211,14 @@ protected:
 				printf("on_receive errcode [0x2]: %s", err.message().c_str());
 			if (bytes > 0)
 			{
-				assert(buf->size() >= bytes);
+				LIVE_ASSERT(buf->size() >= bytes);
 				get_listener()->on_socket_receive(this, buf->data(), bytes);
 			}
 			get_listener()->on_socket_receive_failed(this, err.value());
 			return;
 		}
-		assert(buf->size() >= bytes);
-		assert(buf->size() == bytes);
+		LIVE_ASSERT(buf->size() >= bytes);
+		LIVE_ASSERT(buf->size() == bytes);
 		get_listener()->on_socket_receive(this, buf->data(), bytes);
 	}
 
@@ -228,10 +228,10 @@ protected:
 		if ( m_SendQueue.empty() )
 		{
 			NETWORK_ERROR("tcp_socket::on_send invalid empty buffer " << make_tuple( err.value(), bytes, m_SendQueue.size() ));
-			assert(false == m_impl->get_socket().is_open());
+			LIVE_ASSERT(false == m_impl->get_socket().is_open());
 			return;
 		}
-		assert(buf == m_SendQueue.front());
+		LIVE_ASSERT(buf == m_SendQueue.front());
 		// previous sending is complete, remove it
 		m_SendQueue.pop_front();
 		if ( err )

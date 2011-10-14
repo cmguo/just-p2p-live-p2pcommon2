@@ -110,7 +110,7 @@ protected:
 		{
 			if (bytes > 0)
 			{
-				assert(buf->size() >= bytes);
+				LIVE_ASSERT(buf->size() >= bytes);
 				if (request_.size() > 0)
 				{
 					size_t head_left_bytes = request_.size();
@@ -129,8 +129,8 @@ protected:
 				get_listener()->on_socket_receive_failed(this, err.value());
 			return;
 		}
-		assert(buf->size() >= bytes);
-		assert(buf->size() == bytes);
+		LIVE_ASSERT(buf->size() >= bytes);
+		LIVE_ASSERT(buf->size() == bytes);
 		if (request_.size() > 0)
 		{
 			size_t head_left_bytes = request_.size();

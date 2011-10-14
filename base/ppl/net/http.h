@@ -10,7 +10,7 @@ class HTTPInformation : private boost::noncopyable
 public:
 	explicit HTTPInformation(const char* data, size_t size) : m_data(data), m_size(size)
 	{
-		assert(m_data != NULL && m_size > 0);
+		LIVE_ASSERT(m_data != NULL && m_size > 0);
 	}
 
 	/// 找到内容部分的位置
@@ -69,7 +69,7 @@ inline string HTTPInformation::ExtractBody() const
 	int pos = FindBody();
 	if (pos < 0)
 		return "";
-	assert( static_cast<size_t>( pos ) <= m_size );
+	LIVE_ASSERT( static_cast<size_t>( pos ) <= m_size );
 	return string(m_data + pos, m_data + m_size);
 }
 

@@ -11,10 +11,10 @@ UINT SourceResource::CalcPieceCount( UINT bufferTime ) const
 {
 	if ( m_SourceMinMax.IsEmpty() )
 	{
-		//assert( false );
+		//LIVE_ASSERT( false );
 		return 0;
 	}
-	assert( m_SourceMinMax.GetLength() < 10000 );
+	LIVE_ASSERT( m_SourceMinMax.GetLength() < 10000 );
 	const double source_buffer_time = 120.0 * 1000.0;
 	double pieceCount = 1.0 * m_SourceMinMax.GetLength() * bufferTime / source_buffer_time;
 	return static_cast<UINT>( pieceCount );
@@ -24,10 +24,10 @@ double SourceResource::CalcAveragePieceRate() const
 {
 	if ( m_SourceMinMax.IsEmpty() )
 	{
-		//assert( false );
+		//LIVE_ASSERT( false );
 		return 0.0;
 	}
-	assert( m_SourceMinMax.GetLength() < 10000 );
+	LIVE_ASSERT( m_SourceMinMax.GetLength() < 10000 );
 	const double source_buffer_time = 120.0; // 单位：秒
 	double pieceRate = m_SourceMinMax.GetLength() / source_buffer_time;
 	return pieceRate;
@@ -37,10 +37,10 @@ double SourceResource::CalcAveragePieceDuration() const
 {
 	if ( m_SourceMinMax.IsEmpty() )
 	{
-		//assert( false );
+		//LIVE_ASSERT( false );
 		return 0.0;
 	}
-	assert( m_SourceMinMax.GetLength() < 10000 );
+	LIVE_ASSERT( m_SourceMinMax.GetLength() < 10000 );
 	const double source_buffer_time = 120.0 * 1000.0; // 单位：秒
 	double pieceDuration = source_buffer_time / m_SourceMinMax.GetLength();
 	return pieceDuration;

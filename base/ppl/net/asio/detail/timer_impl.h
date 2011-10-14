@@ -40,22 +40,22 @@ public:
 
 	~timer_impl()
 	{
-		assert(false == m_started);
-		assert(m_detached);
+		LIVE_ASSERT(false == m_started);
+		LIVE_ASSERT(m_detached);
 		this->stop();
 		UTIL_ERROR("timer_impl::~timer_impl " << this);
 	}
 
 	void start_from_now(UINT elapse)
 	{
-		assert(false == this->is_started());
+		LIVE_ASSERT(false == this->is_started());
 		UTIL_ERROR("timer_impl::start_from_now " << ppl::make_tuple(this, m_started, m_detached, elapse));
 		m_impl.expires_from_now(my_time_duration_type(elapse), m_lasterror);
 		this->async_wait();
 	}
 	void start_at(const my_timer_type::time_type& expireTime)
 	{
-		assert(false == this->is_started());
+		LIVE_ASSERT(false == this->is_started());
 		UTIL_ERROR("timer_impl::start_at " << ppl::make_tuple(this, m_started, m_detached));
 		m_impl.expires_at(expireTime, m_lasterror);
 		this->async_wait();
@@ -96,17 +96,17 @@ protected:
 		if ( m_detached )
 		{
 			UTIL_ERROR("on_timer_message, timer_impl is detached, error is " << err << " started=" << m_started);
-			assert(false == m_started);
+			LIVE_ASSERT(false == m_started);
 			return;
 		}
 		if ( err )
 		{
-			assert( boost::asio::error::operation_aborted == err );
+			LIVE_ASSERT( boost::asio::error::operation_aborted == err );
 			return;
 		}
 		if ( false == m_started )
 		{
-			//assert( m_started );
+			//LIVE_ASSERT( m_started );
 			return;
 		}
 		m_started = false;

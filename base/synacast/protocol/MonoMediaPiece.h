@@ -137,9 +137,9 @@ public:
 		, TimeStamp( timeStamp )
 		, HeaderPiece( headerPiece )
 	{
-		assert(maxSize <= PPL_MAX_PIECE_DATA_LENGTH);
+		LIVE_ASSERT(maxSize <= PPL_MAX_PIECE_DATA_LENGTH);
 		//		this->InitDataPiece(timeStamp, headerPiece, 0, NULL);
-		assert(GetPieceIndex() > GetHeaderPiece());
+		LIVE_ASSERT(GetPieceIndex() > GetHeaderPiece());
 		MediaData.reserve( maxSize );
 	}
 
@@ -149,11 +149,11 @@ public:
 		, TimeStamp( timeStamp )
 		, HeaderPiece( headerPiece )
 	{
-		assert(dataLen > 0);
-		assert(dataLen <= PPL_MAX_PIECE_DATA_LENGTH);
+		LIVE_ASSERT(dataLen > 0);
+		LIVE_ASSERT(dataLen <= PPL_MAX_PIECE_DATA_LENGTH);
 		MediaData.assign( static_cast<const BYTE*>( data ), dataLen );
 		//		this->InitDataPiece(timeStamp, headerPiece, dataLen, data);
-		assert(GetPieceIndex() > GetHeaderPiece());
+		LIVE_ASSERT(GetPieceIndex() > GetHeaderPiece());
 	}
 
 
@@ -169,7 +169,7 @@ public:
 
 	bool AppendData(size_t dataLen, const BYTE* data)
 	{
-		assert(dataLen > 0 && data != NULL);
+		LIVE_ASSERT(dataLen > 0 && data != NULL);
 		if (MediaData.size() + dataLen > MediaData.capacity())
 			return false;
 		MediaData.append( data, dataLen );
@@ -179,7 +179,7 @@ public:
 
 	virtual size_t GetPieceBodyLength() const
 	{
-		assert( MediaData.size() > 0 );
+		LIVE_ASSERT( MediaData.size() > 0 );
 		return MediaDataPieceInfo::object_size + MediaData.size();
 	}
 

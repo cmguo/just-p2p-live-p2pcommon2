@@ -145,7 +145,7 @@ public:
 		size_t pos = src.find(delimiter, 0);
 		if (pos == string_type::npos)
 			return std::make_pair(src, string_type());
-		assert(pos + 1 <= src.size());
+		LIVE_ASSERT(pos + 1 <= src.size());
 		return std::make_pair(src.substr(0, pos), src.substr(pos + 1));
 	}
 
@@ -157,7 +157,7 @@ public:
 		size_t pos = src.find(delimiter, 0);
 		if (pos == string_type::npos)
 			return std::make_pair(src, string_type());
-		assert(pos + delimiter.size() <= src.size());
+		LIVE_ASSERT(pos + delimiter.size() <= src.size());
 		return std::make_pair(src.substr(0, pos), src.substr(pos + delimiter.size()));
 	}
 
@@ -176,7 +176,7 @@ public:
 		size_t pos = src.find(delimiter, 0, delimiterSize);
 		if (pos == string_type::npos)
 			return std::make_pair(src, string_type());
-		assert(pos + delimiterSize <= src.size());
+		LIVE_ASSERT(pos + delimiterSize <= src.size());
 		return std::make_pair(src.substr(0, pos), src.substr(pos + delimiterSize));
 	}
 
@@ -186,7 +186,7 @@ public:
 	static std::pair<std::basic_string<CharT, TraitsT, AllocatorT>, std::basic_string<CharT, TraitsT, AllocatorT> > 
 		split_at(const std::basic_string<CharT, TraitsT, AllocatorT>& src, size_t pos)
 	{
-		assert(pos <= src.size());
+		LIVE_ASSERT(pos <= src.size());
 		return std::make_pair(src.substr(0, pos), src.substr(pos));
 	}
 
@@ -195,7 +195,7 @@ public:
 	static std::pair<std::basic_string<CharT, TraitsT, AllocatorT>, std::basic_string<CharT, TraitsT, AllocatorT> > 
 		split_on(const std::basic_string<CharT, TraitsT, AllocatorT>& src, size_t pos)
 	{
-		assert(pos < src.size());
+		LIVE_ASSERT(pos < src.size());
 		return std::make_pair(src.substr(0, pos), src.substr(pos + 1));
 	}
 
@@ -203,7 +203,7 @@ public:
 /*	template <typename CharT, typename TraitsT, typename AllocatorT, typename InputIteratorT>
 	static std::basic_string<CharT, TraitsT, AllocatorT> join(InputIteratorT begin, InputIteratorT end, char delimiter)
 	{
-		assert(!"not implemented");
+		LIVE_ASSERT(!"not implemented");
 		return "";
 	}*/
 
@@ -211,7 +211,7 @@ public:
 	static std::basic_string<CharT, TraitsT, AllocatorT> trim(const std::basic_string<CharT, TraitsT, AllocatorT>& str, const CharT* delimiter)
 	{
 		std::basic_string<CharT, TraitsT, AllocatorT> s = str;
-		assert(TraitsT::length(delimiter) > 0);
+		LIVE_ASSERT(TraitsT::length(delimiter) > 0);
 		s.erase(0, s.find_first_not_of(delimiter));
 		s.erase(s.find_last_not_of(delimiter) + 1);
 		return s;
@@ -254,10 +254,10 @@ public:
 		int count = vsnprintf(str, max_size, format, argList);
 		if (count < 0)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return string();
 		}
-		assert((unsigned int)count < max_size);
+		LIVE_ASSERT((unsigned int)count < max_size);
 		return string(str, count);
 	}
 
@@ -278,10 +278,10 @@ public:
 		int count = _vsnwprintf(str, max_size, format, argList);
 		if (count < 0)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return wstring();
 		}
-		assert(count < max_size);
+		LIVE_ASSERT(count < max_size);
 		return wstring(str, count);
 	}
 #endif

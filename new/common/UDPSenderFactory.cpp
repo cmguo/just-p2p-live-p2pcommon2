@@ -31,9 +31,9 @@ public:
 
 	virtual bool Send(const void* data, size_t size, const InetSocketAddress& sockAddr)
 	{
-		assert(size > 0);
-		//assert(READ_MEMORY(data, UINT16) == PPL_P2P_LIVE2);
-		//assert(m_udp >= 0);
+		LIVE_ASSERT(size > 0);
+		//LIVE_ASSERT(READ_MEMORY(data, UINT16) == PPL_P2P_LIVE2);
+		//LIVE_ASSERT(m_udp >= 0);
 		//return false; // 屏蔽udp发包，用于检测udp不通时的运行状况
 		const UINT8* buf = static_cast<const UINT8*>(data);
 		(void)buf;
@@ -64,9 +64,9 @@ public:
 	explicit NormalUDPSender(int udp) : m_udp(udp) { }
 	virtual bool Send(const void* data, size_t size, const InetSocketAddress& sockAddr)
 	{
-		assert(size > 0);
-		//assert(READ_MEMORY(data, UINT16) == PPL_P2P_LIVE2);
-		assert(m_udp >= 0);
+		LIVE_ASSERT(size > 0);
+		//LIVE_ASSERT(READ_MEMORY(data, UINT16) == PPL_P2P_LIVE2);
+		LIVE_ASSERT(m_udp >= 0);
 		//return false; // 屏蔽udp发包，用于检测udp不通时的运行状况
 		const UINT8* buf = static_cast<const UINT8*>(data);
 		APP_DEBUG("NormalUDPSender Send " << sockAddr << " " << buf[2]);
@@ -138,7 +138,7 @@ public:
 
 	virtual bool Send(const void* data, size_t size, const InetSocketAddress& sockAddr)
 	{
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		boost::shared_ptr<TCPProxyClient> client(new TCPProxyClient( *this, sockAddr ) );
 		if ( false == client->Start(data, size, m_timeout) )
 			return false;
@@ -309,7 +309,7 @@ void HTTPProxyClient::on_socket_receive(BYTE* data, size_t size)
 	else
 	{
 		size_t pos = static_cast<size_t>( bodyPos );
-		assert( pos > 0 && pos < size );
+		LIVE_ASSERT( pos > 0 && pos < size );
 		m_Owner.OnResponseOK(this, data + pos, size - pos);
 	}
 }

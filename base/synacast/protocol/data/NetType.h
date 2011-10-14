@@ -33,9 +33,9 @@ struct NET_TYPE
 	/// 转化为整数
 	UINT32 ToInteger() const
 	{
-		assert(Province < 50);
-		assert(City < 200);
-		assert(City < 500);
+		LIVE_ASSERT(Province < 50);
+		LIVE_ASSERT(City < 200);
+		LIVE_ASSERT(City < 500);
 		return ISP * 100 * 1000 + Province * 1000 + City;
 	}
 };

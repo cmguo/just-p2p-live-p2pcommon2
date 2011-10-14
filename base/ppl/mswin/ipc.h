@@ -31,7 +31,7 @@ public:
 			APP_ERROR("EnumProcesses failed " << ::GetLastError());
 			return;
 		}
-		assert(bytes % 4 == 0);
+		LIVE_ASSERT(bytes % 4 == 0);
 		m_count = bytes / 4;
 	}
 
@@ -42,7 +42,7 @@ public:
 
 	DWORD FindProcess(LPCTSTR name)
 	{
-		assert(m_count > 0);
+		LIVE_ASSERT(m_count > 0);
 		DWORD id = 0;
 		for (DWORD i = 0; i < m_count; ++i)
 		{
@@ -135,7 +135,7 @@ public:
 		FILL_ZERO(m_item);
 		m_item.dwSize = sizeof(m_item);
 		m_snapshot.OpenProcesses();
-		assert(m_snapshot.IsValid());
+		LIVE_ASSERT(m_snapshot.IsValid());
 		m_isValid = (::Process32First(m_snapshot.GetHandle(), &m_item) != FALSE);
 	}
 
@@ -149,7 +149,7 @@ public:
 	}
 	void MoveNext()
 	{
-		assert(HasMore());
+		LIVE_ASSERT(HasMore());
 		m_isValid = (::Process32Next(m_snapshot.GetHandle(), &m_item) != FALSE);
 	}
 
@@ -170,7 +170,7 @@ public:
 		FILL_ZERO(m_item);
 		m_item.dwSize = sizeof(MODULEENTRY32);
 		m_snapshot.Open(TH32CS_SNAPMODULE, pid);
-		assert(m_snapshot.IsValid());
+		LIVE_ASSERT(m_snapshot.IsValid());
 		m_isValid = (FALSE != ::Module32First(m_snapshot.GetHandle(), &m_item));
 	}
 	~ModuleWalker()
@@ -183,7 +183,7 @@ public:
 	}
 	void MoveNext()
 	{
-		assert(HasMore());
+		LIVE_ASSERT(HasMore());
 		m_isValid = (FALSE != ::Module32Next(m_snapshot.GetHandle(), &m_item));
 	}
 	const MODULEENTRY32& Current() const
@@ -221,7 +221,7 @@ public:
 	}
 	void MoveNext()
 	{
-		assert(HasMore());
+		LIVE_ASSERT(HasMore());
 		m_isValid = (FALSE != ::Thread32Next(m_snapShot, &m_item));
 	}
 	const THREADENTRY32& Current() const
@@ -312,7 +312,7 @@ public:
 	}
 	void MoveNext()
 	{
-		assert(HasMore());
+		LIVE_ASSERT(HasMore());
 		m_hasMore = (FALSE != ::FindNextFile(m_handle, &m_item));
 	}
 	const WIN32_FIND_DATA& Current() const

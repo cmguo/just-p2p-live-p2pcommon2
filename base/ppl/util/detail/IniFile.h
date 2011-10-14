@@ -8,6 +8,11 @@
 #include <algorithm>
 #include <functional>
 
+#include <sstream>
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 using std::string;
 
 
@@ -218,7 +223,9 @@ inline bool CIniFile::Load(string FileName, vector<Record>& content)
 
 inline bool CIniFile::Save(string FileName, vector<Record>& content)
 {
-	std::ofstream outFile (FileName.c_str());									// Create an output filestream
+	std::ostringstream tmpName;
+        tmpName << ((int)FileName.c_str() + (int)getpid());
+	std::ofstream outFile (tmpName.str().c_str());							// Create an output filestream
 	if (!outFile.is_open()) return false;									// If the output file doesn't open, then return
 
 	for (int i=0;i<(int)content.size();i++)									// Loop through each vector
@@ -233,6 +240,9 @@ inline bool CIniFile::Save(string FileName, vector<Record>& content)
 	}
 
 	outFile.close();														// Close the file
+
+	::remove(FileName.c_str());
+	::rename(tmpName.str().c_str(), FileName.c_str());
 	return true;
 }
 

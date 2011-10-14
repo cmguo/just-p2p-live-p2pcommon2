@@ -257,15 +257,15 @@ public:
 /*
 inline void ReviseOuterPeerAddress( PEER_ADDRESS& addr, const SimpleSocketAddress& sockAddr, bool isTCP, bool isInitFromRemote )
 {
-	assert( sockAddr.IP != 0 && sockAddr.Port != 0 && sockAddr.IP != INADDR_BROADCAST );
+	LIVE_ASSERT( sockAddr.IP != 0 && sockAddr.Port != 0 && sockAddr.IP != INADDR_BROADCAST );
 	if ( 0 == addr.IP )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		addr.IP = sockAddr.IP;
 	}
 	else
 	{
-		//assert( sockAddr.IP == addr.IP );
+		//LIVE_ASSERT( sockAddr.IP == addr.IP );
 	}
 	if ( isTCP )
 	{
@@ -274,12 +274,12 @@ inline void ReviseOuterPeerAddress( PEER_ADDRESS& addr, const SimpleSocketAddres
 		{
 			if ( 0 == addr.TcpPort && 80 != sockAddr.Port )
 			{
-				assert( false );
+				LIVE_ASSERT( false );
 				addr.TcpPort = sockAddr.Port;
 			}
 			else
 			{
-				//assert( 80 == sockAddr.Port || sockAddr.Port == addr.TcpPort );
+				//LIVE_ASSERT( 80 == sockAddr.Port || sockAddr.Port == addr.TcpPort );
 			}
 		}
 	}
@@ -287,12 +287,12 @@ inline void ReviseOuterPeerAddress( PEER_ADDRESS& addr, const SimpleSocketAddres
 	{
 		if ( 0 == addr.UdpPort )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			addr.UdpPort = sockAddr.Port;
 		}
 		else
 		{
-			//assert( sockAddr.Port == addr.UdpPort );
+			//LIVE_ASSERT( sockAddr.Port == addr.UdpPort );
 		}
 	}
 }*/

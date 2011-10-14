@@ -58,7 +58,7 @@ public:
 		if ( errcode != 0 || val == 0 )
 		{
 			val = rand();
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 		return val;
 	}
@@ -115,7 +115,7 @@ public:
 
 	void SetSeed(unsigned int seed)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		::srand(seed);
 	}
 
@@ -166,7 +166,7 @@ public:
 
 	unsigned int NextIn(unsigned int maxValue)
 	{
-		assert(maxValue > 0);
+		LIVE_ASSERT(maxValue > 0);
 		return m_impl.Next() % maxValue;
 	}
 	unsigned char NextByte()
@@ -184,7 +184,7 @@ public:
 
 	inline std::string RandomString(size_t size)
 	{
-		assert(size < SHRT_MAX);
+		LIVE_ASSERT(size < SHRT_MAX);
 		std::string str(size, '0');
 		for (size_t i = 0; i < size; ++i)
 		{
@@ -195,7 +195,7 @@ public:
 
 	inline std::string RandomSizedString(size_t size)
 	{
-		assert(size < SHRT_MAX);
+		LIVE_ASSERT(size < SHRT_MAX);
 		return RandomString(NextWord((int)size));
 	}
 

@@ -42,7 +42,7 @@ void QuotaManager::CalcTunnelReceiveTimes()
 	{
 		PeerTunnelPtr pt = *_iter;
 		PeerConnection* pc = &pt->GetConnection();
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 
 		if (!m_downloader.CanDownload( pt ) || pt->IsFreezing() )
 			continue;
@@ -105,7 +105,7 @@ void QuotaManager::CalcTunnelReceiveTimes()
 	{
 		PeerTunnelPtr pt = *iter;
 		PeerConnection* pc = &pt->GetConnection();
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 		
 		if (!m_downloader.CanDownload( pt ))
 		{	// 不能使用这个pc去下载，那么就跳过
@@ -282,7 +282,7 @@ std::pair<bool, PeerTunnel*> QuotaManager::TryToDownload(SubPieceUnit subPiece, 
 
 void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT ResourceMaxIndex, const PEER_MINMAX& sourceMinMax) const
 {
-	//assert(HasQuota());
+	//LIVE_ASSERT(HasQuota());
 	time_counter counter;
 
 	/// 如果两个Piece间隔5000就会ResetBuffer
@@ -334,7 +334,7 @@ void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT Resourc
  		minIndex > 0 && 
  		startIndex > 0 )
  	{
- 		assert(sourceForUrgent > (startIndex-minIndex));
+ 		LIVE_ASSERT(sourceForUrgent > (startIndex-minIndex));
  		urgentCount = sourceForUrgent - (startIndex-minIndex);
  		if( urgentCount < 100 ) urgentCount = 100;	//至少计算100个Piece的健康度
  	}
@@ -372,8 +372,8 @@ void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT Resourc
 			if( isGood == false && index < startIndex + urgentCount )
 			{	// 本地资源状况不好,采用完全紧迫度策略
 				UINT key = index - startIndex;
-				assert( key >= 0 );
-				assert( key < urgentCount );
+				LIVE_ASSERT( key >= 0 );
+				LIVE_ASSERT( key < urgentCount );
 //				DWORD externalTimeout = 2000 + key * 3000 / urgentCount;
 				DWORD externalTimeout;
 
@@ -420,7 +420,7 @@ void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT Resourc
 					// 计算紧迫度参数
 					// 采用随机数的原因是 在相同健康度的资源中 随机制定优先级
 					UINT key = urgentCount + healthyCount*1000 + rnd.Next(999) + 2000;
-					assert(key >= urgentCount);
+					LIVE_ASSERT(key >= urgentCount);
 
 					//PieceTask pieceTask(index, 2000);
 
@@ -439,7 +439,7 @@ void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT Resourc
 
 void QuotaManager::CalcHealthy2(HealthyDegreeCollection& HealthyMap, UINT ResourceMaxIndex, const PEER_MINMAX& sourceMinMax) const
 {
-	//assert(HasQuota());
+	//LIVE_ASSERT(HasQuota());
 	time_counter counter;
 
 	/// 如果两个Piece间隔5000就会ResetBuffer
@@ -532,8 +532,8 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection& HealthyMap, UINT Resour
 			if( isGood == false && index < startIndex + urgentCount )
 			{	// 本地资源状况不好,采用完全紧迫度策略
 				UINT key = index - startIndex;
-				assert( key >= 0 );
-				assert( key < urgentCount );
+				LIVE_ASSERT( key >= 0 );
+				LIVE_ASSERT( key < urgentCount );
 				//				DWORD externalTimeout = 2000 + key * 3000 / urgentCount;
 				DWORD externalTimeout;
 
@@ -569,7 +569,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection& HealthyMap, UINT Resour
 					// 采用随机数的原因是 在相同健康度的资源中 随机制定优先级
 					UINT key = urgentCount + healthyCount*1000 + rnd.Next(999) + 2000;
 //					UINT key = index - startIndex;
-					assert(key >= urgentCount);
+					LIVE_ASSERT(key >= urgentCount);
 
 					//PieceTask pieceTask(index, 2000);
 
@@ -588,7 +588,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection& HealthyMap, UINT Resour
 
 void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT ResourceMaxIndex, const PEER_MINMAX& sourceMinMax) /*const*/
 {
-	//assert(HasQuota());
+	//LIVE_ASSERT(HasQuota());
 //	TimeCounter counter;
 
 	/// 如果两个Piece间隔5000就会ResetBuffer
@@ -699,8 +699,8 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 			{	// 本地资源状况不好,采用完全紧迫度策略
 #if !NO_HEALTHCOUNTCALC
 				UINT key = index - startIndex;
-				assert( key >= 0 );
-				assert( key < urgentCount );
+				LIVE_ASSERT( key >= 0 );
+				LIVE_ASSERT( key < urgentCount );
 #endif // !NO_HEALTHCOUNTCALC
 
 //				DWORD externalTimeout = 2000 + key * 3000 / urgentCount;
@@ -784,7 +784,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 					// 采用随机数的原因是 在相同健康度的资源中 随机制定优先级
 					UINT key = urgentCount + healthyCount*1000 + rnd.Next(999) + 2000;
 //					UINT key = index - startIndex;
-					assert(key >= urgentCount);
+					LIVE_ASSERT(key >= urgentCount);
 #endif // !NO_HEALTHCOUNTCALC
 					size_t subPieceCount = m_downloader.GetPossibleSubPieceCount(index, m_streamBuffer.GetSkipIndex());
 					for (INT8 subI = 0; (size_t)subI < subPieceCount; subI++)

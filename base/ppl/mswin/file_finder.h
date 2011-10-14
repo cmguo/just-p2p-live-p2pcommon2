@@ -56,12 +56,12 @@ public:
 	}
 	void move_next()
 	{
-		assert(has_item());
+		LIVE_ASSERT(has_item());
 		m_has_item = (FALSE != ::FindNextFile(m_handle, &m_item));
 	}
 	const WIN32_FIND_DATA& current() const
 	{
-		assert( m_has_item );
+		LIVE_ASSERT( m_has_item );
 		return m_item;
 	}
 

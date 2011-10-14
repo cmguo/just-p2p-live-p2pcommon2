@@ -28,7 +28,7 @@ public:
 	TrackerRequesterImpl();
 	virtual ~TrackerRequesterImpl();
 
-	virtual void ListPeers() { assert(false); }
+	virtual void ListPeers() { LIVE_ASSERT(false); }
 
 	virtual bool IsStarted() const { return m_isStarted; }
 
@@ -136,7 +136,7 @@ public:
 	/// 获取当前的客户端
 	TrackerClientPtr GetCurrentClient()
 	{
-//		assert(!m_clients.empty() && m_CurrentClient < m_clients.size());
+//		LIVE_ASSERT(!m_clients.empty() && m_CurrentClient < m_clients.size());
 		if (m_clients.empty() || m_CurrentClient >= m_clients.size())
 		{
 			TrackerClientPtr nullClient(CreateClient()) ;

@@ -58,7 +58,7 @@ public:
 		fpos_t pos = 0;
 		if ( 0 == fgetpos( m_handle, &pos ) )
 			return pos;
-		assert(false);
+		LIVE_ASSERT(false);
 		return 0;
 	}
 #elif defined(_PPL_PLATFORM_LINUX)
@@ -70,7 +70,7 @@ public:
 //		fpos_t pos = { 0 };
 //		if ( 0 == fgetpos( m_handle, &pos ) )
 //			return pos.__pos;
-//		assert(false);
+//		LIVE_ASSERT(false);
 //		return 0;
 	}
 #else
@@ -99,7 +99,7 @@ public:
 
 	bool open_descriptor( int fd, const char* mode = "r" )
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		this->close();
 		m_handle = fdopen( fd, mode );
 		if (is_open())
@@ -111,7 +111,7 @@ public:
 	/// 打开文件
 	bool open(const char* path, const char* mode = "r", int shareFlag = _SH_DENYNO)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		this->close();
 		m_handle = _fsopen(path, mode, shareFlag);
 		if (is_open())
@@ -123,7 +123,7 @@ public:
 #if defined(_PPL_PLATFORM_MSWIN)
 	bool open(const wchar_t* path, const wchar_t* mode = L"r", int shareFlag = _SH_DENYNO)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		this->close();
 		m_handle = _wfsopen(path, mode, shareFlag);
 		if (is_open())
@@ -146,8 +146,8 @@ public:
 	/// 读取数据
 	size_t read(void* buf, size_t size)
 	{
-		assert(buf != NULL && size > 0);
-		assert(is_open());
+		LIVE_ASSERT(buf != NULL && size > 0);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//{
 		//	return 0;
@@ -158,8 +158,8 @@ public:
 	/// 读取行到缓冲区
 	bool read_line(char* buf, int size)
 	{
-		assert(buf != NULL && size > 0);
-		assert(is_open());
+		LIVE_ASSERT(buf != NULL && size > 0);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//	return false;
 		if (fgets(buf, size, m_handle) != NULL)
@@ -174,7 +174,7 @@ public:
 	/// 读取行到字符串
 	bool read_line(string& line)
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//	return false;
 		const size_t max_size = 1024 * 4;
@@ -196,8 +196,8 @@ public:
 	/// 读取行到缓冲区
 	bool read_line(wchar_t* buf, int size)
 	{
-		assert(buf != NULL && size > 0);
-		assert(is_open());
+		LIVE_ASSERT(buf != NULL && size > 0);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//	return false;
 		if (fgetws(buf, size, m_handle) != NULL)
@@ -212,7 +212,7 @@ public:
 	/// 读取行到字符串
 	bool read_line(wstring& line)
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//	return false;
 		const size_t max_size = 1024;
@@ -233,8 +233,8 @@ public:
 	/// 写入缓冲区数据
 	size_t write(const void* data, size_t size)
 	{
-		assert(data != NULL && size > 0);
-		assert(is_open());
+		LIVE_ASSERT(data != NULL && size > 0);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//{
 		//	return 0;
@@ -245,8 +245,8 @@ public:
 	/// 写入字符串
 	bool write(const char* str)
 	{
-		assert(str != NULL);
-		assert(is_open());
+		LIVE_ASSERT(str != NULL);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//{
 		//	return false;
@@ -257,8 +257,8 @@ public:
 	/// 不定参数的格式化写入
 	int write_variant(const char* format, va_list argptr)
 	{
-		assert(format != NULL);
-		assert(is_open());
+		LIVE_ASSERT(format != NULL);
+		LIVE_ASSERT(is_open());
 		//if (!is_open())
 		//{
 		//	return 0;
@@ -269,7 +269,7 @@ public:
 	/// 格式化的写入
 	int write_format(const char* format, ...)
 	{
-		assert(format != NULL);
+		LIVE_ASSERT(format != NULL);
 		va_list(args);
 		va_start(args, format);
 		int count = write_variant(format, args);
@@ -311,7 +311,7 @@ public:
 	/// 是否失败
 	bool failed()
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		return ferror(m_handle) != 0;
 	}
 

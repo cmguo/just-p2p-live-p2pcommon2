@@ -40,7 +40,7 @@ HRESULT WindowsMediaClient::SetPlayableRange(
 		m_IsSending = true;
 		//NETWRITER_INFO("MediaClient SetPlayableRange: StartIndex=" << StartIndex << ", MinMax=" << make_tuple(MinIndex, MaxIndex));
 	}
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	return SetPlayableRangeAfterSended(HeaderIndex,MinIndex,MaxIndex);
 }
 
@@ -94,7 +94,7 @@ HRESULT CWindowsNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 			m_ClientHandles.erase(iter++);
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		++iter;
 	}
 	
@@ -116,7 +116,7 @@ bool CWindowsNetWriter::ContainsClient(tcp_socket* sock)
 bool CWindowsNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CWindowsNetWriter::OnNewClient " << make_tuple(s, m_ClientHandles.size()));
-	assert( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
+	LIVE_ASSERT( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
 	WindowsMediaClient ClientHandle( this, s );
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = ClientHandle;

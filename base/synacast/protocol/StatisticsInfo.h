@@ -127,8 +127,8 @@ public:
 		PPL_SI_INIT_OBJECT( UploaderStats, UPLOADER_STATS, objectIndex, objectOffset, buf );
 		PPL_SI_INIT_OBJECT( MediaServerStats, MEDIASERVER_STATS, objectIndex, objectOffset, buf );
 
-		assert( 10 == objectIndex );
-		assert( totalSize == objectOffset + headerAndIndexSize );
+		LIVE_ASSERT( 10 == objectIndex );
+		LIVE_ASSERT( totalSize == objectOffset + headerAndIndexSize );
 
 #undef PPL_SI_INIT_OBJECT
 

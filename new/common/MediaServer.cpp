@@ -82,7 +82,7 @@ void CMediaServer::Reset()
 
 bool CMediaServer::AddMediaHeader( MonoMediaHeaderPiecePtr lpPacket)
 {
-	assert( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
+	LIVE_ASSERT( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
 
 	if( !lpPacket )
 	{
@@ -93,7 +93,7 @@ bool CMediaServer::AddMediaHeader( MonoMediaHeaderPiecePtr lpPacket)
 #ifdef _DEBUG
 	if( m_NowHeaderIndex != 0 )
 	{
-		assert( m_storage.HasHeader(m_NowHeaderIndex) );
+		LIVE_ASSERT( m_storage.HasHeader(m_NowHeaderIndex) );
 	}
 #endif
 
@@ -109,7 +109,7 @@ bool CMediaServer::AddMediaHeader( MonoMediaHeaderPiecePtr lpPacket)
 
 bool CMediaServer::ChangeMediaHeader( UINT HeaderIndex )//最重要的函数
 {
-	//	assert( m_NewMediaHeaderQueue.size() > 0 );
+	//	LIVE_ASSERT( m_NewMediaHeaderQueue.size() > 0 );
 	MediaHeaderPiecePtr headerPiece = m_storage.GetHeader(HeaderIndex);
 	if ( ! headerPiece )
 		return false;
@@ -202,12 +202,12 @@ void CMediaServer::StartServer()
 	m_server.reset(new http_acceptor());
 	m_server->set_listener(this);
 
-	assert(m_port != 0);
+	LIVE_ASSERT(m_port != 0);
 	for (int i = 0; i < 100; ++i)
 	{
 		if (m_server->open(m_port))
 		{
-			assert(m_server->is_open());
+			LIVE_ASSERT(m_server->is_open());
 			MEDIASERVER_EVENT( "CMediaServer: Create HTTP Server OK port = " << m_port );
 			break;
 		}
@@ -219,7 +219,7 @@ void CMediaServer::StartServer()
 			if (errcode == -1)
 			{
 				MEDIASERVER_ERROR( "CMediaServer: Create HTTP Server 系统错误，内存不足 ");
-				assert(!"Create Media Server Failed.");
+				LIVE_ASSERT(!"Create Media Server Failed.");
 				return;
 			}
 			if (errcode == -2)
@@ -233,7 +233,7 @@ void CMediaServer::StartServer()
 			else
 			{
 				MEDIASERVER_ERROR( "CMediaServer: Create HTTP Server FAILED. Unrecognized errcode. port = " << m_port );
-				assert(!"Create Media Server Failed.");
+				LIVE_ASSERT(!"Create Media Server Failed.");
 			//	return;
 			}
 		}
@@ -246,7 +246,7 @@ void CMediaServer::StartServer()
 			else
 			{
 				MEDIASERVER_ERROR( "CMediaServer: Create HTTP Server FAILED. Unrecognized winsock errcode. port = " << m_port );
-				//assert(!"Create Media Server Failed.");
+				//LIVE_ASSERT(!"Create Media Server Failed.");
 			//	return;
 			}
 		}
@@ -281,7 +281,7 @@ bool CMediaServer::CreateNetWriter(const MonoMediaHeaderPiecePtr& header)
 	m_Statistics.FirstPlayTime = 0;
 	m_Statistics.FirstPlayPieceTimeStamp = 0;
 
-	assert(m_netWriter != NULL);
+	LIVE_ASSERT(m_netWriter != NULL);
 	VIEW_INFO("CreateNetWriter "<<header->GetPieceIndex()<<" End");
 
 	m_netWriter->Start();
@@ -290,7 +290,7 @@ bool CMediaServer::CreateNetWriter(const MonoMediaHeaderPiecePtr& header)
 	UINT16 playPort = m_netWriter->GetPort();
 	if (playPort != 0)
 	{
-		//assert(m_port == playPort);
+		//LIVE_ASSERT(m_port == playPort);
 		m_port = playPort;
 	}
 
@@ -298,7 +298,7 @@ bool CMediaServer::CreateNetWriter(const MonoMediaHeaderPiecePtr& header)
 	{
 		MEDIASERVER_INFO( "TBD: MediaServer HeaderIndex = "<<m_NowHeaderIndex );
 	}
-	assert( HeaderIndex != 0 );
+	LIVE_ASSERT( HeaderIndex != 0 );
 	MEDIASERVER_INFO( "TBD: MediaServer New HeaderIndex = "<<HeaderIndex );
 	
 	// 置换NetWriter

@@ -9,11 +9,11 @@ void Bitfield::SetBit(size_t index, bool val)
 {
 	if (!IsInRange(index))
 	{
-		assert(!"Bitfield::SetBit: index is out of range.");
+		LIVE_ASSERT(!"Bitfield::SetBit: index is out of range.");
 		return;
 	}
 	size_t pos = GetByteIndex(index);
-	assert(pos < m_bits->size());
+	LIVE_ASSERT(pos < m_bits->size());
 	BYTE& bit = reinterpret_cast<BYTE&>((*m_bits)[pos]);
 	BYTE mask = (BYTE)GetByteMask(index);
 	if (val)
@@ -114,20 +114,20 @@ void BitMap::Revise(UINT32 newMinIndex, UINT16 startPos, UINT16 resLen, const UI
 	// 资源位图不包含newMaxTemp
 	UINT32 newMaxTemp = newMinIndex + startPos + resLen * 8;
 	UINT32 newMax = max(oldMax, newMaxTemp);
-	assert(newMax >= newMinIndex);
+	LIVE_ASSERT(newMax >= newMinIndex);
 
 	size_t newSize = newMax - newMinIndex;
 	BitMap newBits(newMinIndex, newSize);
 	UINT32 i = 0;
 	for (i = newBits.GetMinIndex(); i < newBits.GetMaxIndex(); ++i)
 	{
-		assert(newBits.IsInRange(i));
+		LIVE_ASSERT(newBits.IsInRange(i));
 		newBits.SetBit(i, GetBit(i));
 	}
 	BitMap changedBits(newMinIndex + startPos, resLen, resources);
 	for (i = changedBits.GetMinIndex(); i < changedBits.GetMaxIndex(); ++i)
 	{
-		assert(newBits.IsInRange(i));
+		LIVE_ASSERT(newBits.IsInRange(i));
 		bool bit = changedBits[i];
 		// bit为true，表示从无到有，否则，保持不变
 		if (bit)
@@ -137,9 +137,9 @@ void BitMap::Revise(UINT32 newMinIndex, UINT16 startPos, UINT16 resLen, const UI
 	}
 
 	Swap(newBits);
-	assert(GetMinIndex() == newMinIndex);
-	assert(GetSize() == newSize);
-	assert(GetMaxIndex() == newMax);
+	LIVE_ASSERT(GetMinIndex() == newMinIndex);
+	LIVE_ASSERT(GetSize() == newSize);
+	LIVE_ASSERT(GetMaxIndex() == newMax);
 }*/
 
 void BitMap::EraseBit(UINT32 index)
@@ -194,39 +194,39 @@ class BitfieldTestCase : public ppl::util::test_case
 {
 	virtual void DoRun()
 	{
-		assert(CalcRound8(0) == 0);
-		assert(CalcRound8(1) == 8);
-		assert(CalcRound8(2) == 8);
-		assert(CalcRound8(3) == 8);
-		assert(CalcRound8(4) == 8);
-		assert(CalcRound8(5) == 8);
-		assert(CalcRound8(6) == 8);
-		assert(CalcRound8(7) == 8);
-		assert(CalcRound8(8) == 8);
-		assert(CalcRound8(9) == 16);
+		LIVE_ASSERT(CalcRound8(0) == 0);
+		LIVE_ASSERT(CalcRound8(1) == 8);
+		LIVE_ASSERT(CalcRound8(2) == 8);
+		LIVE_ASSERT(CalcRound8(3) == 8);
+		LIVE_ASSERT(CalcRound8(4) == 8);
+		LIVE_ASSERT(CalcRound8(5) == 8);
+		LIVE_ASSERT(CalcRound8(6) == 8);
+		LIVE_ASSERT(CalcRound8(7) == 8);
+		LIVE_ASSERT(CalcRound8(8) == 8);
+		LIVE_ASSERT(CalcRound8(9) == 16);
 
-		assert(CalcRoundQuotient8(0) == 0);
-		assert(CalcRoundQuotient8(1) == 1);
-		assert(CalcRoundQuotient8(2) == 1);
-		assert(CalcRoundQuotient8(3) == 1);
-		assert(CalcRoundQuotient8(4) == 1);
-		assert(CalcRoundQuotient8(5) == 1);
-		assert(CalcRoundQuotient8(6) == 1);
-		assert(CalcRoundQuotient8(7) == 1);
-		assert(CalcRoundQuotient8(8) == 1);
-		assert(CalcRoundQuotient8(9) == 2);
+		LIVE_ASSERT(CalcRoundQuotient8(0) == 0);
+		LIVE_ASSERT(CalcRoundQuotient8(1) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(2) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(3) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(4) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(5) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(6) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(7) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(8) == 1);
+		LIVE_ASSERT(CalcRoundQuotient8(9) == 2);
 
 		Bitfield bf;
-		assert(bf.GetSize() == 0);
-		assert(bf.GetByteCount() == 0);
+		LIVE_ASSERT(bf.GetSize() == 0);
+		LIVE_ASSERT(bf.GetByteCount() == 0);
 
 		BYTE bytes[1] = { 0x0 };
 		bf = Bitfield(1, bytes);
-		assert(bf.GetSize() == 8);
-		assert(bf.GetByteCount() == 1);
+		LIVE_ASSERT(bf.GetSize() == 8);
+		LIVE_ASSERT(bf.GetByteCount() == 1);
 		CheckBits(bf, 0, bf.GetSize(), false);
-		assert(bf.ToString() == "00000000");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.ToString() == "00000000");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 
 		size_t i = 0;
 		for (i = 0; i < 8; ++i)
@@ -238,54 +238,54 @@ class BitfieldTestCase : public ppl::util::test_case
 		bf.GetData()[0] = 0xf0;
 		CheckBits(bf, 0, 4, true);
 		CheckBits(bf, 4, bf.GetSize(), false);
-		assert(bf.ToString() == "11110000");
-		assert(bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.ToString() == "11110000");
+		LIVE_ASSERT(bf.CheckIsAllBitsSet());
 
 		bf.GetData()[0] = 0x0f;
 		CheckBits(bf, 0, 4, false);
 		CheckBits(bf, 4, bf.GetSize(), true);
-		assert(bf.ToString() == "00001111");
+		LIVE_ASSERT(bf.ToString() == "00001111");
 		status = bf.CheckIsAllBitsSet();
-		assert(!status);
-		assert(bf.FindSkipIndex() == 7);
+		LIVE_ASSERT(!status);
+		LIVE_ASSERT(bf.FindSkipIndex() == 7);
 
 		bf.ResetBit(5);
-		assert(!bf[5]);
-		assert(bf.ToString() == "00001011");
-		assert(!bf.CheckIsAllBitsSet());
-		assert(bf.FindSkipIndex() == 4);
+		LIVE_ASSERT(!bf[5]);
+		LIVE_ASSERT(bf.ToString() == "00001011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.FindSkipIndex() == 4);
 
 		bf.SetBit(5);
-		assert(bf[5]);
-		assert(bf.ToString() == "00001111");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf[5]);
+		LIVE_ASSERT(bf.ToString() == "00001111");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 
 		bf.ResetBit(5);
-		assert(!bf[5]);
-		assert(bf.ToString() == "00001011");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(!bf[5]);
+		LIVE_ASSERT(bf.ToString() == "00001011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 
 		bf.SetBit(2);
-		assert(bf.ToString() == "00101011");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.ToString() == "00101011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 		bf.ResetBit(3);
-		assert(bf.ToString() == "00101011");
-		assert(!bf.CheckIsAllBitsSet());
-		assert(!bf[3]);
-		assert(bf[2]);
-		assert(bf.ToString() == "00101011");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.ToString() == "00101011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(!bf[3]);
+		LIVE_ASSERT(bf[2]);
+		LIVE_ASSERT(bf.ToString() == "00101011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 
 		bf.SetBit(3);
-		assert(bf[3]);
-		assert(bf[2]);
-		assert(bf.ToString() == "00111011");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf[3]);
+		LIVE_ASSERT(bf[2]);
+		LIVE_ASSERT(bf.ToString() == "00111011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 		bf.ResetBit(3);
-		assert(!bf[3]);
-		assert(bf[2]);
-		assert(bf.ToString() == "00101011");
-		assert(!bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(!bf[3]);
+		LIVE_ASSERT(bf[2]);
+		LIVE_ASSERT(bf.ToString() == "00101011");
+		LIVE_ASSERT(!bf.CheckIsAllBitsSet());
 
 		TestZeroBitfield();
 
@@ -293,30 +293,30 @@ class BitfieldTestCase : public ppl::util::test_case
 		{
 			bf.SetBit(i, true);
 		}
-		assert(bf.ToString() == "11111111");
-		assert(bf.CheckIsAllBitsSet());
+		LIVE_ASSERT(bf.ToString() == "11111111");
+		LIVE_ASSERT(bf.CheckIsAllBitsSet());
 
 
 		{
 			BYTE bytes1[2] = { 0xFF, 0xE0 };
 			Bitfield bf1(2, bytes1);
-			assert(bf1.ToString() == "1111111111100000");
-			assert(bf1.CheckIsAllBitsSet());
-			assert(bf1.FindSkipIndex() == 10);
+			LIVE_ASSERT(bf1.ToString() == "1111111111100000");
+			LIVE_ASSERT(bf1.CheckIsAllBitsSet());
+			LIVE_ASSERT(bf1.FindSkipIndex() == 10);
 		}
 		{
 			BYTE bytes1[2] = { 0xFF, 0xE8 };
 			Bitfield bf1(2, bytes1);
-			assert(bf1.ToString() == "1111111111101000");
-			assert(!bf1.CheckIsAllBitsSet());
-			assert(bf1.FindSkipIndex() == 12);
+			LIVE_ASSERT(bf1.ToString() == "1111111111101000");
+			LIVE_ASSERT(!bf1.CheckIsAllBitsSet());
+			LIVE_ASSERT(bf1.FindSkipIndex() == 12);
 		}
 		{
 			BYTE bytes1[3] = { 0xFF, 0xEA, 0xA8 };
 			Bitfield bf1(3, bytes1);
-			assert(bf1.ToString() == "111111111110101010101000");
-			assert(!bf1.CheckIsAllBitsSet());
-			assert(bf1.FindSkipIndex() == 18);
+			LIVE_ASSERT(bf1.ToString() == "111111111110101010101000");
+			LIVE_ASSERT(!bf1.CheckIsAllBitsSet());
+			LIVE_ASSERT(bf1.FindSkipIndex() == 18);
 		}
 	}
 
@@ -336,24 +336,24 @@ class BitfieldTestCase : public ppl::util::test_case
 	{
 		Bitfield bf(size);
 		CheckBits(bf, 0, bf.GetSize(), false);
-		assert(bf.ToString() == string(bf.GetSize(), '0'));
+		LIVE_ASSERT(bf.ToString() == string(bf.GetSize(), '0'));
 	}
 
 	void CheckBits(const Bitfield& bf, size_t begin, size_t end, bool val)
 	{
 		for (size_t i = begin; i < end; ++i)
 		{
-			assert(bf[i] == val);
-			assert(bf[i] == bf.GetBit(i));
+			LIVE_ASSERT(bf[i] == val);
+			LIVE_ASSERT(bf[i] == bf.GetBit(i));
 		}
 	}
 	void TestByte(Bitfield& bf, size_t pos)
 	{
-		assert(bf.GetSize() == 8);
-		assert(bf.GetByteCount() == 1);
-		assert(pos < 8);
+		LIVE_ASSERT(bf.GetSize() == 8);
+		LIVE_ASSERT(bf.GetByteCount() == 1);
+		LIVE_ASSERT(pos < 8);
 		bf.GetData()[0] = static_cast<BYTE>(0x80 >> pos);
-		assert(bf[pos]);
+		LIVE_ASSERT(bf[pos]);
 		CheckBits(bf, 0, pos, false);
 		CheckBits(bf, pos + 1, bf.GetSize(), false);
 	}
@@ -370,13 +370,13 @@ class StreamBitfieldTestCase : public ppl::util::test_case
 		TestZeroBitfield();
 
 		BitMap bf;
-		assert(bf.GetSize() == 0);
-		assert(bf.GetByteCount() == 0);
+		LIVE_ASSERT(bf.GetSize() == 0);
+		LIVE_ASSERT(bf.GetByteCount() == 0);
 
 		BYTE bytes[1] = { 0x0 };
 		bf = BitMap(0, 1, bytes);
-		assert(bf.GetSize() == 8);
-		assert(bf.GetByteCount() == 1);
+		LIVE_ASSERT(bf.GetSize() == 8);
+		LIVE_ASSERT(bf.GetByteCount() == 1);
 		CheckBits(bf, 0, bf.GetSize(), false);
 
 		for (size_t i = 0; i < 8; ++i)
@@ -392,11 +392,11 @@ class StreamBitfieldTestCase : public ppl::util::test_case
 		CheckBits(bf, 0, 4, false);
 		CheckBits(bf, 4, bf.GetSize(), true);
 		bf.ResetBit(5);
-		assert(!bf[5]);
+		LIVE_ASSERT(!bf[5]);
 		bf.SetBit(5);
-		assert(bf[5]);
+		LIVE_ASSERT(bf[5]);
 		bf.ResetBit(5);
-		assert(!bf[5]);
+		LIVE_ASSERT(!bf[5]);
 
 
 		TestBasic();
@@ -424,18 +424,18 @@ class StreamBitfieldTestCase : public ppl::util::test_case
 	{
 		for (size_t i = begin; i < end; ++i)
 		{
-			assert(bf[i] == val);
-			assert(bf[i] == bf.GetBit(i));
+			LIVE_ASSERT(bf[i] == val);
+			LIVE_ASSERT(bf[i] == bf.GetBit(i));
 		}
 	}
 
 	void TestByte(BitMap& bf, size_t pos)
 	{
-		assert(bf.GetSize() == 8);
-		assert(bf.GetByteCount() == 1);
-		assert(pos < 8);
+		LIVE_ASSERT(bf.GetSize() == 8);
+		LIVE_ASSERT(bf.GetByteCount() == 1);
+		LIVE_ASSERT(pos < 8);
 		bf.GetData().GetData()[0] = static_cast<BYTE>(0x80 >> pos);
-		assert(bf[pos]);
+		LIVE_ASSERT(bf[pos]);
 		CheckBits(bf, 0, pos, false);
 		CheckBits(bf, pos + 1, bf.GetSize(), false);
 	}
@@ -447,25 +447,25 @@ class StreamBitfieldTestCase : public ppl::util::test_case
 		src[0] = 0xFF;
 		src[1] = 0x0F;
 		BitMap bmp(100, 2, src);
-		assert(bmp.GetMinIndex() == 100);
-		assert(bmp.GetMaxIndex() == 116);
+		LIVE_ASSERT(bmp.GetMinIndex() == 100);
+		LIVE_ASSERT(bmp.GetMaxIndex() == 116);
 		size_t i = 0;
 		for (i = 100; i < 108; ++i)
 		{
-			assert(bmp[i]);
+			LIVE_ASSERT(bmp[i]);
 		}
 		for (i = 108; i < 112; ++i)
 		{
-			assert(!bmp[i]);
+			LIVE_ASSERT(!bmp[i]);
 		}
 		for (i = 112; i < 116; ++i)
 		{
-			assert(bmp[i]);
+			LIVE_ASSERT(bmp[i]);
 		}
-		assert(!bmp[98]);
-		assert(!bmp[99]);
-		assert(!bmp[116]);
-		assert(!bmp[117]);
+		LIVE_ASSERT(!bmp[98]);
+		LIVE_ASSERT(!bmp[99]);
+		LIVE_ASSERT(!bmp[116]);
+		LIVE_ASSERT(!bmp[117]);
 	}
 
 	UINT8 dest[1024];
@@ -492,35 +492,35 @@ protected:
 		src[0] = 0xFF;
 		src[1] = 0x0F;
 		BitMap bmp(100, 2, src);
-		assert(bmp.GetMinIndex() == 100);
-		assert(bmp.GetMaxIndex() == 116);
+		LIVE_ASSERT(bmp.GetMinIndex() == 100);
+		LIVE_ASSERT(bmp.GetMaxIndex() == 116);
 		size_t i = 0;
 		for (i = 100; i < 108; ++i)
 		{
-			assert(bmp[i]);
+			LIVE_ASSERT(bmp[i]);
 		}
 		for (i = 108; i < 112; ++i)
 		{
-			assert(!bmp[i]);
+			LIVE_ASSERT(!bmp[i]);
 		}
 		for (i = 112; i < 116; ++i)
 		{
-			assert(bmp[i]);
+			LIVE_ASSERT(bmp[i]);
 		}
-		assert(!bmp[98]);
-		assert(!bmp[99]);
-		assert(!bmp[116]);
-		assert(!bmp[117]);
+		LIVE_ASSERT(!bmp[98]);
+		LIVE_ASSERT(!bmp[99]);
+		LIVE_ASSERT(!bmp[116]);
+		LIVE_ASSERT(!bmp[117]);
 	}
 /*
 	void TestDecode()
 	{
 		src[0] = 1;
 		size_t size = BitMap::DecodeBitMap(dest, src, 1);
-		assert(size = 1);
+		LIVE_ASSERT(size = 1);
 		src[0] = 3;
 		size = BitMap::DecodeBitMap(dest, src, 1);
-		assert(size = 1);
+		LIVE_ASSERT(size = 1);
 	}
 */
 	
@@ -546,7 +546,7 @@ protected:
 			huffs = bmp.GetHuffmanString(times);
 			BitMap huffmap(0,times,huffs.length(),huffs.c_str());
 			for (i = 0; i < huffmap.GetByteCount()-1; i ++)
-				assert(huffmap.GetBytes()[i] == (BYTE)b[i]);
+				LIVE_ASSERT(huffmap.GetBytes()[i] == (BYTE)b[i]);
 			//printf("%d...........\n",++j);
 			UTIL_DEBUG(++j);
 		}

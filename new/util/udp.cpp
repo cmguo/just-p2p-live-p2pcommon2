@@ -117,7 +117,7 @@ openPort( unsigned short port, unsigned int interfaceIp, bool verbose )
       //Myclog << "Opened port " << port << " with fd " << fd << endl;
    }
    
-   assert( fd != INVALID_SOCKET  );
+   LIVE_ASSERT( fd != INVALID_SOCKET  );
 	
    return fd;
 }
@@ -128,10 +128,10 @@ getMessage( Socket fd, char* buf, int* len,
             unsigned int* srcIp, unsigned short* srcPort,
             bool verbose)
 {
-   assert( fd != INVALID_SOCKET );
+   LIVE_ASSERT( fd != INVALID_SOCKET );
 	
    int originalSize = *len;
-   assert( originalSize > 0 );
+   LIVE_ASSERT( originalSize > 0 );
    
    struct sockaddr_in from;
    int fromLen = sizeof(from);
@@ -198,20 +198,20 @@ sendMessage( Socket fd, char* buf, int l,
              unsigned int dstIp, unsigned short dstPort,
              bool verbose)
 {
-   assert( fd != INVALID_SOCKET );
+   LIVE_ASSERT( fd != INVALID_SOCKET );
     
    int s;
    if ( dstPort == 0 )
    {
       // sending on a connected port 
-      assert( dstIp == 0 );
+      LIVE_ASSERT( dstIp == 0 );
 		
       s = send(fd,buf,l,0);
    }
    else
    {
-      assert( dstIp != 0 );
-      assert( dstPort != 0 );
+      LIVE_ASSERT( dstIp != 0 );
+      LIVE_ASSERT( dstPort != 0 );
         
       struct sockaddr_in to;
       int toLen = sizeof(to);
@@ -281,7 +281,7 @@ initNetwork()
    {
       // could not find a usable WinSock DLL
       //cerr << "Could not load winsock" << endl;
-      assert(0); // is this is failing, try a different version that 2.2, 1.0 or later will likely work 
+      LIVE_ASSERT(0); // is this is failing, try a different version that 2.2, 1.0 or later will likely work 
       //exit(1);
    }
     
@@ -298,7 +298,7 @@ initNetwork()
       /* WinSock DLL.                                  */
       WSACleanup( );
       //cerr << "Bad winsock verion" << endl;
-      assert(0); // is this is failing, try a different version that 2.2, 1.0 or later will likely work 
+      LIVE_ASSERT(0); // is this is failing, try a different version that 2.2, 1.0 or later will likely work 
       //exit(1);
    }    
 #endif

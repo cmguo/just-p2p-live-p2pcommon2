@@ -33,7 +33,7 @@ public:
 protected:
 	static void trivial_handler()
 	{
-		assert(!"Unhandled Timer Message.");
+		LIVE_ASSERT(!"Unhandled Timer Message.");
 	}
 
 protected:

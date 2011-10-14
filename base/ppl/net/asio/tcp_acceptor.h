@@ -59,7 +59,7 @@ public:
 		if ( err )
 		{
 			this->close();
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 
@@ -82,7 +82,7 @@ public:
 			);
 		if ( err )
 		{
-			//assert(false);
+			//LIVE_ASSERT(false);
 			this->close();
 			return false;
 		}
@@ -90,7 +90,7 @@ public:
 		if ( err )
 		{
 			this->close();
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		this->accept_once();

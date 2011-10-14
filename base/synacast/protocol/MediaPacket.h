@@ -92,8 +92,8 @@ public:
 
 	virtual void write_object(data_output_stream& os) const
 	{
-		assert( SubPieces.size() <= 15 );
-		assert( TSOfPiece.size() <= 15 );
+		LIVE_ASSERT( SubPieces.size() <= 15 );
+		LIVE_ASSERT( TSOfPiece.size() <= 15 );
 		UINT8 lowByte = static_cast<UINT8>( SubPieces.size() ) & 0x0F;
 		UINT8 highByte = static_cast<UINT8>( TSOfPiece.size() ) & 0x0F;
 		UINT8 val = (highByte << 4) | lowByte;
@@ -106,8 +106,8 @@ public:
 
 	virtual size_t get_object_size() const
 	{
-		assert( SubPieces.size() <= 15 );
-		assert( TSOfPiece.size() <= 15 );
+		LIVE_ASSERT( SubPieces.size() <= 15 );
+		LIVE_ASSERT( TSOfPiece.size() <= 15 );
 		if ( SubPieces.size() == 15 )
 		{
 			SubPieces.size();
@@ -119,13 +119,13 @@ public:
 	virtual void AddOneSubPieceUnit(SubPieceUnit inSubPieceUnit)
 	{
 		SubPieces.push_back(inSubPieceUnit);
-		assert(SubPieces.size() <= 15 );
+		LIVE_ASSERT(SubPieces.size() <= 15 );
 	}
 
 	virtual void AddOneSubPieceUnit(UINT64 inTS)
 	{
 		TSOfPiece.push_back(inTS);
-		assert(TSOfPiece.size() <= 15 );
+		LIVE_ASSERT(TSOfPiece.size() <= 15 );
 	}
 
 	virtual void Clear() 
@@ -175,7 +175,7 @@ public:
 
 	virtual size_t get_object_size() const
 	{
-		assert( SubPiece );
+		LIVE_ASSERT( SubPiece );
 		return MediaSubPieceInfo::object_size 
 			+ MediaPieceInfo::object_size 
 			+ sizeof(UINT16) + SubPiece->SubPieceData.size();

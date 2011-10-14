@@ -22,7 +22,7 @@ TimerWindow::TimerWindow() : m_maxTimerID(1)
 
 //bool TimerWindow::Create()
 //{
-//	assert(m_hWnd == NULL);
+//	LIVE_ASSERT(m_hWnd == NULL);
 //	return this->CreateEx(0, TEXT("Message"), TEXT("Message"), 0, CRect(), NULL, 0) != FALSE;
 //}
 
@@ -32,7 +32,7 @@ TimerWindow::~TimerWindow()
 	{
 		UINT timerID = iter->first;
 		Timer* timer = iter->second;
-		assert(timer->GetTimerID() == timerID);
+		LIVE_ASSERT(timer->GetTimerID() == timerID);
 		KillTimer(timerID);
 	}
 	m_timers.clear();
@@ -74,9 +74,9 @@ void TimerWindow::CancelTimer(Timer& timer)
 {
 	UINT timerID = timer.GetTimerID();
 	BOOL success = KillTimer(timerID);
-	assert(success);
+	LIVE_ASSERT(success);
 	int count = m_timers.erase(timerID);
-	assert(count == 1);
+	LIVE_ASSERT(count == 1);
 	timer.Attach(0);
 }
 
@@ -99,15 +99,15 @@ boost::shared_ptr<TimerWindow>& TimerWindow::Instance()
 
 void Timer::Start(UINT interval)
 {
-	assert(!IsStarted());
+	LIVE_ASSERT(!IsStarted());
 	Stop();
 	DoStart(interval);
 }
 
 void Timer::DoStart(UINT interval)
 {
-	assert(interval > 0);
-	assert(interval >= 50);
+	LIVE_ASSERT(interval > 0);
+	LIVE_ASSERT(interval >= 50);
 	m_interval = interval;
 	TimerQueue::Instance()->ScheduleTimer(*this, interval);
 }

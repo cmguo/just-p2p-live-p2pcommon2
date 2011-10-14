@@ -306,7 +306,7 @@ public:
 	explicit CPeerManager(AppModule* lpPeerModule);
 	virtual ~CPeerManager();
 
-	virtual void OnPlayerBufferring( bool isBufferOK ) { assert(false); }
+	virtual void OnPlayerBufferring( bool isBufferOK ) { LIVE_ASSERT(false); }
 
 	virtual bool IsInputSourceIP( UINT ip ) const { return false; };
 
@@ -537,11 +537,11 @@ protected:
 
 	void Validate()
 	{
-		assert(m_IPIndex.size() == m_Connections.size());
-		assert(m_connectionIndex.size() == m_Connections.size());
-		assert(m_AddressIndex.size() == m_Connections.size());
-		assert(m_SessionKeyIndex.size() <= m_Connections.size());
-		assert(m_SessionKeyIndex.size() <= static_cast<size_t>( m_statistics.Degrees.UDPT.GetTotal() ));
+		LIVE_ASSERT(m_IPIndex.size() == m_Connections.size());
+		LIVE_ASSERT(m_connectionIndex.size() == m_Connections.size());
+		LIVE_ASSERT(m_AddressIndex.size() == m_Connections.size());
+		LIVE_ASSERT(m_SessionKeyIndex.size() <= m_Connections.size());
+		LIVE_ASSERT(m_SessionKeyIndex.size() <= static_cast<size_t>( m_statistics.Degrees.UDPT.GetTotal() ));
 	}
 
 protected:

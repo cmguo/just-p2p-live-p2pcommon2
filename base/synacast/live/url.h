@@ -176,7 +176,7 @@ public:
 #ifdef _DEBUG
 		Base64Encoding::GetDelimiter() = "";
 		string url3 = Base64Encoding::Encode(url2);
-		assert(url3 == url);
+		LIVE_ASSERT(url3 == url);
 #endif
 		string result;
 		result.resize(url2.size());
@@ -221,7 +221,7 @@ public:
 	{
 		m_TestVersion = _T("");
 		m_TestVersionNumber = 0;
-		assert(m_AppType == 1012);
+		LIVE_ASSERT(m_AppType == 1012);
 		m_AppType = 1012;
 	}
 
@@ -241,7 +241,7 @@ public:
 		m_ChannelGUID = string_dicts::get_value_ignore_case(params, _T("channel"));
 		if (m_ChannelGUID.empty())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 
@@ -261,13 +261,13 @@ public:
 		tstring param = string_dicts::get_value_ignore_case(params, _T("ko"));
 		if (param.empty())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		ParseTrackers(param, m_Trackers);
 		if (m_Trackers.empty())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 

@@ -21,17 +21,17 @@ BOOST_STATIC_ASSERT(MAX_SUB_PIECE_DATA_SIZE < 1400);
 #ifdef _DEBUG
 void CheckDataPiece(MediaDataPiecePtr piece)
 {
-	assert(piece != NULL);
-	assert(piece->GetPieceType() == PPDT_MEDIA_DATA);
-	assert(piece->GetPieceIndex() > piece->GetHeaderPiece());
-	//assert(piece->CheckValid());
+	LIVE_ASSERT(piece != NULL);
+	LIVE_ASSERT(piece->GetPieceType() == PPDT_MEDIA_DATA);
+	LIVE_ASSERT(piece->GetPieceIndex() > piece->GetHeaderPiece());
+	//LIVE_ASSERT(piece->CheckValid());
 }
 void CheckHeaderPiece(MediaHeaderPiecePtr piece)
 {
-	assert(piece != NULL);
-	assert(piece->GetPieceType() == PPDT_MEDIA_HEADER);
-	assert(piece->GetPieceIndex() > 0);
-	//assert(piece->CheckValid());
+	LIVE_ASSERT(piece != NULL);
+	LIVE_ASSERT(piece->GetPieceType() == PPDT_MEDIA_HEADER);
+	LIVE_ASSERT(piece->GetPieceIndex() > 0);
+	//LIVE_ASSERT(piece->CheckValid());
 }
 #endif
 
@@ -41,8 +41,8 @@ UnfinishedMediaPiece::UnfinishedMediaPiece(SubMediaPiecePtr subPiece)
 {
 	CheckSubPiece(subPiece);
 	m_totalCount = subPiece->GetSubPieceCount();
-	assert(m_totalCount < 64 && m_totalCount > 0);
-	assert(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
+	LIVE_ASSERT(m_totalCount < 64 && m_totalCount > 0);
+	LIVE_ASSERT(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
 	m_subPieces[subPiece->GetSubPieceIndex()] = subPiece;
 	m_pieceInfo = subPiece->GetPieceInfo();
 	m_pieceLevel = subPiece->GetPieceLevel();
@@ -71,8 +71,8 @@ bool UnfinishedMediaPiece::AddSubPiece(SubMediaPiecePtr subPiece)
 {
 	//VIEW_INFO("UnfinishedMediaDataPiece::AddSubPiece  ");
 	CheckSubPiece(subPiece);
-	assert(!m_subPieces.empty());
-//	assert(subPiece->GetPieceType() == PPDT_MEDIA_DATA);
+	LIVE_ASSERT(!m_subPieces.empty());
+//	LIVE_ASSERT(subPiece->GetPieceType() == PPDT_MEDIA_DATA);
 	//UINT pieceIndex = subPiece->GetPieceIndex();
 	UINT8 subPieceIndex = subPiece->GetSubPieceIndex();
 	if (m_totalCount != subPiece->GetSubPieceCount())
@@ -90,7 +90,7 @@ bool UnfinishedMediaPiece::AddSubPiece(SubMediaPiecePtr subPiece)
 		APP_ERROR("UnfinishedMediaDataPiece::AddSubPiece invalid other piece info " << m_pieceInfo.PieceIndex);
 		return false;
 	}
-	assert(subPieceIndex < m_totalCount);
+	LIVE_ASSERT(subPieceIndex < m_totalCount);
 	if (containers::contains(m_subPieces, subPieceIndex))
 	{
 		UDPT_ERROR("Storage::AddSubPiece subpiece already exists " << make_tuple(pieceIndex, m_totalCount, subPieceIndex));
@@ -104,25 +104,25 @@ bool UnfinishedMediaPiece::AddSubPiece(SubMediaPiecePtr subPiece)
 
 MediaPiece::MediaPiece( UnfinishedMediaPiecePtr subPieces ) : m_pieceLevel( 0 )
 {
-	assert(subPieces->IsFinished());
-	assert(subPieces->GetTotalCount() > 0);
-	assert(subPieces->GetTotalCount() < 250);
+	LIVE_ASSERT(subPieces->IsFinished());
+	LIVE_ASSERT(subPieces->GetTotalCount() > 0);
+	LIVE_ASSERT(subPieces->GetTotalCount() < 250);
 	m_subPieces.resize(subPieces->GetTotalCount());
 	STL_FOR_EACH_CONST(SubPieceCollection, subPieces->GetSubPieces(), iter)
 	{
-		assert(iter->first < m_subPieces.size());
+		LIVE_ASSERT(iter->first < m_subPieces.size());
 		m_subPieces[iter->first] = iter->second;
 	}
 }
 
 MediaPiece::MediaPiece( MonoMediaPiecePtr monoPiece, const pool_byte_buffer& pieceData ) : m_pieceLevel( monoPiece->GetPieceLevel() )
 {
-	assert( pieceData.size() > MediaPieceInfo::object_size );
+	LIVE_ASSERT( pieceData.size() > MediaPieceInfo::object_size );
 	size_t slicedDataLen = pieceData.size() - MediaPieceInfo::object_size;
 	size_t subPieceCount = ( slicedDataLen + MAX_SUB_PIECE_DATA_SIZE - 1) / MAX_SUB_PIECE_DATA_SIZE;
-	assert(subPieceCount <= 250);
+	LIVE_ASSERT(subPieceCount <= 250);
 
-	assert(subPieceCount <= 64);
+	LIVE_ASSERT(subPieceCount <= 64);
 	LIMIT_MAX( subPieceCount, 250 );
 	m_subPieces.clear();
 	m_subPieces.resize( subPieceCount );
@@ -130,7 +130,7 @@ MediaPiece::MediaPiece( MonoMediaPiecePtr monoPiece, const pool_byte_buffer& pie
 	{
 		size_t startPos = MAX_SUB_PIECE_DATA_SIZE * subPieceIndex;
 		size_t len = MAX_SUB_PIECE_DATA_SIZE;
-		assert( startPos < slicedDataLen );
+		LIVE_ASSERT( startPos < slicedDataLen );
 		if ( startPos >= slicedDataLen )
 		{
 			break;
@@ -152,24 +152,24 @@ bool MediaPiece::InitBase()
 {
 	if ( m_subPieces.empty() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
 	size_t totallen = 0;
 	for (size_t index = 0; index < m_subPieces.size(); ++index)
 	{
-		assert(m_subPieces[index]);
+		LIVE_ASSERT(m_subPieces[index]);
 		totallen += m_subPieces[index]->SubPieceData.size();
 	}
 
 	const SubMediaPiece& subPiece = *m_subPieces[0];
-	assert(subPiece.GetPieceType() == PPDT_MEDIA_DATA || subPiece.GetPieceType() == PPDT_MEDIA_HEADER);
+	LIVE_ASSERT(subPiece.GetPieceType() == PPDT_MEDIA_DATA || subPiece.GetPieceType() == PPDT_MEDIA_HEADER);
 	m_pieceInfo = subPiece.GetPieceInfo();
 	m_pieceLevel = subPiece.GetPieceLevel();
 	if ( totallen != m_pieceInfo.PieceLength + 1 + SignatureData::static_size )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	return true;
@@ -184,18 +184,18 @@ MediaDataPiece::MediaDataPiece( UnfinishedMediaPiecePtr subPieces ) : MediaPiece
 
 MediaDataPiece::MediaDataPiece( MonoMediaDataPiecePtr monoPiece, const pool_byte_buffer& pieceData ) : MediaPiece( monoPiece, pieceData )
 {
-	assert(monoPiece->GetPieceIndex() > monoPiece->GetHeaderPiece());
+	LIVE_ASSERT(monoPiece->GetPieceIndex() > monoPiece->GetHeaderPiece());
 }
 
 bool MediaDataPiece::Init()
 {
 	if ( false == InitBase() )
 		return false;
-	assert( m_subPieces.size() > 0 );
+	LIVE_ASSERT( m_subPieces.size() > 0 );
 	const SubMediaPiece& subPiece = *m_subPieces[0];
 	if ( subPiece.GetPieceType() != PPDT_MEDIA_DATA )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	PacketInputStream is( subPiece.SubPieceData.data(), subPiece.SubPieceData.size() );
@@ -207,7 +207,7 @@ MonoMediaDataPiecePtr MediaDataPiece::ToMonoPiece() const
 	if (m_pieceInfo.PieceType != PPDT_MEDIA_DATA)
 	{
 		VIEW_ERROR("MediaPiece::MakeDataPacket unrecognized piece type " << m_pieceInfo.PieceType);
-		assert(false);
+		LIVE_ASSERT(false);
 		return MonoMediaDataPiecePtr();
 	}
 	return boost::static_pointer_cast<MonoMediaDataPiece>( MediaPieceUtil::MakeMonoPiece( *this ) );
@@ -221,7 +221,7 @@ MediaDataPiecePtr MediaDataPiece::FromMonoPiece( MonoMediaDataPiecePtr monoPiece
 	MediaDataPiecePtr piece( new MediaDataPiece( monoPiece, MediaPieceUtil::GetBuffer() ) );
 	if ( false == piece->Init() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return MediaDataPiecePtr();
 	}
 	return piece;
@@ -234,13 +234,13 @@ MediaDataPiecePtr MediaDataPiece::FromSubPieces( UnfinishedMediaPiecePtr subPiec
 	if ( PPDT_MEDIA_DATA != subPieces->GetPieceType() )
 	{
 		VIEW_ERROR("MediaDataPiece::FromSubPieces invalid piece type " << subPieces->GetPieceType());
-		assert( false );
+		LIVE_ASSERT( false );
 		return MediaDataPiecePtr();
 	}
 	MediaDataPiecePtr piece( new MediaDataPiece( subPieces ) );
 	if ( false == piece->Init() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return MediaDataPiecePtr();
 	}
 	//if ( false == MediaPieceUtil::Verify( *piece, signer ) )
@@ -260,11 +260,11 @@ bool MediaHeaderPiece::Init()
 {
 	if ( false == InitBase() )
 		return false;
-	assert( m_subPieces.size() > 0 );
+	LIVE_ASSERT( m_subPieces.size() > 0 );
 	const SubMediaPiece& subPiece = *m_subPieces[0];
 	if ( subPiece.GetPieceType() != PPDT_MEDIA_HEADER )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	PacketInputStream is( subPiece.SubPieceData.data(), subPiece.SubPieceData.size() );
@@ -277,7 +277,7 @@ MonoMediaHeaderPiecePtr MediaHeaderPiece::ToMonoPiece() const
 	if (m_pieceInfo.PieceType != PPDT_MEDIA_HEADER)
 	{
 		VIEW_ERROR("MediaHeaderPiece::ToMonoPiece MakeHeaderPiece piece type " << m_pieceInfo.PieceType);
-		assert(false);
+		LIVE_ASSERT(false);
 		return MonoMediaHeaderPiecePtr();
 	}
 	return boost::static_pointer_cast<MonoMediaHeaderPiece>( MediaPieceUtil::MakeMonoPiece( *this ) );
@@ -291,7 +291,7 @@ MediaHeaderPiecePtr MediaHeaderPiece::FromMonoPiece( MonoMediaHeaderPiecePtr mon
 	MediaHeaderPiecePtr piece( new MediaHeaderPiece( monoPiece, MediaPieceUtil::GetBuffer() ) );
 	if ( false == piece->Init() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return MediaHeaderPiecePtr();
 	}
 	return piece;
@@ -304,13 +304,13 @@ MediaHeaderPiecePtr MediaHeaderPiece::FromSubPieces( UnfinishedMediaPiecePtr sub
 	if ( PPDT_MEDIA_HEADER != subPieces->GetPieceType() )
 	{
 		VIEW_ERROR("MediaHeaderPiece::FromSubPieces invalid piece type " << subPieces->GetPieceType());
-		assert( false );
+		LIVE_ASSERT( false );
 		return MediaHeaderPiecePtr();
 	}
 	MediaHeaderPiecePtr piece( new MediaHeaderPiece( subPieces ) );
 	if ( false == piece->Init() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return MediaHeaderPiecePtr();
 	}
 	if ( false == MediaPieceUtil::Verify( *piece, signer ) )
@@ -338,7 +338,7 @@ class UnfinishedMediaDataPieceTestCase : public ppl::util::test_case
 		vector<BYTE> key(32, 5);
 		DataSignerPtr signer( new DataSigner( key ) );
 		MediaDataPiecePtr subpiece = MediaDataPiece::FromMonoPiece( monoPiece, signer );
-		assert( subpiece->GetSubPieceCount() == 6 );
+		LIVE_ASSERT( subpiece->GetSubPieceCount() == 6 );
 
 		MediaPieceInfo pieceInfo = monoPiece->GetPieceInfo();
 		pieceInfo.PieceIndex++;
@@ -349,82 +349,82 @@ class UnfinishedMediaDataPieceTestCase : public ppl::util::test_case
 
 		UnfinishedMediaPiecePtr piecePtr( new UnfinishedMediaPiece( subpiece->GetSubPiece( 1 ) ) );
 		UnfinishedMediaPiece& piece = *piecePtr;
-		assert(!piece.IsFinished());
-		assert(piece.GetTotalCount() == 6);
-		assert(piece.GetReceivedCount() == 1);
-		assert(piece.Contains(1));
-		assert(!piece.Contains(0));
-		assert(!piece.Contains(2));
-		assert(!piece.Contains(3));
-		assert(!piece.GetSubPiece(0));
-		assert(!piece.GetSubPiece(2));
-		assert(!piece.GetSubPiece(3));
-		assert(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
-		assert( ! MediaDataPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
-		assert( ! MediaHeaderPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
+		LIVE_ASSERT(!piece.IsFinished());
+		LIVE_ASSERT(piece.GetTotalCount() == 6);
+		LIVE_ASSERT(piece.GetReceivedCount() == 1);
+		LIVE_ASSERT(piece.Contains(1));
+		LIVE_ASSERT(!piece.Contains(0));
+		LIVE_ASSERT(!piece.Contains(2));
+		LIVE_ASSERT(!piece.Contains(3));
+		LIVE_ASSERT(!piece.GetSubPiece(0));
+		LIVE_ASSERT(!piece.GetSubPiece(2));
+		LIVE_ASSERT(!piece.GetSubPiece(3));
+		LIVE_ASSERT(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
+		LIVE_ASSERT( ! MediaDataPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
+		LIVE_ASSERT( ! MediaHeaderPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
 
-		assert(piece.AddSubPiece( subpiece->GetSubPiece( 0 ) ));
-		assert(!piece.IsFinished());
-		assert(piece.GetTotalCount() == 6);
-		assert(piece.GetReceivedCount() == 2);
-		assert(piece.Contains(1));
-		assert(piece.Contains(0));
-		assert(!piece.Contains(2));
-		assert(piece.GetSubPiece(0) == subpiece->GetSubPiece( 0 ));
-		assert(!piece.GetSubPiece(2));
-		assert(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
-		assert( ! MediaDataPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
-		assert( ! MediaHeaderPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
+		LIVE_ASSERT(piece.AddSubPiece( subpiece->GetSubPiece( 0 ) ));
+		LIVE_ASSERT(!piece.IsFinished());
+		LIVE_ASSERT(piece.GetTotalCount() == 6);
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(piece.Contains(1));
+		LIVE_ASSERT(piece.Contains(0));
+		LIVE_ASSERT(!piece.Contains(2));
+		LIVE_ASSERT(piece.GetSubPiece(0) == subpiece->GetSubPiece( 0 ));
+		LIVE_ASSERT(!piece.GetSubPiece(2));
+		LIVE_ASSERT(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
+		LIVE_ASSERT( ! MediaDataPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
+		LIVE_ASSERT( ! MediaHeaderPiece::FromSubPieces( piecePtr, DataSignerPtr() ) );
 
-		assert(!piece.AddSubPiece( subpiece->GetSubPiece( 0 ) ));
-		assert(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(!piece.AddSubPiece( subpiece->GetSubPiece( 0 ) ));
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
 
-		assert(!piece.AddSubPiece(subPieceError1));
-		assert(piece.GetReceivedCount() == 2);
-		assert(!piece.AddSubPiece(subPieceError2));
-		assert(piece.GetReceivedCount() == 2);
-		assert(!piece.AddSubPiece(subPieceError3));
-		assert(piece.GetReceivedCount() == 2);
-		assert(!piece.AddSubPiece(subPieceError4));
-		assert(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(!piece.AddSubPiece(subPieceError1));
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(!piece.AddSubPiece(subPieceError2));
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(!piece.AddSubPiece(subPieceError3));
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
+		LIVE_ASSERT(!piece.AddSubPiece(subPieceError4));
+		LIVE_ASSERT(piece.GetReceivedCount() == 2);
 
-		assert(piece.AddSubPiece( subpiece->GetSubPiece( 2 ) ));
-		assert(piece.AddSubPiece( subpiece->GetSubPiece( 3 ) ));
-		assert(piece.AddSubPiece( subpiece->GetSubPiece( 4 ) ));
-		assert(piece.AddSubPiece( subpiece->GetSubPiece( 5 ) ));
-		assert(piece.IsFinished());
-		assert(piece.GetTotalCount() == 6);
-		assert(piece.GetReceivedCount() == 6);
-		assert(piece.Contains(1));
-		assert(piece.Contains(0));
-		assert(piece.Contains(2));
-		assert(piece.Contains(3));
-		assert(piece.Contains(4));
-		assert(piece.Contains(5));
-		assert(piece.GetSubPiece(0) == subpiece->GetSubPiece( 0 ));
-		assert(piece.GetSubPiece(2) == subpiece->GetSubPiece( 2 ));
-		assert(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
-		assert(piece.GetSubPiece(3) == subpiece->GetSubPiece( 3 ));
-		assert(piece.GetSubPiece(4) == subpiece->GetSubPiece( 4 ));
-		assert(piece.GetSubPiece(5) == subpiece->GetSubPiece( 5 ));
+		LIVE_ASSERT(piece.AddSubPiece( subpiece->GetSubPiece( 2 ) ));
+		LIVE_ASSERT(piece.AddSubPiece( subpiece->GetSubPiece( 3 ) ));
+		LIVE_ASSERT(piece.AddSubPiece( subpiece->GetSubPiece( 4 ) ));
+		LIVE_ASSERT(piece.AddSubPiece( subpiece->GetSubPiece( 5 ) ));
+		LIVE_ASSERT(piece.IsFinished());
+		LIVE_ASSERT(piece.GetTotalCount() == 6);
+		LIVE_ASSERT(piece.GetReceivedCount() == 6);
+		LIVE_ASSERT(piece.Contains(1));
+		LIVE_ASSERT(piece.Contains(0));
+		LIVE_ASSERT(piece.Contains(2));
+		LIVE_ASSERT(piece.Contains(3));
+		LIVE_ASSERT(piece.Contains(4));
+		LIVE_ASSERT(piece.Contains(5));
+		LIVE_ASSERT(piece.GetSubPiece(0) == subpiece->GetSubPiece( 0 ));
+		LIVE_ASSERT(piece.GetSubPiece(2) == subpiece->GetSubPiece( 2 ));
+		LIVE_ASSERT(piece.GetSubPiece(1) == subpiece->GetSubPiece( 1 ));
+		LIVE_ASSERT(piece.GetSubPiece(3) == subpiece->GetSubPiece( 3 ));
+		LIVE_ASSERT(piece.GetSubPiece(4) == subpiece->GetSubPiece( 4 ));
+		LIVE_ASSERT(piece.GetSubPiece(5) == subpiece->GetSubPiece( 5 ));
 
 		{
 			MediaDataPiecePtr dataPiece = MediaDataPiece::FromSubPieces( piecePtr, signer );
 			//MediaHeaderPiecePtr headerPiece = MediaHeaderPiece::FromSubPieces( piecePtr, signer );
-			//assert( ! headerPiece );
+			//LIVE_ASSERT( ! headerPiece );
 
-			assert(dataPiece);
-			assert(dataPiece->GetPieceIndex() == 1123);
-			assert(dataPiece->GetTimeStamp() == 234);
-			assert(dataPiece->GetHeaderPiece() == 345);
-			assert(dataPiece->GetMediaDataLength() == data_size);
+			LIVE_ASSERT(dataPiece);
+			LIVE_ASSERT(dataPiece->GetPieceIndex() == 1123);
+			LIVE_ASSERT(dataPiece->GetTimeStamp() == 234);
+			LIVE_ASSERT(dataPiece->GetHeaderPiece() == 345);
+			LIVE_ASSERT(dataPiece->GetMediaDataLength() == data_size);
 
 			MonoMediaDataPiecePtr monoDataPiece = dataPiece->ToMonoPiece();
-			assert(memcmp(monoDataPiece->GetMediaData(), data.data(), data_size) == 0);
-			assert( monoDataPiece->HeaderPiece == 345 );
-			assert( monoDataPiece->TimeStamp == 234 );
-			assert( monoDataPiece->PieceIndex == 1123 );
-			assert( monoDataPiece->GetMediaDataLength() == data_size );
+			LIVE_ASSERT(memcmp(monoDataPiece->GetMediaData(), data.data(), data_size) == 0);
+			LIVE_ASSERT( monoDataPiece->HeaderPiece == 345 );
+			LIVE_ASSERT( monoDataPiece->TimeStamp == 234 );
+			LIVE_ASSERT( monoDataPiece->PieceIndex == 1123 );
+			LIVE_ASSERT( monoDataPiece->GetMediaDataLength() == data_size );
 		}
 	}
 };
@@ -450,24 +450,24 @@ class PieceInfoTestCase : public ppl::util::test_case
 
 	void CheckPieceInfo(const PieceInfo& pieceInfo, MonoMediaDataPiecePtr piece)
 	{
-		assert(pieceInfo.GetSubPieceCount() == 6);
+		LIVE_ASSERT(pieceInfo.GetSubPieceCount() == 6);
 		for (UINT8 i = 0; i < 5; ++i)
 		{
 			SubMediaPiecePtr subPiece = pieceInfo.GetSubPiece(i);
-			assert(subPiece->SubPieceData.size() == 1024);
-			assert(subPiece->GetPieceIndex() == 1123);
-//			assert(subPiece->GetTimeStamp() == 234);
-//			assert(subPiece->GetHeaderPiece() == 345);
+			LIVE_ASSERT(subPiece->SubPieceData.size() == 1024);
+			LIVE_ASSERT(subPiece->GetPieceIndex() == 1123);
+//			LIVE_ASSERT(subPiece->GetTimeStamp() == 234);
+//			LIVE_ASSERT(subPiece->GetHeaderPiece() == 345);
 		}
 		SubMediaPiecePtr subPiece = pieceInfo.GetSubPiece(5);
-		assert(subPiece->SubPieceData.size() == 600);
-		assert(subPiece->GetPieceIndex() == 1123);
-//		assert(subPiece->GetTimeStamp() == 234);
-//		assert(subPiece->GetHeaderPiece() == 345);
-		//assert(pieceInfo.GetMonoPiece() == piece);
-		//assert(pieceInfo.GetMediaData() == piece->GetMediaData());
-		assert(pieceInfo.GetMediaDataLength() == piece->GetMediaDataLength());
-		assert(pieceInfo.GetSubPieceCount() == 6);
+		LIVE_ASSERT(subPiece->SubPieceData.size() == 600);
+		LIVE_ASSERT(subPiece->GetPieceIndex() == 1123);
+//		LIVE_ASSERT(subPiece->GetTimeStamp() == 234);
+//		LIVE_ASSERT(subPiece->GetHeaderPiece() == 345);
+		//LIVE_ASSERT(pieceInfo.GetMonoPiece() == piece);
+		//LIVE_ASSERT(pieceInfo.GetMediaData() == piece->GetMediaData());
+		LIVE_ASSERT(pieceInfo.GetMediaDataLength() == piece->GetMediaDataLength());
+		LIVE_ASSERT(pieceInfo.GetSubPieceCount() == 6);
 	}
 };
 
@@ -476,13 +476,13 @@ class PieceTestCase : public ppl::util::test_case
 	virtual void DoRun()
 	{
 		MonoMediaDataPiecePtr dataPiece(new MonoMediaDataPiece(112, 13, 14, 5, "hello"));
-		assert(dataPiece.use_count() == 1);
-		assert(dataPiece.unique());
+		LIVE_ASSERT(dataPiece.use_count() == 1);
+		LIVE_ASSERT(dataPiece.unique());
 		MonoMediaDataPiecePtr piece = dataPiece;
-		assert(dataPiece.use_count() == 2);
-		assert(!dataPiece.unique());
-		assert(piece.use_count() == 2);
-		assert(!piece.unique());
+		LIVE_ASSERT(dataPiece.use_count() == 2);
+		LIVE_ASSERT(!dataPiece.unique());
+		LIVE_ASSERT(piece.use_count() == 2);
+		LIVE_ASSERT(!piece.unique());
 	}
 };
 

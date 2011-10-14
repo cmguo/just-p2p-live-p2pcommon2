@@ -132,7 +132,7 @@ public:
 	{
 #if defined(_PPL_PLATFORM_MSWIN)
 		HRESULT hr = ::CoCreateGuid(&guid);
-		assert(S_OK == hr);
+		LIVE_ASSERT(S_OK == hr);
 #elif defined(_PPL_PLATFORM_LINUX)
 		::uuid_generate(reinterpret_cast<unsigned char*>(&guid));
 #else
@@ -165,7 +165,7 @@ inline bool FormatGUID(char* result, size_t size, const GUID& guid)
 	if (len == sizeof(GUID) * 2 + 6)
 		return true;
 	UTIL_ERROR("FormatGUID failed. len=" << len);
-	assert(!"FormatGUID failed.");
+	LIVE_ASSERT(!"FormatGUID failed.");
 	return false;
 }
 
@@ -201,7 +201,7 @@ inline bool FormatGUID(wchar_t* result, size_t size, const GUID& guid)
 	if (len == sizeof(GUID) * 2 + 6)
 		return true;
 	UTIL_ERROR("FormatGUID failed. len=" << len);
-	assert(!"FormatGUID failed.");
+	LIVE_ASSERT(!"FormatGUID failed.");
 	return false;
 }
 
@@ -215,7 +215,7 @@ inline wstring FormatWideGUID(const GUID& guid)
 
 inline bool DoParseGUID(GUID& guid, const wchar_t* guidstr)
 {
-	assert(guidstr != NULL);
+	LIVE_ASSERT(guidstr != NULL);
 	const int guid_fields = 11;
 
 	unsigned int fields0 = 0;		 
@@ -247,7 +247,7 @@ inline bool DoParseGUID(GUID& guid, const wchar_t* guidstr)
 
 inline bool DoParseGUID(GUID& guid, const char* guidstr)
 {
-	assert(guidstr != NULL);
+	LIVE_ASSERT(guidstr != NULL);
 	const int guid_fields = 11;
 
 	unsigned int fields0 = 0;		 
@@ -294,7 +294,7 @@ inline bool ParseGUID(GUID& guid, const string& guidstr)
 		str.erase(str.size() - 1, 1);
 	}
 	bool res = DoParseGUID(guid, str.c_str());
-	//assert(res);
+	//LIVE_ASSERT(res);
 	return res;
 }
 
@@ -318,7 +318,7 @@ inline bool ParseGUID(GUID& guid, const wstring& guidstr)
 		str.erase(str.size() - 1, 1);
 	}
 	bool res = DoParseGUID(guid, (const char*)str.c_str());
-	//assert(res);
+	//LIVE_ASSERT(res);
 	return res;
 }
 #endif
@@ -357,27 +357,27 @@ private:
 	void TestFunction()
 	{
 		GUID guid;
-		assert(ParseGUID(guid, m_guidstr.c_str()));
+		LIVE_ASSERT(ParseGUID(guid, m_guidstr.c_str()));
 		tstring guidstr2 = FormatGUID(guid);
 		tstring guidstrUpper = strings::upper(guidstr2);
-		assert(guidstr2 == guidstrUpper);
+		LIVE_ASSERT(guidstr2 == guidstrUpper);
 
-		assert(ParseGUID(guid, m_guidstr2.c_str()));
+		LIVE_ASSERT(ParseGUID(guid, m_guidstr2.c_str()));
 		tstring guidstr3 = FormatGUID(guid);
-		assert(guidstr3 == guidstrUpper);
+		LIVE_ASSERT(guidstr3 == guidstrUpper);
 	}
 
 	void TestClass()
 	{
 		Guid guid;
-		assert(guid.Parse(m_guidstr.c_str()));
+		LIVE_ASSERT(guid.Parse(m_guidstr.c_str()));
 		tstring guidstr2 = guid.ToString();
 		tstring guidstrUpper = strings::upper(guidstr2);
-		assert(guidstr2 == guidstrUpper);
+		LIVE_ASSERT(guidstr2 == guidstrUpper);
 
-		assert(guid.Parse(m_guidstr2.c_str()));
+		LIVE_ASSERT(guid.Parse(m_guidstr2.c_str()));
 		tstring guidstr3 = guid.ToString();
-		assert(guidstr3 == guidstrUpper);
+		LIVE_ASSERT(guidstr3 == guidstrUpper);
 	}
 };
 

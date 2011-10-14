@@ -523,7 +523,7 @@ encodeXorOnly(char* ptr)
 static char* 
 encodeAtrString(char* ptr, UInt16 type, const StunAtrString& atr)
 {
-   assert(atr.sizeValue % 4 == 0);
+   LIVE_ASSERT(atr.sizeValue % 4 == 0);
 	
    ptr = encode16(ptr, type);
    ptr = encode16(ptr, atr.sizeValue);
@@ -549,7 +549,7 @@ stunEncodeMessage( const StunMessage& msg,
                    const StunAtrString& password, 
                    bool verbose)
 {
-   assert(bufLen >= sizeof(StunMsgHdr));
+   LIVE_ASSERT(bufLen >= sizeof(StunMsgHdr));
    char* ptr = buf;
 	
    ptr = encode16(ptr, msg.msgHdr.msgType);
@@ -653,7 +653,7 @@ int
 stunRand()
 {
    // return 32 bits of random stuff
-   assert( sizeof(int) == 4 );
+   LIVE_ASSERT( sizeof(int) == 4 );
    static bool init=false;
    if ( !init )
    { 
@@ -692,7 +692,7 @@ stunRand()
    }
 	
 #ifdef WIN32
-   assert( RAND_MAX == 0x7fff );
+   LIVE_ASSERT( RAND_MAX == 0x7fff );
    int r1 = rand();
    int r2 = rand();
 	
@@ -737,7 +737,7 @@ computeHmac(char* hmac, const char* input, int length, const char* key, int size
         key, sizeKey, 
         reinterpret_cast<const unsigned char*>(input), length, 
         reinterpret_cast<unsigned char*>(hmac), &resultSize);
-   assert(resultSize == 20);
+   LIVE_ASSERT(resultSize == 20);
 }
 #endif
 
@@ -776,9 +776,9 @@ stunCreateUserName(const StunAddress4& source, StunAtrString* username)
            UInt32(source.addr),
            UInt32(stunRand()),
            UInt32(lotime));
-   assert( strlen(buffer) < 1024 );
+   LIVE_ASSERT( strlen(buffer) < 1024 );
 	
-   assert(strlen(buffer) + 41 < STUN_MAX_STRING);
+   LIVE_ASSERT(strlen(buffer) + 41 < STUN_MAX_STRING);
 	
    char hmac[20];
    char key[] = "Jason";
@@ -790,8 +790,8 @@ stunCreateUserName(const StunAddress4& source, StunAtrString* username)
    strcat(buffer,hmacHex);
 	
    int l = strlen(buffer);
-   assert( l+1 < STUN_MAX_STRING );
-   assert( l%4 == 0 );
+   LIVE_ASSERT( l+1 < STUN_MAX_STRING );
+   LIVE_ASSERT( l%4 == 0 );
    
    username->sizeValue = l;
    memcpy(username->value,buffer,l);
@@ -827,7 +827,7 @@ stunGetSystemTimeSecs()
 #else
    struct timeval now;
    gettimeofday( &now , NULL );
-   //assert( now );
+   //LIVE_ASSERT( now );
    time = now.tv_sec;
 #endif
    return time;
@@ -909,7 +909,7 @@ stunParseHostName( char* peerName,
    struct hostent* h;
 	
 #ifdef WIN32
-   assert( strlen(host) >= 1 );
+   LIVE_ASSERT( strlen(host) >= 1 );
    if ( isdigit( host[0] ) )
    {
       // assume it is a ip address 
@@ -929,7 +929,7 @@ stunParseHostName( char* peerName,
       {
          int err = getErrno();
          std::cerr << "error was " << err << std::endl;
-         assert( err != WSANOTINITIALISED );
+         LIVE_ASSERT( err != WSANOTINITIALISED );
 			
          ip = ntohl( 0x7F000001L );
 			
@@ -967,7 +967,7 @@ stunParseHostName( char* peerName,
 bool
 stunParseServerName( char* name, StunAddress4& addr)
 {
-   assert(name);
+   LIVE_ASSERT(name);
 	
    // TODO - put in DNS SRV stuff.
 	
@@ -1109,7 +1109,7 @@ stunServerProcessMsg( char* buf,
                           "1234", 4, 
                           reinterpret_cast<const unsigned char*>(buf), bufLen-20-4, 
                           hmac, &hmacSize);
-                     assert(hmacSize == 20);
+                     LIVE_ASSERT(hmacSize == 20);
 #endif
 							
                      if (memcmp(buf, hmac, 20) != 0)
@@ -1121,7 +1121,7 @@ stunServerProcessMsg( char* buf,
 							
                      // need to compute this later after message is filled in
                      resp->hasMessageIntegrity = true;
-                     assert(req.hasUsername);
+                     LIVE_ASSERT(req.hasUsername);
                      resp->hasUsername = true;
                      resp->username = req.username; // copy username in
                   }
@@ -1199,8 +1199,8 @@ stunServerProcessMsg( char* buf,
          {
             // copy username in
             resp->hasUsername = true;
-            assert( req.username.sizeValue % 4 == 0 );
-            assert( req.username.sizeValue < STUN_MAX_STRING );
+            LIVE_ASSERT( req.username.sizeValue % 4 == 0 );
+            LIVE_ASSERT( req.username.sizeValue < STUN_MAX_STRING );
             memcpy( resp->username.value, req.username.value, req.username.sizeValue );
             resp->username.sizeValue = req.username.sizeValue;
          }
@@ -1210,9 +1210,9 @@ stunServerProcessMsg( char* buf,
             resp->hasServerName = true;
             const char serverName[] = "Vovida.org " STUN_VERSION; // must pad to mult of 4
             
-            assert( sizeof(serverName) < STUN_MAX_STRING );
+            LIVE_ASSERT( sizeof(serverName) < STUN_MAX_STRING );
             //cerr << "sizeof serverName is "  << sizeof(serverName) << endl;
-            assert( sizeof(serverName)%4 == 0 );
+            LIVE_ASSERT( sizeof(serverName)%4 == 0 );
             memcpy( resp->serverName.value, serverName, sizeof(serverName));
             resp->serverName.sizeValue = sizeof(serverName);
          }
@@ -1227,7 +1227,7 @@ stunServerProcessMsg( char* buf,
          if (req.hasUsername && (req.username.sizeValue > 64 ) )
          {
             UInt32 source;
-            assert( sizeof(int) == sizeof(UInt32) );
+            LIVE_ASSERT( sizeof(int) == sizeof(UInt32) );
 					
             sscanf(req.username.value, "%x", &source);
             resp->hasReflectedFrom = true;
@@ -1245,7 +1245,7 @@ stunServerProcessMsg( char* buf,
          return false;
    }
 	
-   assert(0);
+   LIVE_ASSERT(0);
    return false;
 }
 
@@ -1253,10 +1253,10 @@ bool
 stunInitServer(StunServerInfo& info, const StunAddress4& myAddr,
                const StunAddress4& altAddr, int startMediaPort, bool verbose )
 {
-   assert( myAddr.port != 0 );
-   assert( altAddr.port!= 0 );
-   assert( myAddr.addr  != 0 );
-   //assert( altAddr.addr != 0 );
+   LIVE_ASSERT( myAddr.port != 0 );
+   LIVE_ASSERT( altAddr.port!= 0 );
+   LIVE_ASSERT( myAddr.addr  != 0 );
+   //LIVE_ASSERT( altAddr.addr != 0 );
 	
    info.myAddr = myAddr;
    info.altAddr = altAddr;
@@ -1586,8 +1586,8 @@ stunServerProcess(StunServerInfo& info, bool verbose)
 		
       if ( ok )
       {
-         assert( dest.addr != 0 );
-         assert( dest.port != 0 );
+         LIVE_ASSERT( dest.addr != 0 );
+         LIVE_ASSERT( dest.port != 0 );
 			
          Socket sendFd;
 			
@@ -1702,14 +1702,14 @@ stunBuildReqSimple( StunMessage* msg,
                     const StunAtrString& username,
                     bool changePort, bool changeIp, unsigned int id )
 {
-   assert( msg );
+   LIVE_ASSERT( msg );
    memset( msg , 0 , sizeof(*msg) );
 	
    msg->msgHdr.msgType = BindRequestMsg;
 	
    for ( int i=0; i<16; i=i+4 )
    {
-      assert(i+3<16);
+      LIVE_ASSERT(i+3<16);
       int r = stunRand();
       msg->msgHdr.id.octet[i+0]= r>>0;
       msg->msgHdr.id.octet[i+1]= r>>8;
@@ -1739,8 +1739,8 @@ stunSendTest( Socket myFd, StunAddress4& dest,
               const StunAtrString& username, const StunAtrString& password, 
               int testNum, bool verbose )
 { 
-   assert( dest.addr != 0 );
-   assert( dest.port != 0 );
+   LIVE_ASSERT( dest.addr != 0 );
+   LIVE_ASSERT( dest.port != 0 );
 	
    bool changePort=false;
    bool changeIP=false;
@@ -1767,7 +1767,7 @@ stunSendTest( Socket myFd, StunAddress4& dest,
          break;
       default:
          cerr << "Test " << testNum <<" is unkown\n";
-         assert(0);
+         LIVE_ASSERT(0);
    }
 	
    StunMessage req;
@@ -1792,7 +1792,7 @@ stunSendTest( Socket myFd, StunAddress4& dest,
    // add some delay so the packets don't get sent too quickly 
 #ifdef WIN32 // !cj! TODO - should fix this up in windows
 		 clock_t now = clock();
-		 assert( CLOCKS_PER_SEC == 1000 );
+		 LIVE_ASSERT( CLOCKS_PER_SEC == 1000 );
 		 while ( clock() <= now+10 ) { };
 #else
 		 usleep(10*1000);
@@ -1816,8 +1816,8 @@ stunGetUserNameAndPassword(  const StunAddress4& dest,
 void 
 stunTest( StunAddress4& dest, int testNum, bool verbose, StunAddress4* sAddr )
 { 
-   assert( dest.addr != 0 );
-   assert( dest.port != 0 );
+   LIVE_ASSERT( dest.addr != 0 );
+   LIVE_ASSERT( dest.port != 0 );
 	
    int port = stunRandomPort();
    UInt32 interfaceIp=0;
@@ -1887,8 +1887,8 @@ stunNatType( StunAddress4& dest,
              Socket *pSocket2
    )
 { 
-   assert( dest.addr != 0 );
-   assert( dest.port != 0 );
+   LIVE_ASSERT( dest.addr != 0 );
+   LIVE_ASSERT( dest.port != 0 );
 	
    if ( hairpin ) 
    {
@@ -1913,8 +1913,8 @@ stunNatType( StunAddress4& dest,
        return StunTypeFailure; 
    }
 
-   assert( myFd1 != INVALID_SOCKET );
-   assert( myFd2 != INVALID_SOCKET );
+   LIVE_ASSERT( myFd1 != INVALID_SOCKET );
+   LIVE_ASSERT( myFd2 != INVALID_SOCKET );
     
    bool respTestI=false;
    bool isNat=true;
@@ -2009,7 +2009,7 @@ stunNatType( StunAddress4& dest,
       else
       {
          //if (verbose) clog << "-----------------------------------------" << endl;
-         assert( err>0 );
+         LIVE_ASSERT( err>0 );
          // data is avialbe on some fd 
 			
          for ( int i=0; i<2; i++)
@@ -2254,9 +2254,9 @@ stunOpenSocket( StunAddress4& dest, StunAddress4* mapAddr,
                 int port, StunAddress4* srcAddr, 
                 bool verbose )
 {
-   assert( dest.addr != 0 );
-   assert( dest.port != 0 );
-   assert( mapAddr );
+   LIVE_ASSERT( dest.addr != 0 );
+   LIVE_ASSERT( dest.port != 0 );
+   LIVE_ASSERT( mapAddr );
    
    if ( port == 0 )
    {
@@ -2322,9 +2322,9 @@ stunOpenSocketPair( StunAddress4& dest, StunAddress4* mapAddr,
                     int port, StunAddress4* srcAddr, 
                     bool verbose )
 {
-   assert( dest.addr!= 0 );
-   assert( dest.port != 0 );
-   assert( mapAddr );
+   LIVE_ASSERT( dest.addr!= 0 );
+   LIVE_ASSERT( dest.port != 0 );
+   LIVE_ASSERT( mapAddr );
    
    const int NUM=3;
 	

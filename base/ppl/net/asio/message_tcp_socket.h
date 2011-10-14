@@ -38,7 +38,7 @@ public:
 	}
 	static void max_receiving_message_size(size_t size)
 	{
-		assert(size > 0 && size < 32 * 1024 * 1024);
+		LIVE_ASSERT(size > 0 && size < 32 * 1024 * 1024);
 		if (size > 0)
 		{
 			ref_max_receiving_message_size() = size;
@@ -47,7 +47,7 @@ public:
 
 	static void max_sending_message_size(size_t size)
 	{
-		assert(size > 0 && size < 32 * 1024 * 1024);
+		LIVE_ASSERT(size > 0 && size < 32 * 1024 * 1024);
 		if (size > 0)
 		{
 			ref_max_sending_message_size() = size;
@@ -64,7 +64,7 @@ public:
 	{
 		if (size >= ref_max_sending_message_size())
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 		byte_buffer_ptr buf(new byte_buffer(size + sizeof(UINT32)));
@@ -85,10 +85,10 @@ public:
 	{
 		if (m_head_ok)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
-		assert(m_head->size() == sizeof(UINT32));
+		LIVE_ASSERT(m_head->size() == sizeof(UINT32));
 		return receive_buffer_n(m_head);
 	}
 
@@ -112,8 +112,8 @@ protected:
 		if (m_head_ok)
 		{
 			// body received
-			assert(buf == m_body);
-			assert(m_body->size() == bytes);
+			LIVE_ASSERT(buf == m_body);
+			LIVE_ASSERT(m_body->size() == bytes);
 			reset_state();
 			// m_body和m_buffer交换，然后将m_buffer交给上层处理，m_body则可以使用新的空闲的缓冲区进行接收
 			m_body.swap(m_buffer);
@@ -122,8 +122,8 @@ protected:
 		else
 		{
 			// head received
-			assert(buf == m_head);
-			assert(m_head->size() == bytes);
+			LIVE_ASSERT(buf == m_head);
+			LIVE_ASSERT(m_head->size() == bytes);
 			UINT32 msgSize = READ_MEMORY(m_head->data(), UINT32);
 			if (msgSize > ref_max_receiving_message_size())
 			{

@@ -117,10 +117,10 @@ public:
 	{
 		if (path.empty())
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return std::make_pair( tstring(), tstring() );
 		}
-		assert( path.size() >= 1 );
+		LIVE_ASSERT( path.size() >= 1 );
 		size_t pos = path.size() - 1;
 		for ( ;; )
 		{
@@ -144,7 +144,7 @@ public:
 		{
 			return tstring_pair( tstring(), tstring() );
 		}
-		assert( path.size() >= 1 );
+		LIVE_ASSERT( path.size() >= 1 );
 		size_t pos = path.size() - 1;
 		for ( ;; )
 		{
@@ -259,7 +259,7 @@ public:
 		if (has_trailing_seperator(path))
 			return path;
 		tstring res = path + path_traits::seperator();
-		assert( has_trailing_seperator( res ) );
+		LIVE_ASSERT( has_trailing_seperator( res ) );
 		return res;
 	}
 
@@ -272,9 +272,9 @@ public:
 		// 如果整个路径只有一个sep，就是根目录了，直接返回
 		if ( path.size() == 1 )
 			return path;
-		assert ( false == path.empty() );
+		LIVE_ASSERT( false == path.empty() );
 		tstring res = path.substr(0, path.size() - 1);
-		assert( false == has_trailing_seperator( res ) );
+		LIVE_ASSERT( false == has_trailing_seperator( res ) );
 		return res;
 	}
 

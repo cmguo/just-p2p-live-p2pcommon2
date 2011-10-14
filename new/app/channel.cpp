@@ -99,8 +99,8 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 {
 	m_playing = false;
 	m_urlstr = urlstr;
-	//assert( ppl::os::file_system::directory_exists(configDir.c_str()) );
-	assert( ppl::os::file_system::directory_exists(baseDir.c_str()) );
+	//LIVE_ASSERT( ppl::os::file_system::directory_exists(configDir.c_str()) );
+	LIVE_ASSERT( ppl::os::file_system::directory_exists(baseDir.c_str()) );
 
 	LiveAppModuleCreateParam& param = m_param;
 
@@ -110,7 +110,7 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 		TRACEOUT("pplive:invalid synacast url: ");
 		TRACEOUT(urlstr.c_str());
 		TRACEOUT("\n");
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 	LiveChannelStartupInfo startupInfo;
@@ -130,7 +130,7 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 		TRACEOUT("pplive:invalid urlstr: no trackers ");
 		TRACEOUT(urlstr.c_str());
 		TRACEOUT("\n");
-		assert(false);
+		LIVE_ASSERT(false);
 		return false;
 	}
 
@@ -142,11 +142,11 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 		{
 			if ( count >= 1000 )
 			{
-				assert( false );
+				LIVE_ASSERT( false );
 				if ( false == m_udp->open(0) )
 				{
 					TRACEOUT("PPlive: Open udp socket Failed! ");
-					assert( false );
+					LIVE_ASSERT( false );
 					return false;
 				}
 				break;
@@ -168,11 +168,11 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 		{
 			if ( count >= 1000 )
 			{
-				assert( false );
+				LIVE_ASSERT( false );
 				if ( false == m_tcp->open(0) )
 				{
 					TRACEOUT("PPlive: Open tcp socket Failed! ");
-					assert( false );
+					LIVE_ASSERT( false );
 					return false;
 				}
 				break;
@@ -254,7 +254,7 @@ bool LiveChannel::Init(const tstring& urlstr, int tcpPort, int udpPort, const ts
 
 void LiveChannel::Start()
 {
-	assert(false == m_started);
+	LIVE_ASSERT(false == m_started);
 	if (false == m_started)
 	{
 		m_started = true;
@@ -394,7 +394,7 @@ std::ostream& operator<<(std::ostream& os, const TRACKERADDR& trackerAddr);
 
 void LiveChannel::AppendTrackerAddresses(vector<TRACKER_LOGIN_ADDRESS>& trackers, const TRACKERADDR* srcAddresses, UINT count, UINT maxCount)
 {
-	assert(count <= maxCount);
+	LIVE_ASSERT(count <= maxCount);
 	LIMIT_MAX(count, maxCount);
 	for (UINT i = 0; i < count; ++i)
 	{
@@ -415,7 +415,7 @@ void LiveChannel::AppendTrackerAddresses(vector<TRACKER_LOGIN_ADDRESS>& trackers
 		else
 		{
 			APP_ERROR("AppendTrackerAddress invalid address " << srcAddr);
-			assert(!"invalid tracker address or port");
+			LIVE_ASSERT(!"invalid tracker address or port");
 		}
 	}
 }
@@ -442,8 +442,8 @@ void LiveChannel::SetPlayerStatus( int pstatus )
 
 void LiveChannel::SetPlayerCallback( FUNC_CallBack callback, unsigned int channelHandle )
 {
-//	assert(callback != NULL);
-//	assert(channelHandle != 0);
+//	LIVE_ASSERT(callback != NULL);
+//	LIVE_ASSERT(channelHandle != 0);
 	m_callback = callback;
 	m_channel_handle = channelHandle;
 }

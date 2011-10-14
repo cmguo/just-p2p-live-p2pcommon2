@@ -41,7 +41,7 @@ public:
 			return "";
 		unsigned long startIP = m_dt.GetReal("start_ip");
 		unsigned long endIP = m_dt.GetReal("end_ip");
-		assert(startIP <= ip && ip <= endIP);
+		LIVE_ASSERT(startIP <= ip && ip <= endIP);
 		string province = m_dt.GetString("province");
 		string city = m_dt.GetString("city");
 		string isp = m_dt.GetString("isp");

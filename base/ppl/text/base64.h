@@ -38,7 +38,7 @@ public:
 
 	static char EncodeBit(unsigned char bit)
 	{
-		assert(bit < 16);
+		LIVE_ASSERT(bit < 16);
 		char ch;
 		if (bit < 10)
 		{

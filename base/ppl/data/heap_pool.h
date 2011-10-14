@@ -45,7 +45,7 @@ public:
 			TRACE("mempool pool_free is failed %p %p %s %d\n", res, lpbuf, filename, line);
 		}
 #endif
-		assert(res);
+		LIVE_ASSERT(res);
 	}
 
 	void clear()

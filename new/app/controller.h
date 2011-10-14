@@ -86,8 +86,8 @@ public:
 #endif
 		bool success = ppl::os::file_system::ensure_directory_exists(configDir.c_str());
 		TRACEOUT("live:config directory is %s %s %d\n", configDir.c_str(), baseDir.c_str(), success);
-		assert(success);
-		assert(ppl::os::file_system::directory_exists(baseDir.c_str()));
+		LIVE_ASSERT(success);
+		LIVE_ASSERT(ppl::os::file_system::directory_exists(baseDir.c_str()));
 
 		m_configdir = configDir;
 		m_basedir = baseDir;
@@ -142,8 +142,8 @@ public:
 		LiveChannelCollection::iterator iter = m_channels.find(channel);
 		if (iter == m_channels.end() )
 			return false;
-		assert(iter->second);
-		assert(iter->second.get() == channel);
+		LIVE_ASSERT(iter->second);
+		LIVE_ASSERT(iter->second.get() == channel);
 		TRACEOUT("Tady --> ### Begin Stop ### ");
 		iter->second->Stop();
 		TRACEOUT("Tady --> ### End Stop ### ");
@@ -160,8 +160,8 @@ public:
 		LiveChannelCollection::const_iterator iter = m_channels.find(channel);
 		if ( iter == m_channels.end() )
 			return NULL;
-		assert(iter->second);
-		assert(iter->second.get() == channel);
+		LIVE_ASSERT(iter->second);
+		LIVE_ASSERT(iter->second.get() == channel);
 		return iter->second.get();
 	}
 

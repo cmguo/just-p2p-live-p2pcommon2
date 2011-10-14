@@ -31,7 +31,7 @@ public:
 	{
 		if ( this->IsValid() )
 		{
-			assert( this->IsWindow() );
+			LIVE_ASSERT( this->IsWindow() );
 			this->Close();
 		}
 	}
@@ -55,7 +55,7 @@ public:
 
 	bool Destroy() const
 	{
-		assert( IsValidWindow() );
+		LIVE_ASSERT( IsValidWindow() );
 		return FALSE != ::DestroyWindow( m_hwnd );
 	}
 
@@ -63,7 +63,7 @@ public:
 	{
 		if ( false == this->IsValid() )
 			return true;
-		assert( this->IsWindow() );
+		LIVE_ASSERT( this->IsWindow() );
 		bool ret = ( FALSE != ::CloseWindow( m_hwnd ) );
 		this->m_hwnd = NULL;
 		return ret;
@@ -72,8 +72,8 @@ public:
 	bool Create(WNDPROC wndProc, LPCTSTR className, LPCTSTR windowCaption, HWND hwndParent = NULL, HINSTANCE hInstance = NULL)
 	{
 		HINSTANCE dllInstance = GetModuleHandle(NULL);
-		assert( NULL == m_hwnd );
-		assert( wndProc != NULL );
+		LIVE_ASSERT( NULL == m_hwnd );
+		LIVE_ASSERT( wndProc != NULL );
 
 		int iCmdShow = SW_HIDE;
 		HWND         hwnd ;
@@ -109,7 +109,7 @@ public:
 			dllInstance,      // program instance handle
 			NULL) ;         // creation parameters
 
-		assert( hwnd != NULL );
+		LIVE_ASSERT( hwnd != NULL );
 
 		if ( NULL == hwnd )
 			return false;
@@ -122,7 +122,7 @@ public:
 
 	LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		assert( IsValid() && IsWindow() );
+		LIVE_ASSERT( IsValid() && IsWindow() );
 		return ::DefWindowProc( m_hwnd, message, wParam, lParam );
 	}
 

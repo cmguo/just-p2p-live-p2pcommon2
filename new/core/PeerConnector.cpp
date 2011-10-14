@@ -72,7 +72,7 @@ bool PeerConnector::Connect(const PEER_ADDRESS& addr, const PeerConnectParam& pa
 	}
 	else
 	{	// 如果默认的话，就直接转向 IPPOOL_CONNECT_
-		assert(param.ConnectFlags == IPPOOL_CONNECT_NONE);
+		LIVE_ASSERT(param.ConnectFlags == IPPOOL_CONNECT_NONE);
 		return ConnectUDP(addr, param);
 	}
 }
@@ -95,7 +95,7 @@ bool PeerConnector::ConnectUDP(const PEER_ADDRESS& addr, const PeerConnectParam&
 	const PEER_ADDRESS& localAddr = m_NetInfo->Address;
 	if (addr.IP == localAddr.IP && addr.UdpPort == localAddr.UdpPort)
 	{
-		//assert(false);
+		//LIVE_ASSERT(false);
 		VIEW_ERROR("ConnectUDP ignore myself " << addr);
 		return false;
 	}
@@ -125,7 +125,7 @@ bool PeerConnector::ConnectTCP(const PEER_ADDRESS& addr, UINT16 realPort, const 
 	const PEER_ADDRESS& localAddr = m_NetInfo->Address;
 	if (addr.IP == localAddr.IP && addr.TcpPort == localAddr.TcpPort)
 	{
-		//assert(false);
+		//LIVE_ASSERT(false);
 		VIEW_ERROR("ConnectTCP ignore myself " << addr);
 		return false;
 	}
@@ -215,13 +215,13 @@ void PeerConnector::HandleNoDegree( data_input_stream& is, const PACKET_PEER_INF
 		{
 			targetAddr = peer.Address;
 		}
-		assert( targetAddr.IsValid() );
+		LIVE_ASSERT( targetAddr.IsValid() );
 		/*
 		if ( false == peer.OuterAddress.IsValid() )
 		{
 			// 如果OuterAddress无效（可能是还没有获取到外部ip和端口），使用内部地址代替
 			targetAddr = peer.Address;
-			assert( false );
+			LIVE_ASSERT( false );
 		}
 		else if ( peer.OuterAddress.IP == m_NetInfo->OuterAddress.IP )
 		{
@@ -232,7 +232,7 @@ void PeerConnector::HandleNoDegree( data_input_stream& is, const PACKET_PEER_INF
 		{
 			targetAddr = peer.OuterAddress;
 		}
-		assert( 0 != targetAddr.UdpPort || 0 != targetAddr.TcpPort );
+		LIVE_ASSERT( 0 != targetAddr.UdpPort || 0 != targetAddr.TcpPort );
 		*/
 		m_ipPool.AddCandidate(targetAddr, coreInfo, CANDIDATE_FROM_REDIRECT);
 		// 检查剩余度是否不足

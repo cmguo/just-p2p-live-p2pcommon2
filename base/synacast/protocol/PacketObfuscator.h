@@ -63,12 +63,12 @@ public:
 		BYTE firstByte = *data;
 		WORD checksumWord = READ_MEMORY( data + 1, WORD );
 		DWORD len = CalcPaddingLength( firstByte );
-		assert( len == 1 || len == 3 || len == 5 || len == 7 );
+		LIVE_ASSERT( len == 1 || len == 3 || len == 5 || len == 7 );
 		len += 3;
 		if ( size <= len + sizeof( UINT32 ) * 2 )
 		{
 			APP_ERROR( "unshuffle invalid 1 " << make_tuple( size, len) );
-			//assert( false );
+			//LIVE_ASSERT( false );
 			return -1;
 		}
 
@@ -91,7 +91,7 @@ public:
 			realData[1] ^= val;
 			realData[0] ^= val;
                         memcpy(data + len, realData, sizeof(realData));
-			//assert( false );
+			//LIVE_ASSERT( false );
 			return -2;
 		}
 

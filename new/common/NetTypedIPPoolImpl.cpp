@@ -36,8 +36,8 @@ class IPPoolIndexUpdating : private boost::noncopyable
 public:
 	IPPoolIndexUpdating(NetTypedIPInfoPtr ipInfo, NetTypedIPPoolImpl* ipPool) : m_ipPool(*ipPool), m_ipInfo(ipInfo)
 	{
-		assert(ipPool);
-		assert(m_ipInfo);
+		LIVE_ASSERT(ipPool);
+		LIVE_ASSERT(m_ipInfo);
 		m_ipPool.DeleteIndex(m_ipInfo);
 	}
 	~IPPoolIndexUpdating()
@@ -151,7 +151,7 @@ NetTypedIPInfoPtr NetTypedIPPoolImpl::Find(const PEER_ADDRESS& PeerAddr)
 	NetTypedPeerInfoCollection::const_iterator iter = m_peers.find(PeerAddr);
 	if (iter == m_peers.end())
 		return NetTypedIPInfoPtr();
-	assert(iter->second);
+	LIVE_ASSERT(iter->second);
 	return iter->second;
 }
 
@@ -219,7 +219,7 @@ bool NetTypedIPPoolImpl::AddCandidate(const CANDIDATE_PEER_INFO& PeerAddr, Candi
 
 void NetTypedIPPoolImpl::AddCandidate(size_t count, const CANDIDATE_PEER_INFO addrs[], CandidatePeerTypeEnum FromWhere)
 {
-	assert(count < UCHAR_MAX);
+	LIVE_ASSERT(count < UCHAR_MAX);
 	for (size_t i = 0; i < count; ++i)
 	{
 		VIEW_INFO("AddCandidate " << i << " " << addrs[i].Address 
@@ -231,7 +231,7 @@ void NetTypedIPPoolImpl::AddCandidate(size_t count, const CANDIDATE_PEER_INFO ad
 
 void NetTypedIPPoolImpl::AddExchangedPeers( size_t count, const PeerExchangeItem* peers, CandidatePeerTypeEnum FromWhere )
 {
-	assert(count < UCHAR_MAX);
+	LIVE_ASSERT(count < UCHAR_MAX);
 
 	CANDIDATE_PEER_INFO peerInfo;
 	FILL_ZERO(peerInfo);
@@ -284,7 +284,7 @@ bool NetTypedIPPoolImpl::AddEchoDetected(const CANDIDATE_PEER_INFO& info, UINT D
 	if (ipInfo->RTT > DetectedRTT || ipInfo->RTT == 0)
 	{
 		if( DetectedRTT == 0 ) DetectedRTT = 1;
-		assert( DetectedRTT > 0 );
+		LIVE_ASSERT( DetectedRTT > 0 );
 		ipInfo->RTT = DetectedRTT;
 		if( DetectedRTT < m_config.ValidDetectedRTT && 
 			(ipInfo->ConnectRank==20 || ipInfo->ConnectRank==50) )
@@ -310,7 +310,7 @@ bool NetTypedIPPoolImpl::AddDetected(const CANDIDATE_PEER_INFO& info, UINT Detec
 	IPPoolIndexUpdating indexUpdating(ipInfo, this);
 	// 加入到DetectedPool
 	if( DetectedRTT == 0 ) DetectedRTT = 1;
-	assert( DetectedRTT > 0 );
+	LIVE_ASSERT( DetectedRTT > 0 );
 	ipInfo->RTT = DetectedRTT;
 	if( DetectedRTT < m_config.ValidDetectedRTT && 
 		(ipInfo->ConnectRank==20 || ipInfo->ConnectRank==50) )
@@ -564,14 +564,14 @@ bool NetTypedIPPoolImpl::AddDisconnected(const PEER_ADDRESS& addr, UINT connecti
 
 	IPPOOL_INFO( "AddDisconnected " << addr << " " << connectionTime << " " << errcode << " " << downloadSpeed << " " << uploadSpeed << " " << ipInfo->ConnectRank << " End" );
 
-	assert(ipInfo->LastDisconnectTime > 0);
+	LIVE_ASSERT(ipInfo->LastDisconnectTime > 0);
 
 	DetectIndicator newIndicator = ipInfo->GetDetectIndicator();
-	assert(newIndicator.RTT == oldIndicator.RTT);
-	assert(newIndicator.AddressDistance == oldIndicator.AddressDistance);
-	assert(newIndicator.ContinuousDetectFailedTimes == oldIndicator.ContinuousDetectFailedTimes);
-	assert(newIndicator.LastDetectTime == oldIndicator.LastDetectTime);
-	assert(((oldIndicator < newIndicator) == false) && ((newIndicator < oldIndicator) == false));
+	LIVE_ASSERT(newIndicator.RTT == oldIndicator.RTT);
+	LIVE_ASSERT(newIndicator.AddressDistance == oldIndicator.AddressDistance);
+	LIVE_ASSERT(newIndicator.ContinuousDetectFailedTimes == oldIndicator.ContinuousDetectFailedTimes);
+	LIVE_ASSERT(newIndicator.LastDetectTime == oldIndicator.LastDetectTime);
+	LIVE_ASSERT(((oldIndicator < newIndicator) == false) && ((newIndicator < oldIndicator) == false));
 	return true;
 }
 
@@ -661,7 +661,7 @@ bool NetTypedIPPoolImpl::GetForConnect(PeerItem& addr)
 		ipInfo->LastGetForConnectTime = GetTimeCount();
 
 		const PEER_ADDRESS& peerAddr = addr.Info.Address;
-		//assert(peerAddr.IP != m_localAddress.IP || (peerAddr.TcpPort != m_localAddress.TcpPort && peerAddr.UdpPort != m_localAddress.UdpPort));
+		//LIVE_ASSERT(peerAddr.IP != m_localAddress.IP || (peerAddr.TcpPort != m_localAddress.TcpPort && peerAddr.UdpPort != m_localAddress.UdpPort));
 		(void)peerAddr;
                 VIEW_DEBUG( "IPPool::GetForConnect " << peerAddr << " " << make_tuple( addr.ConnectTimes, addr.ConnectFlags, addr.CanDetect ) );
 		return true;
@@ -693,7 +693,7 @@ bool NetTypedIPPoolImpl::IsValidAddress(const PEER_ADDRESS& addr) const
 		IPPOOL_INFO("the IP is MDS!" << addr);
 		return false;
 	}
-//	assert(addr.IP != m_localAddress.IP || (addr.TcpPort != m_localAddress.TcpPort && addr.UdpPort != m_localAddress.UdpPort));
+//	LIVE_ASSERT(addr.IP != m_localAddress.IP || (addr.TcpPort != m_localAddress.TcpPort && addr.UdpPort != m_localAddress.UdpPort));
 	return true;
 }
 
@@ -710,8 +710,8 @@ void NetTypedIPPoolImpl::UpdateIPPoolInfo()
 
 NetTypedIPInfoPtr NetTypedIPPoolImpl::GetPeerInfo(const PEER_ADDRESS& addr)
 {
-	//assert( CheckIPValid( addr.IP ) );
-	//assert( false == IsPrivateIP( addr.IP ) );
+	//LIVE_ASSERT( CheckIPValid( addr.IP ) );
+	//LIVE_ASSERT( false == IsPrivateIP( addr.IP ) );
 	NetTypedIPInfoPtr& ipInfo = m_peers[addr];
 	if (!ipInfo)
 	{
@@ -752,10 +752,10 @@ void NetTypedIPPoolImpl::OnTimer(UINT seconds)
 		<< " active_index: " << m_ActiveIndex.size()
 		<< " cannot: " << m_CannotConnectPeers.size() << " End");
 
-	assert( m_DetectIndex.size() <= m_peers.size() );
-	assert( m_ConnectIndex.size() <= m_peers.size() );
-	assert( m_ActiveIndex.size() <= m_peers.size() );
-	assert( m_HelloIndex.size() <= m_peers.size() );
+	LIVE_ASSERT( m_DetectIndex.size() <= m_peers.size() );
+	LIVE_ASSERT( m_ConnectIndex.size() <= m_peers.size() );
+	LIVE_ASSERT( m_ActiveIndex.size() <= m_peers.size() );
+	LIVE_ASSERT( m_HelloIndex.size() <= m_peers.size() );
 
 	UINT now = GetTimeCount();
 	int DeleteCount = 0;
@@ -771,7 +771,7 @@ void NetTypedIPPoolImpl::OnTimer(UINT seconds)
 		}
 		else
 		{
-			assert(1);
+			LIVE_ASSERT(1);
 		}
 		DeleteItem(ipInfo);
 		DeleteCount ++;
@@ -797,7 +797,7 @@ void NetTypedIPPoolImpl::OnTimer(UINT seconds)
 		for(NetTypedPeerInfoCollection::iterator itr = m_peers.begin(); itr != m_peers.end(); itr ++ ) 
 		{
 			NetTypedIPInfoPtr info = itr->second;
-			assert( info );
+			LIVE_ASSERT( info );
 			if( !info ) continue;
 			if( info->IsConnection )
 			{
@@ -884,7 +884,7 @@ void NetTypedIPPoolImpl::OutputDebugData(UINT seconds)
 	ppl::io::stdfile_writer fout;
 	if (!fout.open_binary(path.c_str()))
 	{
-		//	assert(false);
+		//	LIVE_ASSERT(false);
 		return;
 	}
 	time_t currentTime = time(NULL);
@@ -953,7 +953,7 @@ bool NetTypedIPPoolImpl::SaveLog( JsonWriter& writer, UINT32 detectedIP ) const
 		JsonWriter::ArrayWriterEntry arrayEntry(writer.GetStream());
 		STL_FOR_EACH_CONST(NetTypedPeerInfoCollection, m_peers, iter)
 		{
-			assert( iter->second );
+			LIVE_ASSERT( iter->second );
 			const NetTypedIPInfo& ipInfo = *(iter->second);
 			// 转换为KB
 			UINT downloadBytes = static_cast<UINT>( ipInfo.TotalDownloadBytes );
@@ -1006,7 +1006,7 @@ bool NetTypedIPPoolImpl::SaveLog( JsonWriter& writer, UINT32 detectedIP, UINT32&
 
 	STL_FOR_EACH_CONST(NetTypedPeerInfoCollection, m_peers, iter)
 	{
-		assert( iter->second );
+		LIVE_ASSERT( iter->second );
 		const NetTypedIPInfo& ipInfo = *(iter->second);
 		// 转换为KB
 		UINT downloadBytes = static_cast<UINT>( ipInfo.TotalDownloadBytes );

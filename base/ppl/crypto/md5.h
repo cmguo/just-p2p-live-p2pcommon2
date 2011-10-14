@@ -39,14 +39,14 @@ public:
 	bool AddData(const BYTE* data, size_t size)
 	{
 		HRESULT hr = m_HashAlgorithm.AddData(data, size);
-		assert(SUCCEEDED(hr));
+		LIVE_ASSERT(SUCCEEDED(hr));
 		return SUCCEEDED(hr);
 	}
 	bool GetResult(BYTE* data)
 	{
 		DWORD len = HASH_SIZE;
 		HRESULT hr = m_HashAlgorithm.GetValue(data, &len);
-		assert(SUCCEEDED(hr));
+		LIVE_ASSERT(SUCCEEDED(hr));
 		return SUCCEEDED(hr);
 	}
 

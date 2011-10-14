@@ -87,7 +87,7 @@ inline void CheckPredefinedAction(UINT8 action)
 	};
 
 	const size_t predefined_action_count = SIZEOF_ARRAY(PREDEFINED_ACTIONS);
-	assert(std::find(PREDEFINED_ACTIONS, PREDEFINED_ACTIONS + predefined_action_count, action) != PREDEFINED_ACTIONS + predefined_action_count);
+	LIVE_ASSERT(std::find(PREDEFINED_ACTIONS, PREDEFINED_ACTIONS + predefined_action_count, action) != PREDEFINED_ACTIONS + predefined_action_count);
 }
 
 
@@ -100,18 +100,18 @@ public:
 	enum { MAX_SHUFFLE_SIZE = 11 };
 	explicit PacketBuilderBase( size_t bufferSize ) : m_Size( 0 ), m_ShuffleSize( 0 )
 	{
-		assert( bufferSize <= USHRT_MAX );
+		LIVE_ASSERT( bufferSize <= USHRT_MAX );
 		this->m_Buffer.resize( bufferSize + MAX_SHUFFLE_SIZE );
 	}
 
 	const BYTE* GetData() const
 	{
-		assert( m_ShuffleSize <= MAX_SHUFFLE_SIZE );
+		LIVE_ASSERT( m_ShuffleSize <= MAX_SHUFFLE_SIZE );
 		return this->m_Buffer.data() + MAX_SHUFFLE_SIZE - m_ShuffleSize;
 	}
 	size_t GetSize() const
 	{
-		assert( m_ShuffleSize <= MAX_SHUFFLE_SIZE );
+		LIVE_ASSERT( m_ShuffleSize <= MAX_SHUFFLE_SIZE );
 		return this->m_Size + m_ShuffleSize;
 	}
 
@@ -137,7 +137,7 @@ protected:
 		std::pair<BYTE, WORD> checksum = this->CalcChecksum();
 		checksum.second ^= 0xE903;
 		size_t len = PacketObfuscator::CalcPaddingLength( checksum.first );
-		assert( len == 1 || len == 3 || len == 5 || len == 7 );
+		LIVE_ASSERT( len == 1 || len == 3 || len == 5 || len == 7 );
 		m_ShuffleSize = len + 3;
 		RandomGenerator rnd;
 		//UINT32* buf = reinterpret_cast<UINT32*>( m_Buffer.data() + 3 );
@@ -153,7 +153,7 @@ protected:
                 //UINT32 key = *(UINT32 *)(m_Buffer.data() + MAX_SHUFFLE_SIZE - m_ShuffleSize);
                 UINT32 key;
                 memcpy(&key, m_Buffer.data() + MAX_SHUFFLE_SIZE - m_ShuffleSize, sizeof(key));
-		assert( m_Size > sizeof( UINT32 ) * 2 );
+		LIVE_ASSERT( m_Size > sizeof( UINT32 ) * 2 );
 		//UINT32* dst = reinterpret_cast<UINT32*>( m_Buffer.data() + MAX_SHUFFLE_SIZE );
                 UINT32 dst[2];
                 memcpy(dst, m_Buffer.data() + MAX_SHUFFLE_SIZE, sizeof(dst));
@@ -168,7 +168,7 @@ protected:
 
 	void CheckBuffer() const
 	{
-		assert( m_Buffer.size() >= m_Size + MAX_SHUFFLE_SIZE );
+		LIVE_ASSERT( m_Buffer.size() >= m_Size + MAX_SHUFFLE_SIZE );
 	}
 
 protected:
@@ -186,7 +186,7 @@ protected:
 	}
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 
 protected:
@@ -220,9 +220,9 @@ public:
 
 	void Build(const PacketBase& body, UINT32 transactionID)
 	{
-		assert( SYNACAST_MAGIC == this->PacketHead.Magic );
-		assert( SYNACAST_VERSION == this->PacketHead.ProtocolVersion );
-		assert( PPL_P2P_LIVE2 == this->PacketHead.AppType );
+		LIVE_ASSERT( SYNACAST_MAGIC == this->PacketHead.Magic );
+		LIVE_ASSERT( SYNACAST_VERSION == this->PacketHead.ProtocolVersion );
+		LIVE_ASSERT( PPL_P2P_LIVE2 == this->PacketHead.AppType );
 
 		this->InitHead( body.GetAction(), PT_ACTION_TYPE_REQUEST, transactionID );
 		BuildPacket( body );
@@ -236,20 +236,20 @@ public:
 protected:
 	void InitHead(UINT8 action, INT8 actionType, UINT32 transactionID)
 	{
-		assert( action > 0 );
+		LIVE_ASSERT( action > 0 );
 		this->PacketHead.Action = action;
 		this->PacketHead.ActionType = actionType;
 		this->PacketHead.TransactionID = m_TransactionID->Get(transactionID);
-		assert( this->PacketHead.TransactionID != 0 );
+		LIVE_ASSERT( this->PacketHead.TransactionID != 0 );
 		CheckPredefinedAction( action );
-		assert( this->PacketHead.AppType == PPL_P2P_LIVE2 );
+		LIVE_ASSERT( this->PacketHead.AppType == PPL_P2P_LIVE2 );
 	}
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << ChannelGUID << PeerGUID;
-		assert( os.position() == OLD_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 );
+		LIVE_ASSERT( os.position() == OLD_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 );
 		BuildBody( os, body, false );
-		assert( os.position() == OLD_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + body.get_object_size() );
+		LIVE_ASSERT( os.position() == OLD_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + body.get_object_size() );
 	}
 };
 
@@ -280,12 +280,12 @@ public:
 		this->PacketHead.Action = body.GetAction();
 		this->PacketHead.TransactionID = m_TransactionID->Get(transactionID);
 
-		assert( 0 == this->PacketHead.ReservedActionType );
-		assert( SYNACAST_VERSION_REQUEST == this->PacketHead.ProtocolVersion );
-		assert( PPL_PROTOCOL_PLATFORM == this->RequestHead.Platform );
-		assert( ::GetSystemDefaultLangID() == this->RequestHead.Language );
-		assert( body.GetAction() > 0 );
-		assert( this->PacketHead.TransactionID != 0 );
+		LIVE_ASSERT( 0 == this->PacketHead.ReservedActionType );
+		LIVE_ASSERT( SYNACAST_VERSION_REQUEST == this->PacketHead.ProtocolVersion );
+		LIVE_ASSERT( PPL_PROTOCOL_PLATFORM == this->RequestHead.Platform );
+		LIVE_ASSERT( ::GetSystemDefaultLangID() == this->RequestHead.Language );
+		LIVE_ASSERT( body.GetAction() > 0 );
+		LIVE_ASSERT( this->PacketHead.TransactionID != 0 );
 		CheckPredefinedAction( body.GetAction() );
 
 		BuildPacket( body );
@@ -307,9 +307,9 @@ protected:
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << ChannelGUID << PeerGUID << RequestHead;
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + SECURE_REQUEST_HEAD::object_size );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + SECURE_REQUEST_HEAD::object_size );
 		BuildBody( os, body, true );
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + SECURE_REQUEST_HEAD::object_size + body.get_object_size() );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + SECURE_REQUEST_HEAD::object_size + body.get_object_size() );
 	}
 };
 
@@ -350,9 +350,9 @@ protected:
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << ChannelGUID << PeerGUID;
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 );
 		BuildBody( os, body, true );
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + body.get_object_size() );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + sizeof(GUID) * 2 + body.get_object_size() );
 	}
 };
 
@@ -389,9 +389,9 @@ protected:
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << PeerInfo;
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size );
 		BuildBody( os, body, true );
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size + body.get_object_size() );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size + body.get_object_size() );
 	}
 };
 
@@ -424,9 +424,9 @@ protected:
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << PeerInfo;
-		assert( os.position() == TCP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size );
+		LIVE_ASSERT( os.position() == TCP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size );
 		BuildBody( os, body, true );
-		assert( os.position() == TCP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size + body.get_object_size() );
+		LIVE_ASSERT( os.position() == TCP_PACKET_HEAD::object_size + PACKET_PEER_INFO::object_size + body.get_object_size() );
 	}
 };
 
@@ -461,9 +461,9 @@ protected:
 	virtual void DoBuildPacket( data_output_stream& os, const PacketBase& body )
 	{
 		os << PacketHead << SessionInfo;
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + UDP_SESSION_INFO::object_size );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + UDP_SESSION_INFO::object_size );
 		BuildBody( os, body, true );
-		assert( os.position() == NEW_UDP_PACKET_HEAD::object_size + UDP_SESSION_INFO::object_size + body.get_object_size() );
+		LIVE_ASSERT( os.position() == NEW_UDP_PACKET_HEAD::object_size + UDP_SESSION_INFO::object_size + body.get_object_size() );
 	}
 };
 
@@ -485,9 +485,9 @@ protected:
 	{
 		UINT8 action = GetConnectionAction( body.GetAction() );
 		os.write_uint8( action );
-		assert( os.position() == 1 );
+		LIVE_ASSERT( os.position() == 1 );
 		BuildBody( os, body, false );
-		assert( os.position() == 1 + body.get_object_size() );
+		LIVE_ASSERT( os.position() == 1 + body.get_object_size() );
 	}
 };
 

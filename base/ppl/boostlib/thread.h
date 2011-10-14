@@ -23,13 +23,13 @@ public:
 	}
 	~thread()
 	{
-		assert(false == is_alive());
+		LIVE_ASSERT(false == is_alive());
 	}
 
 	/// Æô¶¯
 	void start()
 	{
-		assert(false == is_started());
+		LIVE_ASSERT(false == is_started());
 		m_thread.reset( new boost::thread( boost::bind( &thread::do_run, this ) ) );
 	}
 
@@ -48,7 +48,7 @@ public:
 
 	bool join()
 	{
-		assert(m_thread);
+		LIVE_ASSERT(m_thread);
 		if ( !m_thread )
 			return true;
 		m_thread->join();
@@ -56,7 +56,7 @@ public:
 	}
 	bool join(UINT milliseconds)
 	{
-		assert(m_thread);
+		LIVE_ASSERT(m_thread);
 		if ( !m_thread )
 			return true;
 		return m_thread->timed_join(boost::posix_time::milliseconds(milliseconds));
@@ -113,7 +113,7 @@ public:
 
 	static void sleep( long millis )
 	{
-		assert( millis >= 0 );
+		LIVE_ASSERT( millis >= 0 );
 		static long const nanoseconds_per_millisecond = 1000L*1000L;
 		long secs = millis / 1000;
 		boost::xtime::xtime_nsec_t nsecs = ( millis % 1000 ) * nanoseconds_per_millisecond;

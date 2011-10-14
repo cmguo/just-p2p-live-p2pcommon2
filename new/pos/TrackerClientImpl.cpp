@@ -72,7 +72,7 @@ TrackerClientImpl::TrackerClientImpl()
 
 TrackerClientImpl::~TrackerClientImpl()
 {
-	assert(!IsOnline());
+	LIVE_ASSERT(!IsOnline());
 }
 
 
@@ -110,10 +110,10 @@ void TrackerClientImpl::Stop()
 void TrackerClientImpl::KeepAlive()
 {
 	TRACKER_DEBUG("KeepAlive " << m_address);
-	assert(IsUDP());
+	LIVE_ASSERT(IsUDP());
 	if (!IsUDP())
 		return;
-	assert( ( tsse_insecure == m_TrackerSecurity || tsse_secure == m_TrackerSecurity ) || false == this->IsOnline() );
+	LIVE_ASSERT( ( tsse_insecure == m_TrackerSecurity || tsse_secure == m_TrackerSecurity ) || false == this->IsOnline() );
 
 	if (m_TimeoutTimer.is_started())
 	{
@@ -173,7 +173,7 @@ void TrackerClientImpl::HandleError(INT8 errcode)
 
 void TrackerClientImpl::SaveKeepAliveInterval(UINT interval)
 {
-	assert( interval < 1000 );
+	LIVE_ASSERT( interval < 1000 );
 	TRACKER_DEBUG("Save KeepAlive interval " << interval);
 	// 将interval限制在10秒到10分钟之内
 	LIMIT_MIN_MAX(interval, 10, 600);
@@ -206,7 +206,7 @@ void TrackerClientImpl::DoLeave(const string& user, const string& pwd)
 	TRACKER_DEBUG("DoLeave " << m_address);
 	if (!IsUDP())
 		return;
-	assert( tsse_secure == m_TrackerSecurity || tsse_insecure == m_TrackerSecurity );
+	LIVE_ASSERT( tsse_secure == m_TrackerSecurity || tsse_insecure == m_TrackerSecurity );
 	if ( tsse_secure == m_TrackerSecurity )
 	{
 		PTSLeaveRequest req;
@@ -274,7 +274,7 @@ bool TrackerClientImpl::SendRequest(const PacketBase& req, bool isSecure)
 	m_Statistics->Flow.Upload.Record( size );
 	// 发送请求成功，记录Transaction信息
 	TransactionInfo info( m_PacketSender->GetTransactionID(), req.GetAction() );
-	assert( false == containers::contains( m_Transactions, info.TransactionID ) );
+	LIVE_ASSERT( false == containers::contains( m_Transactions, info.TransactionID ) );
 	m_Transactions[info.TransactionID] = info;
 	return true;
 }
@@ -321,7 +321,7 @@ bool TrackerClientImpl::DoHandleResponse( data_input_stream& is, const OLD_UDP_P
 		}
 		else
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 		return true;
 	}
@@ -387,19 +387,19 @@ bool TrackerClientImpl::DoCheckResponse( UINT8 action, UINT32 transactionID, boo
 	if ( isSecure && ( action != info.Action + 1 ) && ( action != PTS_ACTION_ERROR_RESPONSE ) )
 	{
 		TRACKER_ERROR( "TrackerClientImpl::CheckResponse invalid action " << make_tuple( action, transactionID, info.Action ) << " from " << GetServerAddress() );
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	if ( false == isSecure && ( action != info.Action ) )
 	{
 		TRACKER_ERROR( "TrackerClientImpl::CheckResponse invalid action " << make_tuple( action, transactionID, info.Action ) << " from " << GetServerAddress() );
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	if ( transactionID != info.TransactionID )
 	{
 		TRACKER_ERROR( "TrackerClientImpl::CheckResponse invalid transaction id " << make_tuple( action, transactionID, info.TransactionID ) << " from " << GetServerAddress() );
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	UINT maxTransactionTimeout = 20 * 1000;
@@ -415,13 +415,13 @@ bool TrackerClientImpl::DoCheckResponse( UINT8 action, UINT32 transactionID, boo
 
 void TrackerClientImpl::CheckExpiredResponse()
 {
-	assert( m_Transactions.size() < 100 );
+	LIVE_ASSERT( m_Transactions.size() < 100 );
 	for ( TransactionInfoCollection::iterator iter = m_Transactions.begin(); iter != m_Transactions.end();  )
 	{
 		const TransactionInfo& info = iter->second;
 		if ( info.RequestTime.elapsed() > 30 * 1000 )
 		{
-			assert( iter->first == iter->second.TransactionID );
+			LIVE_ASSERT( iter->first == iter->second.TransactionID );
 			//Tracer::Trace("erase transaction id %lu %s\n", iter->second.TransactionID, strings::format_object(m_address).c_str());
 			m_Transactions.erase( iter++ );
 		}
@@ -507,7 +507,7 @@ bool TrackerClientImpl::CheckResponse( const NEW_UDP_PACKET_HEAD& head, bool isP
 void TrackerClientImpl::SaveDHTTransactionID( UINT32 transactionID, UINT8 action )
 {
 	TransactionInfo info( transactionID, action );
-	assert( false == containers::contains( m_Transactions, info.TransactionID ) );
+	LIVE_ASSERT( false == containers::contains( m_Transactions, info.TransactionID ) );
 	m_Transactions[transactionID] = info;
 }
 
@@ -575,7 +575,7 @@ bool TrackerClientImpl::HandleSecureResponse( data_input_stream& is, const NEW_U
 		return false;
 	}
 
-	assert ( false == isPeerProxy || head.Action == PTS_ACTION_LIST_PEERS_RESPONSE );
+	LIVE_ASSERT( false == isPeerProxy || head.Action == PTS_ACTION_LIST_PEERS_RESPONSE );
 
 	SECURE_RESPONSE_HEAD respHead;
 	is >> respHead;
@@ -584,7 +584,7 @@ bool TrackerClientImpl::HandleSecureResponse( data_input_stream& is, const NEW_U
 		m_Statistics->TotalInvalid2Response++;
 		return true;
 	}
-	assert( head.ProtocolVersion >= SYNACAST_VERSION_3 );
+	LIVE_ASSERT( head.ProtocolVersion >= SYNACAST_VERSION_3 );
 
 	return DoHandleSecureResponse( is, head, respHead );
 }
@@ -648,7 +648,7 @@ void PeerTrackerClient::Logout()
 
 void PeerTrackerClient::DoJoin()
 {
-	assert(IsUDP());
+	LIVE_ASSERT(IsUDP());
 
 	if ( tsse_secure == m_TrackerSecurity || tsse_undetermined == m_TrackerSecurity )
 	{
@@ -701,7 +701,7 @@ void PeerTrackerClient::OnListSucceeded( data_input_stream& is )
 	}
 	if (resp.Peers.size() > 0 && resp.Peers[0].Address.IP == 0)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 	//	m_listener->GetIPPool().AddCandidate(resp->Count, resp->Peers);
 	if ( resp.Peers.size() > 0 )
@@ -888,7 +888,7 @@ void SourceTrackerClient::DoRegister()
 		return;
 	TRACKER_DEBUG("DoRegister " << m_address);
 	PEER_ADDRESS loginAddress = m_address.LoginAddress;
-	assert( loginAddress.IsValid() );
+	LIVE_ASSERT( loginAddress.IsValid() );
 	if ( false == loginAddress.IsValid())
 	{
 		loginAddress = m_NetInfo->Address;
@@ -909,13 +909,13 @@ void SourceTrackerClient::DoRegister()
 	SendRequest(req, false);
 	m_Statistics->Register.RequestTimes++;*/
 
-	assert(IsUDP());
+	LIVE_ASSERT(IsUDP());
 
 	if (!IsUDP())
 		return;
 
 	PEER_ADDRESS loginAddress = m_address.LoginAddress;
-	assert( loginAddress.IsValid() );
+	LIVE_ASSERT( loginAddress.IsValid() );
 	//if ( false == loginAddress.IsValid())
 	//{
 	//	loginAddress = m_NetInfo->Address;
@@ -1050,11 +1050,11 @@ bool SourceTrackerClient::DoHandleSecureResponse( data_input_stream& is, const N
 void SourceTrackerClient::DoSourceExit()
 {
 	TRACKER_DEBUG("DoSourceExit " << m_address);
-	assert(IsUDP());
-	assert(IsOnline());
+	LIVE_ASSERT(IsUDP());
+	LIVE_ASSERT(IsOnline());
 	if (!IsUDP())
 		return;
-	assert( tsse_insecure == m_TrackerSecurity || tsse_secure == m_TrackerSecurity );
+	LIVE_ASSERT( tsse_insecure == m_TrackerSecurity || tsse_secure == m_TrackerSecurity );
 
 	if ( tsse_secure == m_TrackerSecurity )
 	{

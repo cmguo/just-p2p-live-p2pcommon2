@@ -24,7 +24,7 @@ class PeerChannelImpl :  public PeerChannel, public pool_object, private boost::
 protected:
 	explicit PeerChannelImpl(PeerConnection& pc);
 
-	virtual bool HandleUDPSessionPacket(data_input_stream& is, const NEW_UDP_PACKET_HEAD& head, const UDP_SESSION_INFO& sessionInfo, const SimpleSocketAddress& sockAddr) { assert(false); return false; }
+	virtual bool HandleUDPSessionPacket(data_input_stream& is, const NEW_UDP_PACKET_HEAD& head, const UDP_SESSION_INFO& sessionInfo, const SimpleSocketAddress& sockAddr) { LIVE_ASSERT(false); return false; }
 
 	/// 什么都不做，返回true，表示一切正常
 	virtual bool OnAppTimer(UINT seconds) { return true; }

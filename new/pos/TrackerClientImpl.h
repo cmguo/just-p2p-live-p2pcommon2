@@ -67,7 +67,7 @@ public:
 	/// 获取服务器的地址
 	const TRACKER_ADDRESS& GetServerAddress() const
 	{
-		assert( 0 == m_address.ServerAddress.ReservedStatusCode );
+		LIVE_ASSERT( 0 == m_address.ServerAddress.ReservedStatusCode );
 		return m_address.ServerAddress;
 	}
 	UINT8 GetServerType() const { return GetServerAddress().Type; }

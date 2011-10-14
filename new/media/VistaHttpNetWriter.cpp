@@ -55,15 +55,15 @@ HRESULT VistaHttpMediaClient::SetPlayableRange(
 		m_IsSending = true;
 		NETWRITER_INFO("MediaClient SetPlayableRange: StartIndex=" << StartIndex << ", MinMax=" << make_tuple(MinIndex, MaxIndex));
 	}
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	return SetPlayableRangeAfterSended(HeaderIndex,MinIndex,MaxIndex);
 }
 
 /*
 size_t VistaHttpMediaClient::LocateTimeStampOffset( const BYTE * const packetBuffer, const size_t maxPacketSize )
 {
-	assert( ( packetBuffer[3] & 0x80 ) == 0 );	// no error correction
-	assert( packetBuffer[4] == 0x5D );					// payload length type OK
+	LIVE_ASSERT( ( packetBuffer[3] & 0x80 ) == 0 );	// no error correction
+	LIVE_ASSERT( packetBuffer[4] == 0x5D );					// payload length type OK
 
 	LengthType packetLengthType = (LengthType)( ( packetBuffer[3] & 0x60 ) >> 5 );
 	LengthType paddingLengthType = (LengthType)( ( packetBuffer[3] & 0x18 ) >> 3 );
@@ -90,14 +90,14 @@ bool VistaHttpMediaClient::ChanegeTimeStamps(BYTE * const packetBuffer, const si
 	size_t timeStampOffset = LocateTimeStampOffset( packetBuffer, maxPacketSize );
 	
 	DWORD* sendTime = (DWORD*)(packetBuffer + timeStampOffset);
-	assert(*sendTime >= startTimeStamp);
+	LIVE_ASSERT(*sendTime >= startTimeStamp);
 	*sendTime = *sendTime - startTimeStamp;
 	
 	size_t payloadOffset = timeStampOffset + 4 + 2;		// send time, duration
 	size_t payloadCount = 1;
 	if ( ! single )
 	{
-		assert( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
+		LIVE_ASSERT( ( packetBuffer[payloadOffset] & 0x80 ) == 0x80 );
 		payloadOffset += 1;								// multi start with payloads info, 1B
 		payloadCount = packetBuffer[payloadOffset - 1] & 0x3F;
 	}
@@ -138,7 +138,7 @@ bool VistaHttpMediaClient::ChanegeTimeStamps(BYTE * const packetBuffer, const si
 		}	
 		else
 		{
-// 			assert( false );
+// 			LIVE_ASSERT( false );
  			return false;
 		}
 
@@ -176,7 +176,7 @@ HRESULT VistaHttpMediaClient::SendPiece(MonoMediaDataPiecePtr lpDataPacket)
 		while( IndexSize < PieceSize )
 		{
 			memcpy(buffer.data(), PieceBuffer + IndexSize, m_DataUnitSize);
-			assert (m_DataUnitSize == buffer.size());
+			LIVE_ASSERT(m_DataUnitSize == buffer.size());
 			if( true == m_isFirst )
 			{
 				m_StartTimeStamp = AsfHelper::GetTimestamp(buffer.data(), m_DataUnitSize);
@@ -242,7 +242,7 @@ HRESULT VistaHttpMediaClient::SetPlayableRangeAfterSended(
 												 DWORD MinIndex,
 												 DWORD MaxIndex)
 {
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	
 	//bool SendOk = true;
 	// 发送相应的数据
@@ -253,7 +253,7 @@ HRESULT VistaHttpMediaClient::SetPlayableRangeAfterSended(
 		MonoMediaDataPiecePtr lpDataPacket = dataPiece->ToMonoPiece();
 		if ( ! lpDataPacket )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			continue;
 		}
 		UINT i = lpDataPacket->GetPieceIndex();
@@ -280,8 +280,8 @@ HRESULT VistaHttpMediaClient::SetPlayableRangeAfterSended(
 	m_WillPlayIndex = m_LastPlayIndex + 1;
 	m_NetWriter->SavePlaytoIndex(m_LastPlayIndex);
 	
-	assert( m_WillPlayIndex != m_LastPlayIndex );
-	assert( m_WillPlayIndex > m_LastPlayIndex );
+	LIVE_ASSERT( m_WillPlayIndex != m_LastPlayIndex );
+	LIVE_ASSERT( m_WillPlayIndex > m_LastPlayIndex );
 	
 	return S_OK;
 }
@@ -343,9 +343,9 @@ CVistaHttpNetWriter::CVistaHttpNetWriter( CMediaServer* lpMediaServer, MonoMedia
 // 				break;			//---------------------------------|
 // 			}					//                                 |
 // 		}						//                                 |                   
-// 		assert( i < length );	// 这说明头部不对啊                |
+// 		LIVE_ASSERT( i < length );	// 这说明头部不对啊                |
 // 		//	   <---------------------------------------------------|
-// 		assert( i > 0 );
+// 		LIVE_ASSERT( i > 0 );
 // 	}
 // 	else
 // 	{	// 还好，这说明在Source处还没有打上HTTP的头部
@@ -392,7 +392,7 @@ HRESULT CVistaHttpNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 			m_ClientHandles.erase(iter++);
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		++iter;
 	}
 
@@ -413,7 +413,7 @@ bool CVistaHttpNetWriter::ContainsClient(tcp_socket* sock)
 bool CVistaHttpNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CVistaHttpNetWriter::OnNewClient " << make_tuple(s, m_ClientHandles.size()));
-	assert( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
+	LIVE_ASSERT( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
 	VistaHttpMediaClient ClientHandle( this, s, m_DataUnitSize );
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = ClientHandle;

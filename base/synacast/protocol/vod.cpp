@@ -28,7 +28,7 @@ static inline boost::uint16_t host_to_little_endian_short(
 
 UINT16  VODPacketBuilder::CheckSum(UINT16 *pucBuffer, INT32 size) 
 {
-	assert(pucBuffer);
+	LIVE_ASSERT(pucBuffer);
 
 	unsigned long cksum=0;
 

@@ -26,14 +26,14 @@ public:
 #ifdef _DEBUG
 	static void* allocate(size_t size, const char* filename = NULL, int line = 0)
 	{
-		assert(size < 33 * 1024 * 1024);
+		LIVE_ASSERT(size < 33 * 1024 * 1024);
 		void* p = pool_malloc_impl(size, filename, line);
-		assert(p);
+		LIVE_ASSERT(p);
 		return p;
 	}
 	static void deallocate(void* p, size_t size = 0, const char* filename = NULL, int line = 0)
 	{
-		//assert(p != NULL);
+		//LIVE_ASSERT(p != NULL);
 		if (p)
 		{
 			pool_free_impl(p, filename, line);
@@ -42,14 +42,14 @@ public:
 #else
 	static void* allocate(size_t size)
 	{
-		assert(size < 33 * 1024 * 1024);
+		LIVE_ASSERT(size < 33 * 1024 * 1024);
 		void* p = pool_malloc_impl(size);
-		assert(p);
+		LIVE_ASSERT(p);
 		return p;
 	}
 	static void deallocate(void* p, size_t size = 0)
 	{
-		//assert(p != NULL);
+		//LIVE_ASSERT(p != NULL);
 		if (p)
 		{
 			pool_free_impl(p);

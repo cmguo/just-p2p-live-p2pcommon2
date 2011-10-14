@@ -49,7 +49,7 @@ TCPPeerChannel::~TCPPeerChannel()
 
 void TCPPeerChannel::on_socket_receive(tcp_socket* sender, BYTE* data, size_t size)
 {
-	assert(m_Socket.get() == sender);
+	LIVE_ASSERT(m_Socket.get() == sender);
 	m_TotalPacketCount++;
 	if (this->HandlePacket(data, size))
 	{
@@ -59,7 +59,7 @@ void TCPPeerChannel::on_socket_receive(tcp_socket* sender, BYTE* data, size_t si
 
 void TCPPeerChannel::on_socket_receive_failed(tcp_socket* sender, int errcode)
 {
-	assert(m_Socket.get() == sender);
+	LIVE_ASSERT(m_Socket.get() == sender);
 	m_Connection.OnPeerChannelError(errcode, ERROR_TYPE_NETWORK);
 }
 
@@ -87,7 +87,7 @@ bool TCPPeerChannel::HandlePacket(const BYTE* data, size_t size)
 	{
 		return m_Connection.OnPeerChannelError(PP_LEAVE_INVALID_PACKET, ERROR_TYPE_PROTOCOL);
 	}
-	assert(action != 0);
+	LIVE_ASSERT(action != 0);
 	return m_Connection.OnPeerChannelData(is, action);
 }
 
@@ -153,7 +153,7 @@ size_t UDPPeerChannel::SendPacket(const PacketBase& packet, bool bNeedRepeatMRP)
 	{
 		if (bNeedRepeatMRP == true)
 		{
-			assert(m_LastOutRequestTransactionID == m_PacketSender->GetCurTransactionID());
+			LIVE_ASSERT(m_LastOutRequestTransactionID == m_PacketSender->GetCurTransactionID());
 		}
 		m_LastOutRequestTransactionID = m_PacketSender->GetCurTransactionID();
 		m_bIsLastMRPResponseReceived = false;
@@ -169,7 +169,7 @@ size_t UDPPeerChannel::SendPacket(boost::shared_ptr<SubPieceUnitRequestPacket> p
 	UINT32 transactionID = 0;
 	UINT8 action = packet->GetAction();
 
-	assert(action == PPT_SUB_PIECE_REQUEST);
+	LIVE_ASSERT(action == PPT_SUB_PIECE_REQUEST);
 	if ( PPT_SUB_PIECE_REQUEST == m_LastRequestAction && PPT_SUB_PIECE_DATA == action )
 	{// Actually no usefull.
 		transactionID = m_LastInRequestTransactionID;

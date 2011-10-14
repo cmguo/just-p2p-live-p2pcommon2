@@ -409,7 +409,7 @@ public:
 	/// 申请使用这个信息项
 /*	void Acquire(bool isInitFromRemote, bool isVip)
 	{
-		assert(IsUnused());
+		LIVE_ASSERT(IsUnused());
 		this->State = pis_used;
 		this->IsInitFromRemote = isInitFromRemote;
 		this->ConnectionFlags = isVip;
@@ -418,7 +418,7 @@ public:
 	
 	void Acquire()
 	{
-		assert(IsUnused());
+		LIVE_ASSERT(IsUnused());
 		this->State = pis_used;
 		this->BaseConnectionFlags = 0;
 		this->ConnectionFlags = 0;
@@ -430,7 +430,7 @@ public:
 
 	void Init( bool isInitFromRemote, bool isVIP, bool isInner, bool isLAN, UINT8 connectionType, UINT8 natType, bool throughNAT )
 	{
-		assert( connectionType < 16 );
+		LIVE_ASSERT( connectionType < 16 );
 		this->BaseConnectionFlags = 0;
 		this->ConnectionFlags = 0;
 		this->ConnectionType = connectionType;
@@ -466,7 +466,7 @@ public:
 	/// 释放这个信息项
 	void Release()
 	{
-		assert(!IsUnused());
+		LIVE_ASSERT(!IsUnused());
 		this->State = pis_unused;
 		this->BaseConnectionFlags = 0;
 		this->ConnectionFlags = 0;

@@ -22,8 +22,8 @@ public:
 	explicit SubMediaPiece( const MediaPieceInfo& pieceInfo, UINT8 pieceLevel, UINT8 subPieceCount, UINT8 subPieceIndex, UINT16 dataLen, const BYTE* data )
 		: PieceInfo( pieceInfo )
 	{
-		assert( dataLen < 1500 );
-		assert( dataLen <= 1344 );
+		LIVE_ASSERT( dataLen < 1500 );
+		LIVE_ASSERT( dataLen <= 1344 );
 		SubPieceInfo.PieceLevel = pieceLevel;
 		SubPieceInfo.SubPieceCount = subPieceCount;
 		SubPieceInfo.SubPieceIndex = subPieceIndex;

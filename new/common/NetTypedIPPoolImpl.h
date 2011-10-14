@@ -122,7 +122,7 @@ inline bool operator<(const DetectIndicator& x, const DetectIndicator& y)
 //	{	// 已经探测　(不管探测成功，还是失败) 按照上一次发起 Detect时间来
 //		return x.LastDetectTime < y.LastDetectTime;
 //	}
-//	assert(0);
+//	LIVE_ASSERT(0);
 //	return true;
 	//return x.LastDetectTime < y.LastDetectTime;
 	return CompareIndicator(x.LastDetectTime, x.Key, y.LastDetectTime, y.Key);
@@ -169,7 +169,7 @@ inline bool operator<(const ConnectIndicator& x, const ConnectIndicator& y)
 	UINT ConnectRank = x.ConnectRank;
 	if( ConnectRank == 90 )
 	{	// 能够探测成功的节点
-		assert( x.RTT > 0 && y.RTT > 0);
+		LIVE_ASSERT( x.RTT > 0 && y.RTT > 0);
 		//return x.RTT < y.RTT;
 		return CompareIndicator(x.RTT, x.Key, y.RTT, y.Key);
 	}
@@ -188,7 +188,7 @@ inline bool operator<(const ConnectIndicator& x, const ConnectIndicator& y)
 		//return x.LastConnectTime < y.LastConnectTime;
 		return CompareIndicator(x.LastConnectTime, x.Key, y.LastConnectTime, y.Key);
 	}
-	assert(0);
+	LIVE_ASSERT(0);
 	//return true;
 	return x.Key < y.Key;
 }

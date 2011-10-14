@@ -33,7 +33,7 @@ public:
 
 	//virtual bool Parse(const BYTE* data, size_t size)
 	//{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 	//	return false;
 	//}
 
@@ -53,7 +53,7 @@ public:
 	{
 		PacketOutputStream os(buffer, capacity);
 		this->Write(os);
-		assert(os.position() == get_object_size());
+		LIVE_ASSERT(os.position() == get_object_size());
 	}
 
 	/// 从内存缓冲区解析报文
@@ -63,7 +63,7 @@ public:
 		bool res = this->read_object( in );
 		if ( res )
 		{
-			assert( in.position() == get_object_size() );
+			LIVE_ASSERT( in.position() == get_object_size() );
 		}
 		return res;
 	}
@@ -75,27 +75,27 @@ public:
 
 	virtual bool read_object( data_input_stream& is )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 
 	/// 将对象数据输出到流
 	virtual void write_object( data_output_stream& os ) const
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 
 	/// 获取对象大小
 	virtual size_t get_object_size() const
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return 0;
 	}
 
 protected:
 	void SetAction(UINT8 action)
 	{
-		assert(action > 0);
+		LIVE_ASSERT(action > 0);
 		m_action = action;
 	}
 

@@ -11,9 +11,9 @@
 
 inline void CheckSocketAddressValid(UINT32 ip, UINT16 port)
 {
-	assert(ip != 0 && ip != INADDR_NONE && ip != INADDR_ANY);
-	assert(port != 0);
-	//assert( CheckIPValid( ip ) );
+	LIVE_ASSERT(ip != 0 && ip != INADDR_NONE && ip != INADDR_ANY);
+	LIVE_ASSERT(port != 0);
+	//LIVE_ASSERT( CheckIPValid( ip ) );
 }
 
 inline void CheckSocketAddressValid(const InetSocketAddress& sockAddr)
@@ -67,7 +67,7 @@ size_t TrackerPacketSender::Send(const PacketBase& body, const InetSocketAddress
 		size = m_Builder->GetSize();
 	}
 
-	assert( data != NULL && size > 0 && FALSE == ::IsBadReadPtr(data, size) );
+	LIVE_ASSERT( data != NULL && size > 0 && FALSE == ::IsBadReadPtr(data, size) );
 
 	if (proxyType == PROXY_UDP)
 	{
@@ -85,7 +85,7 @@ size_t TrackerPacketSender::Send(const PacketBase& body, const InetSocketAddress
 	{
 		res = false;
 		APP_ERROR("Unsupported proxy type. " << proxyType << " to " << sockAddr << " with " << make_buffer_pair(data, size));
-		assert(!"Unsupported proxy type.");
+		LIVE_ASSERT(!"Unsupported proxy type.");
 	}
 
 	if (res)
@@ -102,12 +102,12 @@ size_t TrackerPacketSender::Send(const PacketBase& body, const InetSocketAddress
 size_t UDPConnectionPacketSender::Send( const PacketBase& body, UINT32 transactionID, UINT32 sequenceID, UINT32 sessionKey, const SimpleSocketAddress& sockAddr )
 {
 	CheckSocketAddressValid(sockAddr);
-	assert( sessionKey != 0 );
+	LIVE_ASSERT( sessionKey != 0 );
 	m_Builder->Build( body, transactionID, sequenceID, sessionKey );
 	size_t size = m_Builder->GetSize();
-	assert( size > 3 );
+	LIVE_ASSERT( size > 3 );
 	const BYTE* data = m_Builder->GetData();
-	assert( data[0] != 0xE9 || data[1] != 0x03 );
+	LIVE_ASSERT( data[0] != 0xE9 || data[1] != 0x03 );
 	if ( m_Sender->Send( m_Builder->GetData(), size, sockAddr.ToInetSocketAddress() ) )
 	{
 		m_Flow->Record((UINT)size);
@@ -146,9 +146,9 @@ size_t UDPConnectionlessPacketSender::Send( const PacketBase& body, UINT32 trans
 
 	m_Builder->Build( body, transactionID );
 	size_t size = m_Builder->GetSize();
-	assert( size > 3 );
+	LIVE_ASSERT( size > 3 );
 	const BYTE* data = m_Builder->GetData();
-	assert( data[0] != 0xE9 || data[1] != 0x03 );
+	LIVE_ASSERT( data[0] != 0xE9 || data[1] != 0x03 );
 	if ( m_Sender->Send( m_Builder->GetData(), size, sockAddr.ToInetSocketAddress() ) )
 	{
 		m_Flow->Record( (UINT)size );
@@ -198,10 +198,10 @@ size_t TCPConnectionlessPacketSender::Send( const PacketBase& body, tcp_socket_p
 
 	m_Builder->Build( body );
 	size_t size = m_Builder->GetSize();
-	assert( size > 0 );
-	assert( size > 3 );
+	LIVE_ASSERT( size > 0 );
+	LIVE_ASSERT( size > 3 );
 	const BYTE* data = m_Builder->GetData();
-	assert( data[0] != 0xE9 || data[1] != 0x03 );
+	LIVE_ASSERT( data[0] != 0xE9 || data[1] != 0x03 );
 	if ( sock->send( m_Builder->GetData(), size ) )
 	{
 		m_Flow->Record( (UINT)size );
@@ -232,7 +232,7 @@ size_t TCPConnectionPacketSender::Send( const PacketBase& body, tcp_socket_ptr s
 {
 	m_Builder->Build( body );
 	size_t size = m_Builder->GetSize();
-	assert( size > 0 );
+	LIVE_ASSERT( size > 0 );
 	if ( sock->send( m_Builder->GetData(), size ) )
 	{
 		m_Flow->Record( (UINT)size );

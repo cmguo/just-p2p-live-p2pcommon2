@@ -216,7 +216,7 @@ public:
 
 	virtual void SetDownloader(Downloader* downloader)
 	{
-		assert(downloader != NULL);
+		LIVE_ASSERT(downloader != NULL);
 		m_downloader = downloader;
 	}
 	virtual BitMap BuildTotalBitmap() const;

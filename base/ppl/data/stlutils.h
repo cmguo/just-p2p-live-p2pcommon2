@@ -13,7 +13,7 @@
 template <typename T>
 inline void delete_element(T* p)
 {
-	assert(p != NULL);
+	LIVE_ASSERT(p != NULL);
 	boost::checked_delete(p);
 }
 
@@ -161,7 +161,7 @@ public:
 	template <typename ContainerT>
 	static typename ContainerT::value_type pop(ContainerT& container)
 	{
-		assert(false == container.empty());
+		LIVE_ASSERT(false == container.empty());
 		typename ContainerT::value_type val = container.top();
 		container.pop();
 		return val;
@@ -170,7 +170,7 @@ public:
 	template <typename ContainerT>
 	static typename ContainerT::value_type pop_front(ContainerT& container)
 	{
-		assert(false == container.empty());
+		LIVE_ASSERT(false == container.empty());
 		typename ContainerT::value_type val = container.front();
 		container.pop_front();
 		return val;
@@ -287,7 +287,7 @@ public:
 		if (coll.empty())
 			return false;
 		typename collection_type::iterator iter = coll.begin();
-		assert(iter != coll.end());
+		LIVE_ASSERT(iter != coll.end());
 		val = iter->second;
 		coll.erase(iter);
 		return true;
@@ -304,20 +304,20 @@ public:
 			if (!coll.empty())
 			{
 				--lowerBound;
-				assert(coll.key_comp()(lowerBound->first, key));
+				LIVE_ASSERT(coll.key_comp()(lowerBound->first, key));
 			}
 		}
 		else
 		{
 			if (lowerBound->first != key)
 			{
-				assert(coll.key_comp()(key, lowerBound->first));
+				LIVE_ASSERT(coll.key_comp()(key, lowerBound->first));
 				if (lowerBound == coll.begin())
 					lowerBound = coll.end();
 				else
 				{
 					--lowerBound;
-					assert(coll.key_comp()(lowerBound->first, key));
+					LIVE_ASSERT(coll.key_comp()(lowerBound->first, key));
 				}
 			}
 		}
@@ -337,7 +337,7 @@ public:
 		if (coll.empty())
 			return false;
 		typename collection_type::iterator iter = coll.begin();
-		assert(iter != coll.end());
+		LIVE_ASSERT(iter != coll.end());
 		key = *iter;
 		coll.erase(iter);
 		return true;
@@ -370,7 +370,7 @@ public:
 	template <typename ContainerT>
 	static size_t count_range(const ContainerT& coll, const typename ContainerT::key_type& rangeMin, const typename ContainerT::key_type& rangeMax)
 	{
-		assert(!coll.key_comp()(rangeMax, rangeMin)); // rangeMin<=rangeMax，也就是!(rangeMax<rangeMin)
+		LIVE_ASSERT(!coll.key_comp()(rangeMax, rangeMin)); // rangeMin<=rangeMax，也就是!(rangeMax<rangeMin)
 		return std::distance(coll.lower_bound(rangeMin), coll.upper_bound(rangeMax));
 	}
 
@@ -404,7 +404,7 @@ public:
 	template <typename KeyT, typename TypeT, typename PredT, typename AllocatorT>
 	static size_t count_range(const std::map<KeyT, TypeT, PredT, AllocatorT>& cont, const KeyT& rangeMin, const KeyT& rangeMax)
 	{
-		assert(!cont.key_comp()(rangeMax, rangeMin)); // rangeMin<=rangeMax，也就是!(rangeMax<rangeMin)
+		LIVE_ASSERT(!cont.key_comp()(rangeMax, rangeMin)); // rangeMin<=rangeMax，也就是!(rangeMax<rangeMin)
 		return std::distance(cont.lower_bound(rangeMin), cont.upper_bound(rangeMax));
 	}
 
@@ -464,7 +464,7 @@ public:
 	template <typename KeyT, typename ValueT, typename PredT, typename AllocatorT>
 	static void pop(std::map<KeyT, ValueT, PredT, AllocatorT>& coll)
 	{
-		assert(!coll.empty());
+		LIVE_ASSERT(!coll.empty());
 		coll.erase(coll.begin());
 	}
 
@@ -500,7 +500,7 @@ public:
 		if (coll.empty())
 			return false;
 		typename collection_type::iterator iter = coll.begin();
-		assert(iter != coll.end());
+		LIVE_ASSERT(iter != coll.end());
 		val = iter->second;
 		coll.erase(iter);
 		return true;

@@ -9,7 +9,7 @@
 
 RateMeasure::RateMeasure(size_t maxUnits) : m_CurrentUnit(0)//, m_Rate(0), m_RecentTotal(0), m_Total(0), m_MaxRate( 0 ), m_TotalPackets( 0 )
 {
-	assert(maxUnits >= DEFAULT_UNITS && maxUnits < 60 * 60);
+	LIVE_ASSERT(maxUnits >= DEFAULT_UNITS && maxUnits < 60 * 60);
 	m_Units.resize(maxUnits + 1);
 }
 
@@ -37,7 +37,7 @@ UINT RateMeasure::GetAveragePacketRate() const
 /*
 void RateMeasure::Update(UINT amount)
 {
-	assert(m_CurrentUnit < m_Units.size());
+	LIVE_ASSERT(m_CurrentUnit < m_Units.size());
 	m_Total.Record(amount);
 	m_Units[m_CurrentUnit].Record(amount);
 
@@ -48,11 +48,11 @@ void RateMeasure::Update(UINT amount)
 
 void RateMeasure::Update()
 {
-	assert(m_CurrentUnit < m_Units.size());
+	LIVE_ASSERT(m_CurrentUnit < m_Units.size());
 
 #ifdef _DEBUG
 	MeasureUnit sum;
-	assert( std::accumulate( m_Units.begin(), m_Units.end(), sum ) == m_RecentTotal + m_Units[m_CurrentUnit]);
+	LIVE_ASSERT( std::accumulate( m_Units.begin(), m_Units.end(), sum ) == m_RecentTotal + m_Units[m_CurrentUnit]);
 #endif
 
 	size_t lastUnit = m_CurrentUnit;
@@ -60,12 +60,12 @@ void RateMeasure::Update()
 	if (m_CurrentUnit >= m_Units.size())
 		m_CurrentUnit = 0;
 
-	assert(m_RecentTotal.Bytes >= m_Units[m_CurrentUnit].Bytes);
-	assert(m_RecentTotal.Packets >= m_Units[m_CurrentUnit].Packets);
+	LIVE_ASSERT(m_RecentTotal.Bytes >= m_Units[m_CurrentUnit].Bytes);
+	LIVE_ASSERT(m_RecentTotal.Packets >= m_Units[m_CurrentUnit].Packets);
 	m_RecentTotal += m_Units[lastUnit];
 	m_RecentTotal -= m_Units[m_CurrentUnit];
 	m_Units[m_CurrentUnit].Clear();
-	assert( m_Units.size() > 1 );
+	LIVE_ASSERT( m_Units.size() > 1 );
 	m_Rate = m_RecentTotal / ( m_Units.size() - 1 );
 //#pragma message("------ RateMeasure modification")
 	//m_Rate = m_RecentTotal / m_Units.size();
@@ -76,9 +76,9 @@ void RateMeasure::Update()
 
 void RateMeasure::SyncTo( RATE_COUNTER& dst ) const
 {
-	assert( sizeof( RATE_COUNTER ) == dst.StructSize );
-	assert( sizeof( SINGLE_RATE_COUNTER ) == dst.Bytes.StructSize );
-	assert( sizeof( SINGLE_RATE_COUNTER ) == dst.Packets.StructSize );
+	LIVE_ASSERT( sizeof( RATE_COUNTER ) == dst.StructSize );
+	LIVE_ASSERT( sizeof( SINGLE_RATE_COUNTER ) == dst.Bytes.StructSize );
+	LIVE_ASSERT( sizeof( SINGLE_RATE_COUNTER ) == dst.Packets.StructSize );
 
 	dst.Bytes.Total = m_Total.Bytes;
 	dst.Bytes.Rate = m_Rate.Bytes;

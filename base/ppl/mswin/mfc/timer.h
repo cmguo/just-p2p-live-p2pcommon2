@@ -38,9 +38,9 @@ protected:
 	UINT GetTimerID() const { return m_timerID; }
 	void Attach(UINT id)
 	{
-//		assert(!IsStarted());
+//		LIVE_ASSERT(!IsStarted());
 		m_timerID = id;
-//		assert(IsStarted());
+//		LIVE_ASSERT(IsStarted());
 	}
 	virtual void OnElapsed();
 

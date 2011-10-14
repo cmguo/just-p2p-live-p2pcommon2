@@ -13,7 +13,7 @@ public:
 	static const size_t HASH_SIZE = 20;
 	bool HashData(const BYTE* btKey, DWORD dwKenLen, const BYTE* btIn, DWORD dwInLen, BYTE* btOut)
 	{
-		assert(dwKenLen <= 64);
+		LIVE_ASSERT(dwKenLen <= 64);
 		if ( dwKenLen > 64 )
 			return false;
 

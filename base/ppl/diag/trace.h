@@ -22,7 +22,7 @@ public:
 #ifdef _PPL_PLATFORM_MSWIN
 	static void Output(const wchar_t* str)
 	{
-		assert(str != NULL);
+		LIVE_ASSERT(str != NULL);
 		::OutputDebugStringW(str);
 	}
 
@@ -38,7 +38,7 @@ public:
 		nBuf = _vsnwprintf(szBuffer, max_size, formatString, args);
 
 		// was there an error? was the expanded string too long?
-		assert(nBuf >= 0);
+		LIVE_ASSERT(nBuf >= 0);
 
 		Output(szBuffer);
 
@@ -47,14 +47,14 @@ public:
 
 	static void Output(const char* str)
 	{
-		assert(str != NULL);
+		LIVE_ASSERT(str != NULL);
 		::OutputDebugStringA(str);
 	}
 
 #else
         static void Output(const char* str)
         {
-                assert(str != NULL);
+                LIVE_ASSERT(str != NULL);
                 printf("%s", str);
         }
 
@@ -72,7 +72,7 @@ public:
 		nBuf = vsnprintf(szBuffer, max_size, formatString, args);
 
 		// was there an error? was the expanded string too long?
-		assert(nBuf >= 0);
+		LIVE_ASSERT(nBuf >= 0);
 
 		Output(szBuffer);
 

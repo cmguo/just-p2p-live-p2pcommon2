@@ -82,12 +82,12 @@ public:
 	{
 		if ( cmd.empty() )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 		if ( "exit" == cmd )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 		m_callbacks[cmd] = callback;
@@ -97,12 +97,12 @@ public:
 	{
 		if ( cmd.empty() )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 		if ( "exit" == cmd )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			return false;
 		}
 		m_callbacks.erase(cmd);

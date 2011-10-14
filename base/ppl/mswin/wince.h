@@ -18,13 +18,13 @@ namespace std {
 /*
 inline RPC_STATUS WINAPI UuidFromStringA(unsigned char* str, UUID* uuid)
 {
-	assert(!"not implemented");
+	LIVE_ASSERT(!"not implemented");
 	return RPC_S_ACCESS_DENIED;
 }
 
 inline RPC_STATUS RPC_ENTRY UuidFromStringW(unsigned short* str, UUID* uuid)
 {
-	assert(!"not implemented");
+	LIVE_ASSERT(!"not implemented");
 	return RPC_S_ACCESS_DENIED;
 }
 

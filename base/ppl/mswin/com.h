@@ -17,7 +17,7 @@ public:
 	ComInitializer()
 	{
 		HRESULT hr = ::CoInitialize(NULL);
-		assert(hr == S_OK);
+		LIVE_ASSERT(hr == S_OK);
 	}
 	~ComInitializer()
 	{

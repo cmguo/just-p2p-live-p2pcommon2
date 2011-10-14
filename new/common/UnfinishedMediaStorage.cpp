@@ -71,9 +71,9 @@ size_t UnfinishedSubPieceStorage::GetInterested(UINT pieceIndex, std::vector<UIN
 			interestedSubPieceIndexes.push_back(i);
 		}
 	}
-	assert(!interestedSubPieceIndexes.empty());
-	assert(interestedSubPieceIndexes.size() + subPieceInfo->GetReceivedCount() == subPieceInfo->GetTotalCount());
-	assert(subPieceInfo->GetTotalCount() > 0);
+	LIVE_ASSERT(!interestedSubPieceIndexes.empty());
+	LIVE_ASSERT(interestedSubPieceIndexes.size() + subPieceInfo->GetReceivedCount() == subPieceInfo->GetTotalCount());
+	LIVE_ASSERT(subPieceInfo->GetTotalCount() > 0);
 	return subPieceInfo->GetTotalCount();
 }
 
@@ -93,8 +93,8 @@ bool UnfinishedSubPieceStorage::HasSubPiece(UINT pieceIndex, UINT8 subPieceIndex
 UnfinishedMediaPiecePtr UnfinishedSubPieceStorage::AddSubPiece(SubMediaPiecePtr subPiece)
 {
 	//VIEW_INFO("Storage::AddSubPiece ");
-	assert(subPiece->GetSubPieceCount() < 64);
-	assert(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
+	LIVE_ASSERT(subPiece->GetSubPieceCount() < 64);
+	LIVE_ASSERT(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
 	UnfinishedMediaPiecePtr piece;
 	UINT pieceIndex = subPiece->GetPieceIndex();
 	UINT8 subPieceIndex = subPiece->GetSubPieceIndex();
@@ -150,7 +150,7 @@ void UnfinishedSubPieceStorage::View() const
 		STL_FOR_EACH_CONST( SubPieceCollection, subPieces, subPieceIter )
 		{
 			SubMediaPiecePtr subPiece = subPieceIter->second;
-			assert( pieceIndex == subPiece->GetPieceIndex() );
+			LIVE_ASSERT( pieceIndex == subPiece->GetPieceIndex() );
 			oss << subPiece->GetSubPieceIndex() << "/" << subPiece->GetSubPieceCount() << ", ";
 		}
 		oss << "]";

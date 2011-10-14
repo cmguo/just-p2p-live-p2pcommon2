@@ -49,14 +49,14 @@ public:
 	/// 从指定的缓冲区构造
 	Bitfield(size_t size, const BYTE* data) : m_bits(new pool_byte_string(data, size)), m_size(size * 8)
 	{
-		assert(size < USHRT_MAX);
-		assert(size == 0 || data != NULL);
+		LIVE_ASSERT(size < USHRT_MAX);
+		LIVE_ASSERT(size == 0 || data != NULL);
 		CheckSize();
 	}
 	/// 构造指定长度的位域
 	explicit Bitfield(size_t size, unsigned char initialValue = 0) : m_bits(new pool_byte_string(CalcRoundQuotient8(size), initialValue)), m_size(size)
 	{
-		assert(size < USHRT_MAX);
+		LIVE_ASSERT(size < USHRT_MAX);
 		CheckSize();
 	}
 	explicit Bitfield(pool_byte_string_ptr data) : m_bits(data), m_size(data->size() * 8)
@@ -138,11 +138,11 @@ protected:
 
 	void CheckSize() const
 	{
-		assert(m_bits->size() < USHRT_MAX);
-		assert(m_size < USHRT_MAX * 8);
+		LIVE_ASSERT(m_bits->size() < USHRT_MAX);
+		LIVE_ASSERT(m_size < USHRT_MAX * 8);
 		size_t capacity = (m_bits->size() * 8);
-		assert(m_size <= capacity);
-		assert(CalcRound8(m_size) == capacity);
+		LIVE_ASSERT(m_size <= capacity);
+		LIVE_ASSERT(CalcRound8(m_size) == capacity);
 	}
 
 private:
@@ -158,11 +158,11 @@ inline bool Bitfield::GetBit(size_t index) const
 {
 	if (!IsInRange(index))
 	{
-		//assert(!"Bitfield::GetBit: index is out of range.");
+		//LIVE_ASSERT(!"Bitfield::GetBit: index is out of range.");
 		return false;
 	}
 	size_t pos = GetByteIndex(index);
-	assert(pos < m_bits->size());
+	LIVE_ASSERT(pos < m_bits->size());
 	BYTE mask = (BYTE)GetByteMask(index);
 	BYTE bit = (*m_bits)[pos];
 	return 0 != (bit & mask);
@@ -195,7 +195,7 @@ public:
 	{
 		if (!IsInRange(index))
 		{
-			//assert(false);
+			//LIVE_ASSERT(false);
 			return false;
 		}
 		return m_bits.GetBit(index - m_minIndex);
@@ -206,7 +206,7 @@ public:
 	{
 		if (!IsInRange(index))
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return;
 		}
 		m_bits.SetBit(index - m_minIndex, val);

@@ -36,7 +36,7 @@ HRESULT MmshMediaClient::SetPlayableRange(
 		m_IsSending = true;
 		NETWRITER_INFO("MediaClient SetPlayableRange: StartIndex=" << StartIndex << ", MinMax=" << make_tuple(MinIndex, MaxIndex));
 	}
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	return SetPlayableRangeAfterSended(HeaderIndex,MinIndex,MaxIndex);
 }
 
@@ -90,7 +90,7 @@ HRESULT CMmshNetWriter::SetPlayableRange(DWORD MinIndex,DWORD MaxIndex)
 			m_ClientHandles.erase(iter++);
 			continue;
 		}
-		assert( hr == S_OK || hr == E_LOCATION_ERROR );
+		LIVE_ASSERT( hr == S_OK || hr == E_LOCATION_ERROR );
 		++iter;
 	}
 
@@ -111,12 +111,12 @@ bool CMmshNetWriter::OnClientReceive(tcp_socket_ptr s, const BYTE* data, size_t 
 	// 检查 m_ClientHandles 是否有此套接字，如果有此套接字，则退出
 	if( ContainsClient(s.get()) )
 	{
-		assert( 0 );
+		LIVE_ASSERT( 0 );
 		NETWRITER_ERROR( "CNetWriter::ContainsClient has this SOCKET "<<*s );
 		return true;
 	}
 	
-	assert( m_lpMediaHead->GetMediaType() == PPMT_MEDIA_ASF_MMSH );
+	LIVE_ASSERT( m_lpMediaHead->GetMediaType() == PPMT_MEDIA_ASF_MMSH );
 	// 发送Media的头部
 	const BYTE *buffer = m_lpMediaHead->GetHeader();
 	int length = m_lpMediaHead->GetHeaderLength();
@@ -147,7 +147,7 @@ bool CMmshNetWriter::ContainsClient(tcp_socket* sock)
 bool CMmshNetWriter::OnNewClient(tcp_socket_ptr s)
 {
 	NETWRITER_EVENT("CMmshNetWriter::OnNewClient " << make_tuple(s, m_ClientHandles.size()));
-	assert( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
+	LIVE_ASSERT( m_ClientHandles.find(s.get()) == m_ClientHandles.end() );
 	MmshMediaClient ClientHandle( this, s );
 	// 将这个SOCKET挂接到 m_ClientHandles
 	m_ClientHandles[s.get()] = ClientHandle;

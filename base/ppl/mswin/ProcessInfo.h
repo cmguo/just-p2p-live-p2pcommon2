@@ -21,9 +21,9 @@ typedef struct
 inline BOOL GetProcessCmdLine(HANDLE hProcess, LPWSTR szCmdLine, DWORD Size)
 {
 // sanity checks
-   assert(hProcess != NULL);
-   assert(szCmdLine != NULL);
-   assert(Size > 0);
+   LIVE_ASSERT(hProcess != NULL);
+   LIVE_ASSERT(szCmdLine != NULL);
+   LIVE_ASSERT(Size > 0);
    if ((hProcess == NULL) || (szCmdLine == NULL) || (Size == 0))
       return(FALSE);
 

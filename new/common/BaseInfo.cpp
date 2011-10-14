@@ -63,7 +63,7 @@ void PeerNetInfo::Load( const u_long ipArray[], size_t size )
 {
 	if ( size > 0 )
 	{
-		assert( size <= 15 );
+		LIVE_ASSERT( size <= 15 );
 		LIMIT_MAX( size, 15 );
 		this->m_LocalIPArray.clear();
 		this->m_LocalAddressArray.clear();
@@ -79,7 +79,7 @@ void PeerNetInfo::Load( const u_long ipArray[], size_t size )
 		}
 		if ( this->m_LocalIPArray.empty() )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 			this->m_LocalIPArray.push_back( ipArray[0] );
 			this->AddAddress( ipArray[0] );
 		}
@@ -90,21 +90,21 @@ void PeerNetInfo::Load( const u_long ipArray[], size_t size )
 			this->SaveOuterIP( ip );
 			this->m_OuterAddress.TcpPort = this->Address.TcpPort;
 			this->m_OuterAddress.UdpPort = this->Address.UdpPort;
-			assert( this->m_OuterAddress.IsFullyValid() );
+			LIVE_ASSERT( this->m_OuterAddress.IsFullyValid() );
 			this->Address.IP = ip;
 		}
 		else
 		{
 			this->Address.IP = ipArray[0];
 		}
-		assert(this->m_HasExternalIP == (this->m_OuterAddress.IP != 0));
+		LIVE_ASSERT(this->m_HasExternalIP == (this->m_OuterAddress.IP != 0));
 		VIEW_DEBUG("LoadIPArray HasExternalIP = " << (this->m_HasExternalIP ? "true" : "false"));
 	}
 	else
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
-	assert( this->Address.IsFullyValid() );
+	LIVE_ASSERT( this->Address.IsFullyValid() );
 	this->CheckPeerNetType();
 }
 
@@ -145,7 +145,7 @@ std::vector<UINT32> PeerNetInfo::GetIPArray() const
 
 std::vector<PEER_ADDRESS> PeerNetInfo::GetLocalAddresses() const
 {
-	assert(m_LocalAddressArray.size() <= 15);
+	LIVE_ASSERT(m_LocalAddressArray.size() <= 15);
 	if ( this->IsUPNPEnabled() && this->m_OuterAddress.IP != 0 )
 	{
 		this->m_HasOuterIPUsedForUPNP = true;
@@ -160,7 +160,7 @@ std::vector<PEER_ADDRESS> PeerNetInfo::GetLocalAddresses() const
 
 void PeerNetInfo::SaveOuterIP( UINT32 ip )
 {
-	assert( 0 != ip );
+	LIVE_ASSERT( 0 != ip );
 	this->m_OuterAddress.IP = ip;
 
 	if ( std::find(this->m_LocalIPArray.begin(), this->m_LocalIPArray.end(), ip) != this->m_LocalIPArray.end() )
@@ -195,7 +195,7 @@ public:
 
 	virtual PEER_ADDRESS GetUPNPAddress() const
 	{
-		assert( this->IsUPNPEnabled() );
+		LIVE_ASSERT( this->IsUPNPEnabled() );
 		return this->Address;
 	}
 };
@@ -205,7 +205,7 @@ public:
 
 PEER_ADDRESS GetProperUDPKeyPeerAddress( const PEER_ADDRESS& peerAddr, const SimpleSocketAddress& sockAddr )
 {
-	//	assert( peerAddr.IP == sockAddr.IP || IsPrivateIP( peerAddr.IP ) );
+	//	LIVE_ASSERT( peerAddr.IP == sockAddr.IP || IsPrivateIP( peerAddr.IP ) );
 	if ( peerAddr.IP == sockAddr.IP && IsPrivateIP( sockAddr.IP ) )
 		return peerAddr;
 	PEER_ADDRESS keyAddress;
@@ -221,20 +221,20 @@ PEER_ADDRESS GetProperKeyPeerAddress( const PEER_ADDRESS& peerAddr, const Simple
 	if ( false == isInitFromRemote )
 	{
 		// 本地发起的连接，直接返回peerAddr
-		assert( peerAddr.IP == sockAddr.IP );
+		LIVE_ASSERT( peerAddr.IP == sockAddr.IP );
 		if ( isUDP )
 		{
-			assert( peerAddr.UdpPort == sockAddr.Port );
+			LIVE_ASSERT( peerAddr.UdpPort == sockAddr.Port );
 		}
 		else
 		{
-			assert( peerAddr.TcpPort == sockAddr.Port || 80 == sockAddr.Port || peerAddr.TcpPort == 80 );
+			LIVE_ASSERT( peerAddr.TcpPort == sockAddr.Port || 80 == sockAddr.Port || peerAddr.TcpPort == 80 );
 		}
 		return peerAddr;
 	}
 	// 远程发起的连接，参考sockAddr信息
 	PEER_ADDRESS keyAddress;
-	//	assert( peerAddr.IP == sockAddr.IP || IsPrivateIP( peerAddr.IP ) );
+	//	LIVE_ASSERT( peerAddr.IP == sockAddr.IP || IsPrivateIP( peerAddr.IP ) );
 	keyAddress.IP = sockAddr.IP;
 	if ( isUDP )
 	{
@@ -279,8 +279,8 @@ class NetInfoTestCase : public ppl::util::test_case
 	virtual void DoRun()
 	{
 		UINT ip = ResolveHostName( "0.1.0.4" );
-		assert( false == CheckIPValid( ip ) );
-		assert( false == CheckIPFullyValid( ip ) );
+		LIVE_ASSERT( false == CheckIPValid( ip ) );
+		LIVE_ASSERT( false == CheckIPFullyValid( ip ) );
 	}
 };
 

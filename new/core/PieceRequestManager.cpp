@@ -8,7 +8,7 @@
 
 bool PieceRequestManager::Add(UINT pieceIndex, PeerConnection* connection, UINT timeout)
 {
-	assert(connection != NULL);
+	LIVE_ASSERT(connection != NULL);
 	PieceTaskInfo request(pieceIndex, connection, timeout); 
 	std::pair<PieceTaskInfoCollection::iterator, bool> result = m_requests.insert(std::make_pair(pieceIndex, request));
 	if (result.second)
@@ -17,13 +17,13 @@ bool PieceRequestManager::Add(UINT pieceIndex, PeerConnection* connection, UINT 
 		return true;
 	}
 	// 插入失败，请求已经存在
-	assert(!"Piece has already been requested.");
+	LIVE_ASSERT(!"Piece has already been requested.");
 	return false;
 }
 
 bool PieceRequestManager::Add(SubPieceUnit subPiece, PeerConnection* connection, UINT externTimeout)
 {
-	assert(connection != NULL);
+	LIVE_ASSERT(connection != NULL);
 	PieceTaskInfo subPieceRequest(subPiece, connection, externTimeout);
 	std::pair<PieceTaskInfoCollection::iterator, bool> result = m_requests.insert(std::make_pair(subPiece, subPieceRequest));
 	if (result.second)
@@ -32,7 +32,7 @@ bool PieceRequestManager::Add(SubPieceUnit subPiece, PeerConnection* connection,
 		return true;
 	}
 	// 插入失败，请求已经存在
-//	assert(!"SubPiece has already been requested.");
+//	LIVE_ASSERT(!"SubPiece has already been requested.");
 	return false;
 }
 
@@ -115,7 +115,7 @@ size_t PieceRequestManager::CheckTimeout(UINT currentPos)
 			VIEW_INFO( "ExternalTimeout is UDP? " << connection->IsUDP()<<" "<<connection->GetKeyAddress() << " " <<subPiece << " " << requestTime << " > " << timeout << " End" );
 
 			AddCount(subPiece.PieceIndex, connection->IsUDP());
-//			assert(requestTime < 5000);
+//			LIVE_ASSERT(requestTime < 5000);
 			++timeoutCount;
 			m_requests.erase(iter++);
 		}
@@ -189,30 +189,30 @@ class PieceRequestManagerTestCase : public ppl::util::test_case
 	virtual void DoRun()
 	{
 		TestPieceRequestManager mgr;
-		assert(mgr.m_requests.size() == 0);
+		LIVE_ASSERT(mgr.m_requests.size() == 0);
 
-		assert(mgr.Add(1, NULL, 10*1000));
-		assert(mgr.m_requests.size() == 1);
-		assert(!mgr.Add(1, NULL, 10*1000));
-		assert(mgr.m_requests.size() == 1);
+		LIVE_ASSERT(mgr.Add(1, NULL, 10*1000));
+		LIVE_ASSERT(mgr.m_requests.size() == 1);
+		LIVE_ASSERT(!mgr.Add(1, NULL, 10*1000));
+		LIVE_ASSERT(mgr.m_requests.size() == 1);
 
-		assert(mgr.Add(20000, NULL, 10*1000));
-		assert(mgr.m_requests.size() == 2);
+		LIVE_ASSERT(mgr.Add(20000, NULL, 10*1000));
+		LIVE_ASSERT(mgr.m_requests.size() == 2);
 
-		assert(mgr.Add(2001, NULL, 10*1000));
-		assert(mgr.m_requests.size() == 3);
+		LIVE_ASSERT(mgr.Add(2001, NULL, 10*1000));
+		LIVE_ASSERT(mgr.m_requests.size() == 3);
 
-		assert(!mgr.Remove(200, NULL));
-		assert(mgr.m_requests.size() == 3);
+		LIVE_ASSERT(!mgr.Remove(200, NULL));
+		LIVE_ASSERT(mgr.m_requests.size() == 3);
 
-		assert(mgr.Remove(2001, NULL));
-		assert(mgr.m_requests.size() == 2);
+		LIVE_ASSERT(mgr.Remove(2001, NULL));
+		LIVE_ASSERT(mgr.m_requests.size() == 2);
 
-		assert(mgr.Remove(1, NULL));
-		assert(mgr.m_requests.size() == 1);
+		LIVE_ASSERT(mgr.Remove(1, NULL));
+		LIVE_ASSERT(mgr.m_requests.size() == 1);
 
-		assert(mgr.Remove(20000, NULL));
-		assert(mgr.m_requests.size() == 0);
+		LIVE_ASSERT(mgr.Remove(20000, NULL));
+		LIVE_ASSERT(mgr.m_requests.size() == 0);
 	}
 };
 

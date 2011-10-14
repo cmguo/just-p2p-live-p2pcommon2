@@ -33,7 +33,7 @@ public:
 	const std::basic_string<CharT, TraitsT, AllocT>& data;
 	explicit variant_string_writer( const std::basic_string<CharT, TraitsT, AllocT>& s ) : data( s )
 	{
-		assert( data.size() < std::numeric_limits<LengthT>::max() );
+		LIVE_ASSERT( data.size() < std::numeric_limits<LengthT>::max() );
 	}
 };
 
@@ -56,7 +56,7 @@ public:
 	const std::vector<T, AllocT>& items;
 	explicit variant_vector_writer( const std::vector<T, AllocT>& d ) : items( d )
 	{
-		assert( items.size() < std::numeric_limits<LengthT>::max() );
+		LIVE_ASSERT( items.size() < std::numeric_limits<LengthT>::max() );
 	}
 };
 
@@ -80,7 +80,7 @@ public:
 	const basic_buffer<T, AllocT>& items;
 	explicit variant_buffer_writer( const basic_buffer<T, AllocT>& d ) : items( d )
 	{
-		assert( items.size() < std::numeric_limits<LengthT>::max() );
+		LIVE_ASSERT( items.size() < std::numeric_limits<LengthT>::max() );
 	}
 };
 

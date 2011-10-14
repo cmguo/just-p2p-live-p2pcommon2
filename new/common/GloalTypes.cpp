@@ -406,12 +406,12 @@ public:
 
 	virtual PEER_ADDRESS GetUPNPAddress() const
 	{
-		assert( this->IsUPNPEnabled() );
+		LIVE_ASSERT( this->IsUPNPEnabled() );
 		PEER_ADDRESS upnpAddress;
 		upnpAddress.IP = this->m_OuterAddress.IP;
 		upnpAddress.TcpPort = this->m_sysInfo.ExtenalTcpPort;
 		upnpAddress.UdpPort = this->m_sysInfo.ExtenalUdpPort;
-		assert( upnpAddress.IsFullyValid() );
+		LIVE_ASSERT( upnpAddress.IsFullyValid() );
 		return upnpAddress;
 	}
 
@@ -478,7 +478,7 @@ public:
 		STL_FOR_EACH_CONST(PredefiendCollection, m_predefined, iter)
 		{
 			const tstring& s = iter->first;
-			assert(!strings::is_upper(s));
+			LIVE_ASSERT(!strings::is_upper(s));
 		}
 	}
 

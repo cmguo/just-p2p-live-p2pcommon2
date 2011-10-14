@@ -89,11 +89,11 @@ LiveAppModuleImpl::LiveAppModuleImpl(const LiveAppModuleCreateParam& param, cons
 	m_PeerInformation.reset(new PeerInformation(param.ChannelGUID, param.SysInfo->PeerGUID, param.AppVersion, param.AppVersionNumber16, CreatePeerNetInfo(*m_SysInfo)));
 	m_PeerInformation->NetInfo->CoreInfo.PeerType = param.PeerType;
 
-	assert(m_SysInfo != NULL);
+	LIVE_ASSERT(m_SysInfo != NULL);
 	m_PeerCountLimit = m_SysInfo->MaxAppPeerCount;
 	LIMIT_MIN(m_PeerCountLimit, PPL_MIN_PEER_COUNT_LIMIT);
 	// 传入的最大peer个数应该不超过一个最大限制PPL_MAX_PEER_COUNT_LIMIT
-	assert(m_PeerCountLimit <= PPL_MAX_PEER_COUNT_LIMIT);
+	LIVE_ASSERT(m_PeerCountLimit <= PPL_MAX_PEER_COUNT_LIMIT);
 	LIMIT_MAX(m_PeerCountLimit, PPL_MAX_PEER_COUNT_LIMIT);
 
 
@@ -338,7 +338,7 @@ bool LiveAppModuleImpl::DispatchUdpPacket(BYTE* data, int size, const InetSocket
 		{
 			VIEW_ERROR( "LiveAppModuleImpl::DispatchUdpPacket unshuffle failed 1 " << make_tuple( size, len ) << sockAddr );
 		}
-		//assert( false );
+		//LIVE_ASSERT( false );
 		return false;
 	}
 	if ( size < len )
@@ -429,7 +429,7 @@ bool LiveAppModuleImpl::DispatchUdpPacket(BYTE* data, int size, const InetSocket
 		m_detectFlow.Download.Record(size);
 		return true;
 	}
-	assert(proxyType == PROXY_UDP);
+	LIVE_ASSERT(proxyType == PROXY_UDP);
 	bool success = m_Manager->HandleUDPPacket( is, head, packetPeerInfo, sockAddr, extraProxy );
 	if ( false == success )
 	{
@@ -490,7 +490,7 @@ void LiveAppModuleImpl::RandomlyAppendTracker(std::vector<TRACKER_LOGIN_ADDRESS>
 	{
 		// 从tracker地址列表中随机的选取一个，加入到实际要用的tracker地址集合中，然后从trackers中删除
 		int pos = rnd.Next() % (int)trackers.size();
-		assert(pos >= 0 && (UINT)pos < trackers.size());
+		LIVE_ASSERT(pos >= 0 && (UINT)pos < trackers.size());
 		APP_EVENT("LoadTracker " << pos << ": " << trackers[pos]);
 		m_trackerAddressList.push_back(trackers[pos]);
 		trackers.erase(trackers.begin() + pos);
@@ -499,8 +499,8 @@ void LiveAppModuleImpl::RandomlyAppendTracker(std::vector<TRACKER_LOGIN_ADDRESS>
 
 void LiveAppModuleImpl::LoadTracker(const std::vector<TRACKER_LOGIN_ADDRESS>& trackers)
 {
-	assert(trackers.size() > 0);
-	assert(trackers.size() <= TRACKER_CLIENT_COUNT_LIMIT);
+	LIVE_ASSERT(trackers.size() > 0);
+	LIVE_ASSERT(trackers.size() <= TRACKER_CLIENT_COUNT_LIMIT);
 	std::set<TRACKER_ADDRESS> trackerSet; // 用于检查重复的tracker服务器地址
 
 #if 0
@@ -534,11 +534,11 @@ void LiveAppModuleImpl::LoadTracker(const std::vector<TRACKER_LOGIN_ADDRESS>& tr
 	{
 		const TRACKER_LOGIN_ADDRESS& tracker = trackers[index];
 		const TRACKER_ADDRESS& srcAddr = tracker.ServerAddress;
-		assert(srcAddr.IP != INADDR_NONE && srcAddr.IP != INADDR_ANY && srcAddr.Port != 0);
+		LIVE_ASSERT(srcAddr.IP != INADDR_NONE && srcAddr.IP != INADDR_ANY && srcAddr.Port != 0);
 		if (containers::contains(trackerSet, srcAddr))
 		{
 			APP_ERROR("LoadTracker: reduplicative tracker server address " << tracker);
-			assert(!"LoadTracker: reduplicative tracker server address ");
+			LIVE_ASSERT(!"LoadTracker: reduplicative tracker server address ");
 			continue;
 		}
 		trackerSet.insert(srcAddr);
@@ -557,7 +557,7 @@ void LiveAppModuleImpl::LoadTracker(const std::vector<TRACKER_LOGIN_ADDRESS>& tr
 		else
 		{
 			APP_ERROR("LoadTracker invalid tracker type " << tracker);
-			assert(!"LoadTracker invalid tracker type");
+			LIVE_ASSERT(!"LoadTracker invalid tracker type");
 		}
 	}
 
@@ -660,7 +660,7 @@ void LiveAppModuleImpl::Start(const LiveAppModuleCreateParam& param)
 {
 	m_LiveInfo->LocalPeerInfo.Flow.Reset();
 
-	assert(m_ipPool);
+	LIVE_ASSERT(m_ipPool);
 
 
 	DoCreateComponents();
@@ -685,18 +685,18 @@ void LiveAppModuleImpl::Start(const LiveAppModuleCreateParam& param)
 	}
 
 	m_UdpDetect.reset(new CUdpDetect(*m_ipPool, *m_Manager, m_PeerInformation, m_UDPConnectionlessPacketSender, *m_LiveInfo));
-	assert(m_UdpDetect);
+	LIVE_ASSERT(m_UdpDetect);
 
-	assert(m_streamBuffer);
+	LIVE_ASSERT(m_streamBuffer);
 	m_streamBuffer->SetPeerInformation( m_PeerInformation );
 	m_streamBuffer->GenerateKey(m_PeerInformation->ChannelGUID);
 
 	m_mediaServer.reset(new CMediaServer(*m_mediaServerListener, *m_streamBuffer, 8888));
 	m_mediaServer->SetClientErrorCallback(m_cbClientError);
 	m_streamBuffer->SetMediaServer(m_mediaServer.get());
-	assert(m_tracker);
-	assert(m_Manager);
-	assert(m_mediaServer);
+	LIVE_ASSERT(m_tracker);
+	LIVE_ASSERT(m_Manager);
+	LIVE_ASSERT(m_mediaServer);
 
 	ini_file ini;
 	this->InitIni(ini);
@@ -727,7 +727,7 @@ void LiveAppModuleImpl::Start(const LiveAppModuleCreateParam& param)
 
 	DoStart(param);
 	m_mediaServer->Start( SM_FORWORD, 5*1000, 15*1000 );
-	assert(500 % APP_TIMER_TIMES_PER_SECOND == 0);
+	LIVE_ASSERT(500 % APP_TIMER_TIMES_PER_SECOND == 0);
 	m_timer.start(APP_TIMER_INTERVAL);
 }
 
@@ -837,12 +837,12 @@ void LiveAppModuleImpl::OnAppTimer()
 		const PeerConnectorStatistics& statistics = m_Manager->GetStatistics().ConnectorData;
 		UINT lastInitiateConnections = LOWORD(localInfo.DownloadingPieces[6]);
 		UINT lastSucceededConnections = HIWORD(localInfo.DownloadingPieces[6]);
-		assert(lastInitiateConnections >= 0);
-		assert(lastSucceededConnections >= 0);
-		assert(lastInitiateConnections < USHRT_MAX);
-		//assert(lastInitiateConnections >= lastSucceededConnections);
-		//assert(statistics.TotalInitiateConnections >= lastInitiateConnections);
-		//assert(statistics.TotalInitiateConnections >= statistics.TotalSucceededConnections);
+		LIVE_ASSERT(lastInitiateConnections >= 0);
+		LIVE_ASSERT(lastSucceededConnections >= 0);
+		LIVE_ASSERT(lastInitiateConnections < USHRT_MAX);
+		//LIVE_ASSERT(lastInitiateConnections >= lastSucceededConnections);
+		//LIVE_ASSERT(statistics.TotalInitiateConnections >= lastInitiateConnections);
+		//LIVE_ASSERT(statistics.TotalInitiateConnections >= statistics.TotalSucceededConnections);
 		//localInfo.DownloadingPieces[6] = MAKE_DWORD(statistics.TotalInitiateConnections, statistics.TotalSucceededConnections);
 		localInfo.DownloadingPieces[6] = MAKE_DWORD(statistics.GetTotalInitiatedConnections(), statistics.GetTotalSucceededInitiatedConnections());
 		m_LiveInfo->IPPoolInfo.PendingConnectionCount = (WORD)statistics.GetPendingPeerCount();
@@ -949,7 +949,7 @@ void LiveAppModuleImpl::UpdateTrackerRequesterStatistics(UINT seconds)
 		for (size_t i = 0; i < m_tracker->GetClientCount(); ++i)
 		{
 			TrackerClientPtr client = m_tracker->GetClient(i);
-			assert(client);
+			LIVE_ASSERT(client);
 			if ( client )
 			{
 				long statusCode = client->GetStatusCode();
@@ -1237,7 +1237,7 @@ void LiveAppModuleImpl::OnStunLogin()
 	serverAddr.UdpPort = rawServerAddr.GetPort();
 	serverAddr.TcpPort = 0;
 	PEER_ADDRESS detectedAddr = m_StunModule->GetDetectedAddress();
-	assert( serverAddr.IsUDPValid() && detectedAddr.IsUDPValid() );
+	LIVE_ASSERT( serverAddr.IsUDPValid() && detectedAddr.IsUDPValid() );
 	m_PeerInformation->NetInfo->SetStunAddress( serverAddr, detectedAddr );
 	m_tracker->KeepAlive();
 	VIEW_INFO("nat login ok " << detectedAddr << " on " << serverAddr);
@@ -1245,7 +1245,7 @@ void LiveAppModuleImpl::OnStunLogin()
 
 void LiveAppModuleImpl::OnStunTransmit( BYTE* data, size_t bytes, const InetSocketAddress& remoetAddr )
 {
-	assert( data != NULL && bytes > 0 );
+	LIVE_ASSERT( data != NULL && bytes > 0 );
 	this->DispatchUdpPacket(data, bytes, remoetAddr, PROXY_UDP, EXTRA_PROXY_NTS);
 }
 

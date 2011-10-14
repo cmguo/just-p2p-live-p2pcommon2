@@ -18,9 +18,9 @@ public:
 	static void* allocate(size_t size)
 #endif
 	{
-		assert(size < 33 * 1024 * 1024);
+		LIVE_ASSERT(size < 33 * 1024 * 1024);
 		void* p = malloc(size);
-		assert(p);
+		LIVE_ASSERT(p);
 		return p;
 	}
 
@@ -30,7 +30,7 @@ public:
 	static void deallocate(void* p, size_t size = 0)
 #endif
 	{
-		//assert(p != NULL);
+		//LIVE_ASSERT(p != NULL);
 		if (p)
 		{
 			free(p);

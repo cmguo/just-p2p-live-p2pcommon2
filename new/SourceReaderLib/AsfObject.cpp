@@ -18,7 +18,7 @@ AsfObject::~AsfObject(void)
 
 void AsfObject::Parse( const char * data, size_t size )
 {
-	assert( size > 24 );
+	LIVE_ASSERT( size > 24 );
 	m_Guid			= *( (GUID*)( data ) );
 	m_Size			= *( (UINT64*)( data + 16 ) );
 }

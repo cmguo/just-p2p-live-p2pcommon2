@@ -65,32 +65,32 @@ public:
 	virtual void OnTrackerClientLogin(TrackerClient* sender) = 0;
 
 	/// 登录失败
-	virtual void OnTrackerClientLoginFailed(TrackerClient* sender, long errcode) { assert(false); }
+	virtual void OnTrackerClientLoginFailed(TrackerClient* sender, long errcode) { LIVE_ASSERT(false); }
 
 	/// 保活成功
-	virtual void OnTrackerClientKeepAlive(TrackerClient* sender) { assert(false); }
+	virtual void OnTrackerClientKeepAlive(TrackerClient* sender) { LIVE_ASSERT(false); }
 
 	/// 保活失败
-	virtual void OnTrackerClientKeepAliveFailed(TrackerClient* sender, long errcode) { assert(false); }
+	virtual void OnTrackerClientKeepAliveFailed(TrackerClient* sender, long errcode) { LIVE_ASSERT(false); }
 
 	/// list成功
 	virtual void OnTrackerClientList(TrackerClient* sender, size_t count, const CANDIDATE_PEER_INFO peers[], 
 		size_t lanPeerCount, const INNER_CANDIDATE_PEER_INFO lanPeers[], UINT64 sourceTimeStamp) = 0;
 
 	/// list失败
-	virtual void OnTrackerClientListFailed(TrackerClient* sender, long errcode) { assert(false); }
+	virtual void OnTrackerClientListFailed(TrackerClient* sender, long errcode) { LIVE_ASSERT(false); }
 
 
 
 	/// 处理操作成功
-	virtual void HandleSuccess(TrackerClient& client) { assert(false); }
+	virtual void HandleSuccess(TrackerClient& client) { LIVE_ASSERT(false); }
 
 	/// 处理操作失败
-	virtual bool HandleFail(TrackerClient& client) { assert(false); return true; }
+	virtual bool HandleFail(TrackerClient& client) { LIVE_ASSERT(false); return true; }
 
 
 	/// 保存source的minmax
-	virtual bool SaveSourceMinMax(const PEER_MINMAX& minmax) { assert(false); return false; }
+	virtual bool SaveSourceMinMax(const PEER_MINMAX& minmax) { LIVE_ASSERT(false); return false; }
 
 	/// 保存被探测到的外部地址
 	virtual void SaveDetectedAddress(UINT detectedIP, UINT16 detectedUDPPort, TrackerClient* sender) = 0;

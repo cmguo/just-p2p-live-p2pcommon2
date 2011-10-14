@@ -95,7 +95,7 @@ public:
 		TCHAR buf[max_size + 1];
 		buf[max_size] = '\0';
 		DWORD length = get_string(key, buf, max_size, defaultValue);
-		assert(length <= max_size);
+		LIVE_ASSERT(length <= max_size);
 		return tstring(buf, length);
 	}
 	bool set_string(LPCTSTR key, LPCTSTR value)
@@ -162,8 +162,8 @@ protected:
 	}
 	void check_state()
 	{
-		assert(false == m_filename.empty());
-		assert(false == m_section.empty());
+		LIVE_ASSERT(false == m_filename.empty());
+		LIVE_ASSERT(false == m_section.empty());
 	}
 
 private:

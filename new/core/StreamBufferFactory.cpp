@@ -40,8 +40,8 @@ StreamBufferImpl::StreamBufferImpl(UINT minBufferTime) : m_lpMediaServer(NULL)
 	m_lpMediaServer = NULL;
 
 	m_minBufferTime = minBufferTime;
-	assert(m_minBufferTime >= 30 * 1000);
-	assert(m_minBufferTime <= 300 * 1000);
+	LIVE_ASSERT(m_minBufferTime >= 30 * 1000);
+	LIVE_ASSERT(m_minBufferTime <= 300 * 1000);
 	//m_lpMediaServer = new CMediaServer(this, 8888);
 
 }
@@ -169,7 +169,7 @@ bool StreamBufferImpl::Reset(UINT index)
 
 void StreamBufferImpl::OnFirstPiece(MediaDataPiecePtr lpPacket)
 {
-	assert(m_State == st_waiting);
+	LIVE_ASSERT(m_State == st_waiting);
 	CheckDataPiece(lpPacket);
 
 	m_State = st_running;//改变状态
@@ -192,7 +192,7 @@ bool StreamBufferImpl::AddHeaderPiece( MediaHeaderPiecePtr piece )
 bool StreamBufferImpl::DoAddDataPiece(MediaDataPiecePtr packet)
 {
 	//然后再放到Buffer中
-//	assert(packet->GetSize() > 1024 * 2);
+//	LIVE_ASSERT(packet->GetSize() > 1024 * 2);
 	if (!m_storage.AddDataPiece(packet))
 	{
 		// 添加失败，需要删除这个packet
@@ -203,7 +203,7 @@ bool StreamBufferImpl::DoAddDataPiece(MediaDataPiecePtr packet)
 	{
 		m_statistics.FirstErrorPiece = pieceIndex;
 		m_statistics.FirstErrorPieceTimeStamp = packet->GetTimeStamp();
-		assert( false );
+		LIVE_ASSERT( false );
 	}
 	return true;
 }
@@ -220,7 +220,7 @@ void StreamBufferImpl::UpdateBase()
 	// 避免时间跨度过大，造成时间计算出错
 	PieceInfo firstPieceInfo = m_storage.GetFirstPiece();
 	MediaDataPiecePtr firstPiece = firstPieceInfo.GetPiece();
-//	assert(firstPiece != NULL);
+//	LIVE_ASSERT(firstPiece != NULL);
 	if (firstPiece && firstPiece->GetPieceIndex() > m_base.GetPieceIndex())
 	{
 		DoUpdateBase(firstPieceInfo);
@@ -296,7 +296,7 @@ UINT StreamBufferImpl::GetPrepaDataLen()
 	curIndex = max(minIndex,curIndex);
 
 	prepaDataLen = GetDownloadStartIndex() - curIndex;
-	//	assert(prepaDataLen >= 0);
+	//	LIVE_ASSERT(prepaDataLen >= 0);
 	LIMIT_MIN(prepaDataLen, 0);
 	return prepaDataLen;
 }
@@ -470,7 +470,7 @@ BitMap PeerStreamBuffer::BuildTotalBitmap() const
 		}
 		else
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 	}
 	if (maxLength == 0)
@@ -484,7 +484,7 @@ BitMap PeerStreamBuffer::BuildTotalBitmap() const
 
 bool PeerStreamBuffer::AddDataPiece( MediaDataPiecePtr piece )
 {
-	assert( PPDT_MEDIA_DATA == piece->GetPieceType() );
+	LIVE_ASSERT( PPDT_MEDIA_DATA == piece->GetPieceType() );
 	CheckDataPiece(piece);
 
 	STREAMBUFFER_INFO("StreamBufferImpl::AddDataPiece " << make_tuple(piece->GetPieceIndex(), piece->GetPieceLength()));
@@ -504,7 +504,7 @@ bool PeerStreamBuffer::AddDataPiece( MediaDataPiecePtr piece )
 	}
 	else
 	{
-		assert(m_skipIndex != 0 && m_storage.GetMinIndex() != 0);
+		LIVE_ASSERT(m_skipIndex != 0 && m_storage.GetMinIndex() != 0);
 		// 过滤掉非法的piece
 		if( index < m_skipIndex && index < m_storage.GetMinIndex() )
 		{
@@ -530,9 +530,9 @@ bool PeerStreamBuffer::AddDataPiece( MediaDataPiecePtr piece )
 
 size_t PeerStreamBuffer::PushStream(UINT& skipIndex)
 {
-	assert(m_downloader != NULL);
-	assert(m_skipIndex > 0);
-	assert(m_skipIndex >= m_storage.GetMinIndex());
+	LIVE_ASSERT(m_downloader != NULL);
+	LIVE_ASSERT(m_skipIndex > 0);
+	LIVE_ASSERT(m_skipIndex >= m_storage.GetMinIndex());
 	if (m_storage.IsEmpty())
 	{
 		STREAMBUFFER_WARN("StreamBufferImpl::IncreaseSkipIndex StreamBuffer isn't contain any DataPacket!");
@@ -640,7 +640,7 @@ size_t PeerStreamBuffer::PushStream(UINT& skipIndex)
 //
 //	const PPMediaDataPacket* pieceSkip = (const PPMediaDataPacket*)GetDataPiece(m_skipIndex);
 //	CheckDataPiece(pieceSkip);
-//	assert( pieceSkip->GetTimeStamp() >= m_base.GetTimeStamp() );
+//	LIVE_ASSERT( pieceSkip->GetTimeStamp() >= m_base.GetTimeStamp() );
 //	DWORD SkipTimestamp = pieceSkip->GetTimeStamp();
 //	//? TimeStamp可能翻转
 //	if( SkipTimestamp < 20*1000 )
@@ -675,7 +675,7 @@ void PeerStreamBuffer::Push()
 	UINT oldSkipIndex = m_skipIndex;
 	size_t pushedCount = PushStream(m_skipIndex);
 	UINT diff = m_skipIndex - oldSkipIndex;
-	assert(diff >= pushedCount);
+	LIVE_ASSERT(diff >= pushedCount);
 	m_feedback.Push(pushedCount);
 	m_feedback.Skip(diff - pushedCount);
 
@@ -719,9 +719,9 @@ void PeerStreamBuffer::UpdateStatistics(UINT downSpeed)
 	UINT minBufferSize = m_SourceResource->CalcPieceCount( minBufferTime );
 //	UINT huntIndex = m_base.GetPieceIndex() + static_cast<UINT>(m_base.GetElapsedTime() * pieceRate / 1000);
 	UINT pieceCount = m_feedback.GetPushed();
-	assert(m_skipIndex >= m_statistics.MinIndex);
+	LIVE_ASSERT(m_skipIndex >= m_statistics.MinIndex);
 	UINT bufferSize = m_skipIndex - m_statistics.MinIndex + 1;
-	assert(pieceCount <= bufferSize);
+	LIVE_ASSERT(pieceCount <= bufferSize);
 // 	if (pieceCount > bufferSize)
 // 	{
 	//	STREAMBUFFER_DEBUG("StreamPusher::UpdateStatistics pieceCount invalid" << make_tuple(pieceCount, bufferSize));
@@ -740,9 +740,9 @@ void PeerStreamBuffer::UpdateStatistics(UINT downSpeed)
 //	LIMIT_MAX(minBufferSize, max_min_buffer_time * 100);
 	LIMIT_MIN(bufferSize, minBufferSize);
 	LIMIT_MAX(pieceCount, bufferSize);
-	assert(minBufferSize > 0 && bufferSize > 0);
+	LIVE_ASSERT(minBufferSize > 0 && bufferSize > 0);
 	UINT bufferPercent = (pieceCount >= bufferSize) ? 100 : static_cast<UINT>(pieceCount * 100.0 / bufferSize);
-	assert(bufferPercent <= 100);
+	LIVE_ASSERT(bufferPercent <= 100);
 	LIMIT_MAX(bufferPercent, 100);
 
 	UINT sourceLength20s = m_SourceResource->GetTimedLength(minBufferTime);
@@ -790,7 +790,7 @@ void PeerStreamBuffer::UpdateStatistics(UINT downSpeed)
 	{
 		for ( UINT index = oldIndex + 1; index <= newIndex; ++index )
 		{
-			assert( index >= 1 );
+			LIVE_ASSERT( index >= 1 );
 			if ( index <= STREAMBUFFER_STATS::MAX_BUFFERRING_TIME_COUNT )
 			{
 				m_statistics.BufferringUsedTime[ index - 1 ] = usedTime;
@@ -851,7 +851,7 @@ void PeerStreamBuffer::Shrink()
 	else if (m_skipIndex < m_storage.GetMinIndex())
 	{
 		// 应该是在m_storage.RemoveExpired中删除了m_skipIndex对应的片
-		assert(false);
+		LIVE_ASSERT(false);
 		m_skipIndex = m_storage.GetMinIndex();
 		m_feedback.Push(1);
 	}
@@ -859,7 +859,7 @@ void PeerStreamBuffer::Shrink()
 	{
 		//UpdateBase();
 	}
-	assert(m_skipIndex >= m_storage.GetMinIndex());
+	LIVE_ASSERT(m_skipIndex >= m_storage.GetMinIndex());
 }
 
 bool PeerStreamBuffer::NeedResetBuffer(MediaDataPiecePtr piece) const
@@ -921,9 +921,9 @@ class MapsTest : public ppl::util::test_case
 		m[7] = 1;
 		m[9] = 1;
 		m[11] = 1;
-		assert(maps::count_range(m, 2, 10) == 5);
-		assert(maps::count_range(m, 3, 10) == 5);
-		assert(maps::count_range(m, 2, 11) == 6);
+		LIVE_ASSERT(maps::count_range(m, 2, 10) == 5);
+		LIVE_ASSERT(maps::count_range(m, 3, 10) == 5);
+		LIVE_ASSERT(maps::count_range(m, 2, 11) == 6);
 	}
 };
 

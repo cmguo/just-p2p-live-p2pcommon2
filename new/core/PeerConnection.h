@@ -218,13 +218,13 @@ public:
 	AppModule& GetAppModule() { return m_PeerModule; }
 
 public:
-	virtual UINT32 GetRemoteSessionKey() const { assert( false ); return 0; }
+	virtual UINT32 GetRemoteSessionKey() const { LIVE_ASSERT( false ); return 0; }
 	bool IsUDP() const { return m_IsUDP; }
 
 	/// 是否由远端发起连接
 	bool IsInitFromRemote() const
 	{
-		assert( reinterpret_cast<UINT>( m_ConnectionInfo.get() ) != 0xFFFFFFFF );
+		LIVE_ASSERT( reinterpret_cast<UINT>( m_ConnectionInfo.get() ) != 0xFFFFFFFF );
 		return m_ConnectionInfo->IsInitFromRemote;
 	}
 
@@ -276,7 +276,7 @@ public:
 	{
 		UINT minIndex = GetMinIndex();
 		UINT maxIndex = GetMaxIndex();
-		assert(maxIndex >= minIndex);
+		LIVE_ASSERT(maxIndex >= minIndex);
 		return maxIndex - minIndex;
 	}
 

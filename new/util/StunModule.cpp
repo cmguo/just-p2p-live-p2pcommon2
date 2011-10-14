@@ -142,7 +142,7 @@ StunModule::StunModule( const std::vector<InetSocketAddress>& stunServers, UDPSe
 		m_ServerList = stunServers;
 	}
 	m_CurrentServer = RandomGenerator().Next() % m_ServerList.size();
-	assert(m_CurrentServer < m_ServerList.size());
+	LIVE_ASSERT(m_CurrentServer < m_ServerList.size());
 
 }
 
@@ -159,7 +159,7 @@ bool StunModule::NeedStun() const
 void StunModule::Start()
 {
 	m_LoginTimer.start(3 * 60 * 1000);
-	assert( false == m_LoginTimeoutTimer.is_started() );
+	LIVE_ASSERT( false == m_LoginTimeoutTimer.is_started() );
 	m_LoginTimeoutTimer.stop();
 
 	if ( false == NeedStun() )
@@ -180,7 +180,7 @@ bool StunModule::Login()
 		return false;
 	if ( m_LoginTimeoutTimer.is_started() )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	m_LoginTimeoutTimer.stop();
@@ -232,7 +232,7 @@ void StunModule::OnLoginFailed()
 {
 	++m_LoginFailedTimes;
 	m_KeepAliveTimer.stop();
-	assert( false == m_LoginTimeoutTimer.is_started() );
+	LIVE_ASSERT( false == m_LoginTimeoutTimer.is_started() );
 	m_LoginTimeoutTimer.stop();
 	m_Loginned = false;
 	if ( m_LoginFailedTimes >= 3 )

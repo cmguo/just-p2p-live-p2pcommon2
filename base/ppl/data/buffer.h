@@ -71,15 +71,15 @@ public:
 		}
 		else
 		{
-			assert(m_capacity == 0 && m_size == 0);
+			LIVE_ASSERT(m_capacity == 0 && m_size == 0);
 		}
 	}
 
 	/// 预留空间(原来的数据保留)
 	void reserve(size_t size)
 	{
-		assert(size < max_buffer_size);
-		assert(m_size <= m_capacity);
+		LIVE_ASSERT(size < max_buffer_size);
+		LIVE_ASSERT(m_size <= m_capacity);
 		if (m_capacity >= size)
 			return;
 		this_type newBuffer(size);
@@ -95,7 +95,7 @@ public:
 	void resize(size_t size)
 	{
 		reserve(size);
-		assert(m_capacity >= size);
+		LIVE_ASSERT(m_capacity >= size);
 		m_size = size;
 	}
 	/// 保证大小为指定长度，不保证数据有效(原来的数据可能丢失)
@@ -126,12 +126,12 @@ public:
 			this->resize(0);
 			return;
 		}
-		assert(src != NULL && size > 0);
-		assert(!::IsBadReadPtr(src, size));
+		LIVE_ASSERT(src != NULL && size > 0);
+		LIVE_ASSERT(!::IsBadReadPtr(src, size));
 		resize(size);
 		memcpy(m_data, src, size);
-		assert(m_size == size);
-		assert(m_capacity >= size);
+		LIVE_ASSERT(m_size == size);
+		LIVE_ASSERT(m_capacity >= size);
 	}
 
 	void append(const element_type* src, size_t size)
@@ -189,9 +189,9 @@ public:
 	const element_type* end() const { return m_data + m_size; }
 
 	/// 索引操作符
-	element_type operator[](size_t index) const { assert(!empty()); assert(index < m_size); return m_data[index]; }
+	element_type operator[](size_t index) const { LIVE_ASSERT(!empty()); LIVE_ASSERT(index < m_size); return m_data[index]; }
 	/// 索引操作符
-	element_type& operator[](size_t index) { assert(!empty()); assert(index < m_size); return m_data[index]; }
+	element_type& operator[](size_t index) { LIVE_ASSERT(!empty()); LIVE_ASSERT(index < m_size); return m_data[index]; }
 
 
 private:
@@ -228,7 +228,7 @@ public:
 	virtual void DoRun()
 	{
 		dynamic_buffer buf;
-		assert(buf.empty());
+		LIVE_ASSERT(buf.empty());
 		CheckBuffer(buf, 0, 0, true);
 
 		buf.reserve(1);
@@ -252,38 +252,38 @@ public:
 		string str("Hello");
 		buf.assign(str.data(), str.size());
 		CheckBuffer(buf, 19, str.size());
-		assert(0 == memcmp(buf.data(), str.data(), str.size()));
+		LIVE_ASSERT(0 == memcmp(buf.data(), str.data(), str.size()));
 
 		str = "111222333444555666777888999abcdefghijklmnopq";
 		buf.assign(str.data(), str.size());
 		CheckBuffer(buf, str.size(), str.size());
-		assert(0 == memcmp(buf.data(), str.data(), str.size()));
+		LIVE_ASSERT(0 == memcmp(buf.data(), str.data(), str.size()));
 
 		buf.resize(64 * 1000);
 		CheckBuffer(buf, 64 * 1000, 64 * 1000);
 		
 		dynamic_buffer buf2(110);
-		assert(!buf2.empty());
-		assert(buf2.data() != NULL);
-		assert(buf2.capacity() == 110);
-		assert(buf2.size() == 110);
+		LIVE_ASSERT(!buf2.empty());
+		LIVE_ASSERT(buf2.data() != NULL);
+		LIVE_ASSERT(buf2.capacity() == 110);
+		LIVE_ASSERT(buf2.size() == 110);
 	}
 
 	void CheckBuffer(const dynamic_buffer& buf, size_t capacity, size_t size, bool isNull = false)
 	{
-		assert(buf.capacity() == capacity);
+		LIVE_ASSERT(buf.capacity() == capacity);
 		if (buf.size() != size)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 		}
-		assert(buf.size() == size);
+		LIVE_ASSERT(buf.size() == size);
 		if (isNull)
 		{
-			assert(buf.data() == NULL);
+			LIVE_ASSERT(buf.data() == NULL);
 		}
 		else
 		{
-			assert(buf.data() != NULL);
+			LIVE_ASSERT(buf.data() != NULL);
 		}
 	}
 };

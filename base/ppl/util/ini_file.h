@@ -106,8 +106,8 @@ public:
 protected:
 	void check_state()
 	{
-		assert(!m_filename.empty());
-		assert(!m_section.empty());
+		LIVE_ASSERT(!m_filename.empty());
+		LIVE_ASSERT(!m_section.empty());
 	}
 
 

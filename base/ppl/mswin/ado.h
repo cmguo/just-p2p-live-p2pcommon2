@@ -62,7 +62,7 @@ public:
 	{
 		variant_t res;
 		_RecordsetPtr ptr = m_conn->Execute(sqlText, &res, options);
-		assert(ptr == NULL);
+		LIVE_ASSERT(ptr == NULL);
 		return res;
 	}
 	_RecordsetPtr Query(const char* sqlText, long options = adCmdUnspecified | adOptionUnspecified)
@@ -85,7 +85,7 @@ class AdoDataTable
 public:
 	explicit AdoDataTable(_RecordsetPtr& rst) : m_rst(rst)
 	{
-		assert(m_rst != NULL);
+		LIVE_ASSERT(m_rst != NULL);
 	}
 	AdoDataTable(AdoConnection& conn, const char* sqlText)
 	{
@@ -134,7 +134,7 @@ public:
 	}
 	void MoveNext()
 	{
-		assert(HasData());
+		LIVE_ASSERT(HasData());
 		m_rst->MoveNext();
 	}
 	_bstr_t GetString(const char* index)
@@ -142,42 +142,42 @@ public:
 		variant_t res = GetField(_variant_t(index));
 		if (res.vt == VT_NULL)
 			return "";
-		assert(res.vt == VT_BSTR);
+		LIVE_ASSERT(res.vt == VT_BSTR);
 		return res;
 	}
 	long GetInteger(const char* index)
 	{
 		variant_t res = GetField(_variant_t(index));
-		assert(res.vt == VT_I4);
+		LIVE_ASSERT(res.vt == VT_I4);
 		return res;
 	}
 	double GetReal(const char* index)
 	{
 		variant_t res = GetField(_variant_t(index));
-		assert(res.vt == VT_R8);
+		LIVE_ASSERT(res.vt == VT_R8);
 		return res;
 	}
 	_bstr_t GetString(long index)
 	{
 		variant_t res = GetField(index);
-		assert(res.vt == VT_BSTR);
+		LIVE_ASSERT(res.vt == VT_BSTR);
 		return res;
 	}
 	long GetInteger(long index)
 	{
 		variant_t res = GetField(index);
-		assert(res.vt == VT_I4);
+		LIVE_ASSERT(res.vt == VT_I4);
 		return res;
 	}
 	double GetReal(long index)
 	{
 		variant_t res = GetField(index);
-		assert(res.vt == VT_R8);
+		LIVE_ASSERT(res.vt == VT_R8);
 		return res;
 	}
 	_variant_t GetField(const variant_t& index)
 	{
-		assert(HasData());
+		LIVE_ASSERT(HasData());
 		return m_rst->Fields->Item[index]->Value;
 	}
 

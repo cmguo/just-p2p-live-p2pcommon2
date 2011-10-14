@@ -301,7 +301,7 @@ public:
 		UINT duration = 0;
 		if ( isInternal )
 		{
-			assert(this->GoodQuality != isGoodQuality);
+			LIVE_ASSERT(this->GoodQuality != isGoodQuality);
 			this->GoodQuality = isGoodQuality;
 			duration = this->InternalLastTimeQualityChanged.elapsed32();
 			this->InternalLastTimeQualityChanged.sync();

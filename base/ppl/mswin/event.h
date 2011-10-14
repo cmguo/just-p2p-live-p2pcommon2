@@ -34,17 +34,17 @@ public:
 
 	BOOL signal()
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		return ::SetEvent(m_handle);
 	}
 	BOOL reset()
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		return ::ResetEvent(m_handle);
 	}
 	BOOL pulse()
 	{
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		return ::PulseEvent(m_handle);
 	}
 
@@ -75,7 +75,7 @@ public:
 
 	bool open(LPCTSTR name, DWORD desiredAccess, bool inheritHandle = false)
 	{
-		assert(name != NULL);
+		LIVE_ASSERT(name != NULL);
 		this->close();
 		attach(::OpenEvent(desiredAccess, inheritHandle ? TRUE : FALSE, name));
 		return is_open();
@@ -84,7 +84,7 @@ public:
 protected:
 	void attach(HANDLE hEvent)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		m_handle = hEvent;
 	}
 
@@ -100,7 +100,7 @@ public:
 	explicit manual_reset_event(BOOL initState = FALSE, LPCTSTR name = NULL)
 	{
 		attach(::CreateEvent(NULL, TRUE, initState, name));
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 	}
 };
 
@@ -111,7 +111,7 @@ public:
 	explicit auto_reset_event(BOOL initState = FALSE, LPCTSTR name = NULL)
 	{
 		attach(::CreateEvent(NULL, FALSE, initState, name));
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 	}
 };
 

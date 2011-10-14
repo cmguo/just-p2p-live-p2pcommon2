@@ -99,7 +99,7 @@ bool UDPPeerTunnel::RequestSubPiece(SubPieceUnit subPiece, DWORD externalTimeout
 	{	// 只有TCP发包失败，才会返回false
 		return false;
 	}
-//	assert(counter.GetElapsed() < 100);
+//	LIVE_ASSERT(counter.GetElapsed() < 100);
 
 // 	if (m_RequestSubPieces.size() == 0)
 // 	{
@@ -118,7 +118,7 @@ bool UDPPeerTunnel::RequestSubPiece(SubPieceUnit subPiece, DWORD externalTimeout
 	VIEW_INFO("RequestSubPiece "<<*this<<" "<<subPiece << " " << make_tuple( externalTimeout, internalTimeout ) );
 
 #ifndef _LIGHT_TIMEOUT
-	assert(m_RequestSubPieces.find(subPiece) == m_RequestSubPieces.end());
+	LIVE_ASSERT(m_RequestSubPieces.find(subPiece) == m_RequestSubPieces.end());
 #endif
 
 	DWORD dwNow = ::GetTickCount();	
@@ -214,7 +214,7 @@ void UDPPeerTunnel::RequestMRP()
 			LIMIT_MAX(curTask.externalTimeOut, internalTimeout);
 			VIEW_INFO("RequestSubPiece "<<*this<<" "<<curTask.subPiece << " " << make_tuple( curTask.externalTimeOut, internalTimeout ) );
 #ifndef _LIGHT_TIMEOUT
-			assert(m_RequestSubPieces.find(curTask.subPiece) == m_RequestSubPieces.end());
+			LIVE_ASSERT(m_RequestSubPieces.find(curTask.subPiece) == m_RequestSubPieces.end());
 #endif
 			if (m_RequestSubPieces.size() == 0)
 			{
@@ -256,7 +256,7 @@ void UDPPeerTunnel::OnReceiveSubPiece(SubMediaPiecePtr subPiecePtr)
 // 	DWORD requestTick = iter->second.second;
 	rtt = dwNow - iter->second.second;
 	usedTime = m_RequestTime.elapsed();
-	//assert( subPiece == *(m_RequestSubPieces.begin()) );
+	//LIVE_ASSERT( subPiece == *(m_RequestSubPieces.begin()) );
 
 	// 在自己的请求的 m_RequestSubPieces 中删除该SubPiece
 	m_RequestSubPieces.erase(iter);
@@ -344,9 +344,9 @@ void UDPPeerTunnel::OnReceiveSubPiece(SubMediaPiecePtr subPiecePtr)
 		VIEW_INFO("UDPPeerTunnel::OnReceiveSubPiece maxRequestTime: "<<m_Connection << " " << m_maxRequestTime);
 	}
 
-//	assert(usedTime < 10000);
+//	LIVE_ASSERT(usedTime < 10000);
 //	DWORD firstTick = m_RequestSubPieces.begin()->second.second;
-//	assert(!(rtt < usedTime && ((dwNow - firstTick) != usedTime)));
+//	LIVE_ASSERT(!(rtt < usedTime && ((dwNow - firstTick) != usedTime)));
 	UpdataWindowSize(usedTime, true);
 	UpdateRTT(rtt);
 
@@ -360,7 +360,7 @@ void UDPPeerTunnel::OnReceiveSubPiece(SubMediaPiecePtr subPiecePtr)
 // 	{
 // 		sMaxRTT = rtt;
 // 	}
-//	assert(usedTime <= rtt);
+//	LIVE_ASSERT(usedTime <= rtt);
 	m_RequestTime.sync();
 	
 	VIEW_INFO(" UDPPeerTunnel::RequestFromTaskQueue " << m_WindowSize);
@@ -375,7 +375,7 @@ void UDPPeerTunnel::OnReceiveSubPiece(SubMediaPiecePtr subPiecePtr)
 
 //void UDPPeerTunnel::OnReceivePiece(PPMediaDataPacketPtr piecePtr)
 //{
-//	assert(false);
+//	LIVE_ASSERT(false);
 //}
 
 void UDPPeerTunnel::OnPieceNotFound(UINT pieceIndex)
@@ -421,7 +421,7 @@ void UDPPeerTunnel::OnSubPieceNotFound(SubPieceUnit subPiece)
 	}
 	rtt = dwNow - iter->second.second;
 	usedTime = m_RequestTime.elapsed();
-	//assert( subPiece == *(m_RequestSubPieces.begin()) );
+	//LIVE_ASSERT( subPiece == *(m_RequestSubPieces.begin()) );
 	// 在自己的请求的 m_RequestSubPieces 中删除该SubPiece
 	m_RequestSubPieces.erase(subPiece);
 #else
@@ -540,8 +540,8 @@ bool UDPPeerTunnel::CheckRequestPieceTimeout()
 		{	// 请求超时
 			VIEW_INFO( "InternalTimeout "<<*this<<" "<<subPiece << " " << make_tuple( now, iter->second.first ) );
 
-			assert(iter->second.first - iter->second.second > 0);
-			assert(now - iter->second.first > 0);
+			LIVE_ASSERT(iter->second.first - iter->second.second > 0);
+			LIVE_ASSERT(now - iter->second.first > 0);
 			UINT rtt = now - iter->second.second;
 #ifdef _LIGHT_TIMEOUT
 			//if (m_orderlessRate < 50)
@@ -557,7 +557,7 @@ bool UDPPeerTunnel::CheckRequestPieceTimeout()
 				UpdataWindowSize(m_RequestTime.elapsed(), false);
 			}
 //			MyOutputDebugString("Tady[%d]: curUsedtime = 《%d》", m_debugID, m_RequestTime.GetElapsed() + 500);
-//			assert(rtt >= m_RequestTime.GetElapsed());
+//			LIVE_ASSERT(rtt >= m_RequestTime.GetElapsed());
 			// Removed by Tady, 110609: Should not reset the requestTime, right? :)
 //			m_RequestTime.sync(); 
 //			iCounterOfTimeout++;
@@ -637,7 +637,7 @@ DWORD UDPPeerTunnel::GetUsedTime()
 
 		if (dwDuration > m_avrgUsedTime)
 		{
-//			assert(dwDuration < 10000);
+//			LIVE_ASSERT(dwDuration < 10000);
 			
 			// Modified by Tady, 071708: m_avrgUsedTime may be sinked.
 //			m_avrgUsedTime = m_avrgUsedTime * 0.8 + requestingTime * 0.2;
@@ -645,7 +645,7 @@ DWORD UDPPeerTunnel::GetUsedTime()
 		}
 	}
 
-//	assert(m_avrgUsedTime < 10000);
+//	LIVE_ASSERT(m_avrgUsedTime < 10000);
 	return m_avrgUsedTime;
 }
 
@@ -680,9 +680,9 @@ void UDPPeerTunnel::UpdataWindowSize(UINT usedTime, bool requestSucced)
 
 //	VIEW_INFO(m_Connection<<"m_SumDeltaUsedTime: "<<m_SumDeltaUsedTime<<" calcUsedTimeCount: "<<calcUsedTimeCount);
 	m_avrgUsedTime = m_SumDeltaUsedTime / calcUsedTimeCount;
-// 	assert(m_avrgUsedTime > 0);
-// 	assert(m_avrgUsedTime < 10000);
-//	assert(m_avrgUsedTime < 10000);
+// 	LIVE_ASSERT(m_avrgUsedTime > 0);
+// 	LIVE_ASSERT(m_avrgUsedTime < 10000);
+//	LIVE_ASSERT(m_avrgUsedTime < 10000);
 	LIMIT_MIN_MAX(m_avrgUsedTime, 1, 10000);
 	m_nowRequestSuccedRate = (double)m_SumRequestSuccedCount / (double)calcUsedTimeCount;
 
@@ -778,7 +778,7 @@ void UDPPeerTunnel::AdjustWindowSize(UINT minSize)
 //	if (m_avrgUsedTime < 1000)
 	if (m_avrgUsedTime > 0 && m_avrgUsedTime < 1500)
 	{
-		assert(m_avrgUsedTime > 0);
+		LIVE_ASSERT(m_avrgUsedTime > 0);
 //		UINT magic = min(2 * 1000 /m_avrgUsedTime, 8 + 1000 / m_avrgUsedTime);
 //		m_WindowSize = magic;
  		UINT match = m_avrgRTT  / m_avrgUsedTime + bool(m_avrgRTT  % m_avrgUsedTime); // == m_avrgRTT * 1.0 / m_avrgUsedTime + 0.5;
@@ -891,7 +891,7 @@ bool UDPPeerTunnel::RequestTillFullWindow2()
 
 	// Flush out all data in m_taskqueue.
 //	CheckTimeoutMRP();
-//	assert(m_TaskQueue.size() == 0);
+//	LIVE_ASSERT(m_TaskQueue.size() == 0);
 
 #if (MRP_SUPPORTED && LIGHT_MRP)
 	RequestMRP();
@@ -908,7 +908,7 @@ bool UDPPeerTunnel::TryToDownload(SubPieceUnit subPiece, DWORD externalTimeout)
 	//	return false;
 	//}
 #ifndef _LIGHT_TIMEOUT
-	assert( false == containers::contains( m_RequestSubPieces, subPiece ) );
+	LIVE_ASSERT( false == containers::contains( m_RequestSubPieces, subPiece ) );
 #endif
 
 #ifdef _DEBUG
@@ -916,7 +916,7 @@ bool UDPPeerTunnel::TryToDownload(SubPieceUnit subPiece, DWORD externalTimeout)
 	{
 		if ( iter->subPiece == subPiece )
 		{
-			assert( false );
+			LIVE_ASSERT( false );
 		}
 	}
 #endif
@@ -929,14 +929,14 @@ void UDPPeerTunnel::UpdateRTT(UINT inRTT)
 		m_avrgRTT = inRTT;
 	else
 		m_avrgRTT = m_avrgRTT * 0.8 + inRTT * 0.2;
-// 	assert(m_avrgRTT != 0);
-// 	assert(m_avrgRTT < 10000);
+// 	LIVE_ASSERT(m_avrgRTT != 0);
+// 	LIVE_ASSERT(m_avrgRTT < 10000);
 	LIMIT_MIN_MAX(m_avrgRTT, 10, 10000);
 }
 
 UDPPeerTunnel::~UDPPeerTunnel()
 {
-//	assert(m_debugID != 3);
+//	LIVE_ASSERT(m_debugID != 3);
 }
 
 void UDPPeerTunnel::ClearTaskQueue() 
@@ -949,7 +949,7 @@ void UDPPeerTunnel::ClearTaskQueue()
 	// clearing task queue we should send out old MRPs.
 	CheckTimeoutMRP();  
 #else // LIGHT_MRP
-	assert(m_TaskQueue.empty());
+	LIVE_ASSERT(m_TaskQueue.empty());
 #endif // LIGHT_MRP
 #endif // MRP_SUPPORTED
 

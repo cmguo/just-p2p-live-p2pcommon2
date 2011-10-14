@@ -87,7 +87,7 @@ public:
 	{
 		m_dir = logDir;
 		m_name = logName;
-		assert( ppl::os::file_system::directory_exists( m_dir.c_str() ) );
+		LIVE_ASSERT( ppl::os::file_system::directory_exists( m_dir.c_str() ) );
 		m_maxLogSize = maxSize;
 	}
 
@@ -231,7 +231,7 @@ protected:
 		if ( false == m_fout.open_text(filepath.c_str()) )
 		{
 			printf("failed to open log file %s\n", filepath.c_str());
-			//assert(false);
+			//LIVE_ASSERT(false);
 			return false;
 		}
 		return true;

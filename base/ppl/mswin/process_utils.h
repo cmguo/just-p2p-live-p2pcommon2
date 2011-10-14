@@ -110,7 +110,7 @@ inline BOOL GetProcessCmdLine(HANDLE hProcess,LPWSTR wBuf,DWORD dwBufLen)
        return FALSE;
 
     // Get process handle
-	assert( hProcess );
+	LIVE_ASSERT( hProcess );
 
     // Retrieve information
     status = funcNtQueryInformationProcess( hProcess,

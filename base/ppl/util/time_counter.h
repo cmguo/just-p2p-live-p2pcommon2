@@ -186,7 +186,7 @@ inline UINT64 GetTickCount64()
 {
 	struct timespec t = { 0 };
 	int res = clock_gettime(CLOCK_REALTIME, &t);
-	assert( 0 == res );
+	LIVE_ASSERT( 0 == res );
     UINT64 val = (UINT64)t.tv_sec * 1000 + (UINT64)t.tv_nsec / 1000000;
 	return val;
 }
@@ -197,9 +197,9 @@ inline UINT32 GetTickCount()
 {
 	static UINT64 initialTick64 = GetTickCount64();
 	UINT64 currentTick64 = GetTickCount64();
-	assert(currentTick64 >= initialTick64);
+	LIVE_ASSERT(currentTick64 >= initialTick64);
 	UINT64 diff = currentTick64 - initialTick64;
-	assert(diff < INT_MAX);
+	LIVE_ASSERT(diff < INT_MAX);
 	return static_cast<UINT32>( diff );
 }
 */

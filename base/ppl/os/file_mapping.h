@@ -42,7 +42,7 @@ public:
 
 	bool create(HANDLE hFile, LPCTSTR name, DWORD size, DWORD protectFlag = PAGE_READWRITE)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		this->close();
 		//APP_DEBUG("Create File Mapping: size=" << size << ", name=" << (NULL == name ? "(null)" : name));
 		m_handle = ::CreateFileMapping(hFile, NULL, protectFlag, 0, size, name);
@@ -52,7 +52,7 @@ public:
 			APP_ERROR("CreateFileMapping failed " << make_tuple(errcode, size) << " " << (NULL == name ? "(null)" : name));
 			return false;
 		}
-		assert( NO_ERROR == errcode || ERROR_ALREADY_EXISTS == errcode );
+		LIVE_ASSERT( NO_ERROR == errcode || ERROR_ALREADY_EXISTS == errcode );
 		if ( ERROR_ALREADY_EXISTS == errcode )
 		{
 			APP_ERROR( "CreateFileMapping failed already exists " << (NULL == name ? "(null)" : name) );
@@ -65,8 +65,8 @@ public:
 #if !defined(_WIN32_WCE)
 	bool open(LPCTSTR name, DWORD access = FILE_MAP_READ | FILE_MAP_WRITE)
 	{
-		assert(name != NULL);
-		assert(!is_open());
+		LIVE_ASSERT(name != NULL);
+		LIVE_ASSERT(!is_open());
 		this->close();
 		APP_DEBUG("Open File Mapping: name=" << name);
 		m_handle = ::OpenFileMapping(access, FALSE, name);
@@ -97,7 +97,7 @@ public:
 
 	bool map(DWORD pos, DWORD size, DWORD access = FILE_MAP_READ | FILE_MAP_WRITE)
 	{
-		assert(is_open() && false == is_mapped());
+		LIVE_ASSERT(is_open() && false == is_mapped());
 		unmap();
 		m_view = ::MapViewOfFile(native_handle(), access, 0, pos, size);
 		if (is_mapped())

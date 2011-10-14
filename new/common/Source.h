@@ -51,7 +51,7 @@ public:
 	}
 	MediaDataPiecePtr Get(UINT delayTime)
 	{
-		assert(delayTime > 0);
+		LIVE_ASSERT(delayTime > 0);
 		if (!m_pieces.empty())
 		{
 			DelayedPieceInfo pieceInfo = m_pieces.front();
@@ -159,9 +159,9 @@ inline SourceModule::~SourceModule()
 
 inline void SourceModule::DoCreateComponents()
 {
-	assert(!m_tracker);
-	assert(!m_streamBuffer);
-	assert(!m_Manager);
+	LIVE_ASSERT(!m_tracker);
+	LIVE_ASSERT(!m_streamBuffer);
+	LIVE_ASSERT(!m_Manager);
 	m_tracker.reset(DoCreateTracker());
 	m_streamBuffer.reset(StreamBufferFactory::MCCCreate());
 	m_Manager.reset(PeerManagerFactory::MCCCreate(this));
@@ -204,13 +204,13 @@ inline void SourceModule::OnAppTimer()
 
 /*
 	const int APP_TIMER_TIMES_PER_MINUTE = APP_TIMER_TIMES_PER_SECOND * 60;
-	assert(APP_TIMER_TIMES_PER_MINUTE > 10);
+	LIVE_ASSERT(APP_TIMER_TIMES_PER_MINUTE > 10);
 	if (times % APP_TIMER_TIMES_PER_MINUTE != 10)
 		return;
 	File fout;
 	if (!fout.OpenAppend(m_logFilePath.c_str()))
 	{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 		return;
 	}
 	const CDetailedPeerInfo& localInfo = m_LiveInfo->LocalPeerInfo;
@@ -238,8 +238,8 @@ inline void SourceModule::SafeAddHeaderPiece(MonoMediaHeaderPiece* piece)
 		MonoMediaHeaderPiecePtr piecePtr(piece);
 		SOURCENEW_DEBUG("获得头部成功 PieceIndex=" << piece->GetPieceIndex() << " Length=" << piece->GetPieceLength() );
 
-		assert(!::IsBadReadPtr(piece, sizeof(MonoMediaHeaderPiece)));
-		assert(!m_streamBuffer->GetStorage().HasHeader(piece->GetPieceIndex()));
+		LIVE_ASSERT(!::IsBadReadPtr(piece, sizeof(MonoMediaHeaderPiece)));
+		LIVE_ASSERT(!m_streamBuffer->GetStorage().HasHeader(piece->GetPieceIndex()));
 		MediaHeaderPiecePtr headerPiece = MediaHeaderPiece::FromMonoPiece( piecePtr, m_streamBuffer->GetSigner() );
 		if ( ! headerPiece )
 		{
@@ -258,8 +258,8 @@ inline void SourceModule::SafeAddDataPiece(MonoMediaDataPiece* piece)
 		SOURCENEW_DEBUG("获得数据片成功 PieceIndex=" << piece->GetPieceIndex() << " Length=" << piece->GetPieceLength()
 			<< " HeaderIndex=" << piece->GetHeaderPiece() << " Timestamp=" << piece->GetTimeStamp() );
 
-		assert(!::IsBadReadPtr(piece, sizeof(MonoMediaDataPiece)));
-		assert(!m_streamBuffer->GetStorage().HasDataPiece(piece->GetPieceIndex()));
+		LIVE_ASSERT(!::IsBadReadPtr(piece, sizeof(MonoMediaDataPiece)));
+		LIVE_ASSERT(!m_streamBuffer->GetStorage().HasDataPiece(piece->GetPieceIndex()));
 		MediaDataPiecePtr dataPiece = MediaDataPiece::FromMonoPiece( piecePtr, m_streamBuffer->GetSigner() );
 		if ( ! dataPiece )
 		{

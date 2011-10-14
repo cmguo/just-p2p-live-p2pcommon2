@@ -120,7 +120,7 @@ void CUdpDetect::HandleRedetect( data_input_stream& is, const NEW_UDP_PACKET_HEA
 	}
 
 	VIEW_INFO("UDPReceiveRedetect " << is.total_size() << " " << sockAddr);
-	//assert( parser->KeyAddress.ToUDPAddress() == sockAddr );
+	//LIVE_ASSERT( parser->KeyAddress.ToUDPAddress() == sockAddr );
 	CANDIDATE_PEER_INFO peerInfo;
 	peerInfo.Address = parser.KeyAddress;
 	peerInfo.CoreInfo = packetPeerInfo.CoreInfo;
@@ -134,7 +134,7 @@ void CUdpDetect::DoDetect()
 {	
 	// 此函数是由Timer驱动的，每隔0.25秒就会被调用
 	//return;
-	//assert(m_OnceDetectCount >= NORMAL_DETECT_COUNT && m_OnceDetectCount <= MAX_DETECT_COUNT);
+	//LIVE_ASSERT(m_OnceDetectCount >= NORMAL_DETECT_COUNT && m_OnceDetectCount <= MAX_DETECT_COUNT);
 	
 	if (m_LiveInfo.TransferMethod == TRANSFER_NO_DETECT)
 	{
@@ -181,8 +181,8 @@ void CUdpDetect::DoDetect()
 		// IpPoolMaxCount = 1500 - ------------------
 		//                               50
 		IpPoolMaxCount = 1500 - bufferTime / 50;
-		assert( IpPoolMaxCount >= 100 );
-		assert( IpPoolMaxCount <= 1100 );
+		LIVE_ASSERT( IpPoolMaxCount >= 100 );
+		LIVE_ASSERT( IpPoolMaxCount <= 1100 );
 	}
 
 	IPPOOL_INFO( "IpPoolMaxCount "<<IpPoolMaxCount );
@@ -298,7 +298,7 @@ void CUdpDetect::OnAppTimer(UINT times)
 
 bool CUdpDetect::HandleUDPPacket( data_input_stream& is, const NEW_UDP_PACKET_HEAD& head, const PACKET_PEER_INFO& packetPeerInfo, const SimpleSocketAddress& sockAddr )
 {
-	assert(packetPeerInfo.ChannelGUID == m_PeerInformation->ChannelGUID);
+	LIVE_ASSERT(packetPeerInfo.ChannelGUID == m_PeerInformation->ChannelGUID);
 	switch (head.Action)
 	{
 	case PPT_PEER_EXCHANGE:
@@ -337,7 +337,7 @@ bool CUdpDetect::ExchangePeers( const SimpleSocketAddress& sockAddr, bool isResp
 	{
 		// peer地址列表在100毫秒之后过期
 		size_t count = m_PeerManager.FillPeerAddresses( packet.Peers, max_udp_echo_peer_count, sockAddr.IP );
-		assert( count == packet.Peers.size() );
+		LIVE_ASSERT( count == packet.Peers.size() );
 		m_ExchangedPeerTime.sync();
 	}
 	size_t packetSize = m_PacketSender->Send( packet, transactionID, sockAddr );
@@ -381,7 +381,7 @@ void CUdpDetect::HandlePeerExchange(  data_input_stream& is, const NEW_UDP_PACKE
 	m_Statistics.LastReceivedExchangedPeerCount = static_cast<UINT16>( packet.Peers.size() );
 	m_Statistics.TotalReceivedExchangedPeerCount += packet.Peers.size();
 
-	//assert( sockAddr.IP == packetPeerInfo.OuterAddress.IP || sockAddr.IP == packetPeerInfo.Address.IP );
+	//LIVE_ASSERT( sockAddr.IP == packetPeerInfo.OuterAddress.IP || sockAddr.IP == packetPeerInfo.Address.IP );
 
 	//检查是否是自己发给自己的
 	if (packetPeerInfo.PeerGUID == m_PeerInformation->PeerGUID)
@@ -436,7 +436,7 @@ void CUdpDetect::HandlePeerExchange(  data_input_stream& is, const NEW_UDP_PACKE
 		else
 		{
 			VIEW_INFO("IPAddDetected "<<keyAddress<<" "<<packetPeerInfo.Address<<" End");
-			assert( keyAddress.IP == packetPeerInfo.Address.IP );
+			LIVE_ASSERT( keyAddress.IP == packetPeerInfo.Address.IP );
 			CANDIDATE_PEER_INFO candidatePeer;
 			candidatePeer.Address = packetPeerInfo.Address;
 			candidatePeer.CoreInfo = packetPeerInfo.CoreInfo;

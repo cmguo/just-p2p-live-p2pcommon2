@@ -114,7 +114,7 @@ inline void CheckSocketResult(int socketResult)
 		UTIL_ERROR("CheckSocketResult error " << make_tuple(socketResult, errcode));
 		throw SocketException(errcode);
 	}
-	assert(socketResult == 0);
+	LIVE_ASSERT(socketResult == 0);
 }
 
 /// 检查send/recv的结果
@@ -141,21 +141,21 @@ inline void SyncSocket::Close()
 		if (SOCKET_ERROR == result)
 		{
 			UTIL_ERROR("File::Close CloseHandle failed " << ::WSAGetLastError());
-		//	assert(false);
+		//	LIVE_ASSERT(false);
 		}
 	}
 }
 
 inline void SyncSocket::Connect(const SocketAddress& addr)
 {
-	assert(!IsOpen());
+	LIVE_ASSERT(!IsOpen());
 	Close();
 	m_handle = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (m_handle == INVALID_SOCKET)
 	{
 		int errcode = ::WSAGetLastError();
 		UTIL_ERROR("SyncSocket::Connect create socket failed " << errcode);
-		assert(false);
+		LIVE_ASSERT(false);
 		throw SocketException(errcode);
 	}
 	UTIL_EVENT("SyncSocket::Connect connect to " << addr);
@@ -165,7 +165,7 @@ inline void SyncSocket::Connect(const SocketAddress& addr)
 
 inline void SyncSocket::Connect(const char* host, u_short port)
 {
-	assert(host != NULL && port != 0);
+	LIVE_ASSERT(host != NULL && port != 0);
 	u_long ip = ResolveHostName(host);
 	if (ip == INADDR_NONE)
 	{
@@ -178,18 +178,18 @@ inline void SyncSocket::Connect(const char* host, u_short port)
 
 inline size_t SyncSocket::Receive(void* buffer, size_t size)
 {
-	assert(buffer != NULL && size > 0);
-//	assert(IsOpen());
+	LIVE_ASSERT(buffer != NULL && size > 0);
+//	LIVE_ASSERT(IsOpen());
 	int bytes = ::recv(m_handle, static_cast<char*>(buffer), size, 0);
 	CheckSocketIOResult(bytes);
-	assert(bytes > 0 && bytes <= size);
+	LIVE_ASSERT(bytes > 0 && bytes <= size);
 	return bytes;
 }
 
 inline bool SyncSocket::ReceiveN(void* buffer, size_t size)
 {
-	assert(buffer != NULL && size > 0);
-//	assert(IsOpen());
+	LIVE_ASSERT(buffer != NULL && size > 0);
+//	LIVE_ASSERT(IsOpen());
 	char* buf = static_cast<char*>(buffer);
 	size_t totalBytes = 0;
 	while (totalBytes < size)
@@ -202,18 +202,18 @@ inline bool SyncSocket::ReceiveN(void* buffer, size_t size)
 
 inline size_t SyncSocket::Send(const void* data, size_t size)
 {
-	assert(data != NULL && size > 0);
-//	assert(IsOpen());
+	LIVE_ASSERT(data != NULL && size > 0);
+//	LIVE_ASSERT(IsOpen());
 	int bytes = ::send(m_handle, static_cast<const char*>(data), size, 0);
 	CheckSocketIOResult(bytes);
-	assert (bytes > 0 && bytes <= size);
+	LIVE_ASSERT(bytes > 0 && bytes <= size);
 	return bytes;
 }
 
 inline void SyncSocket::SendN(const void* data, size_t size)
 {
-	assert(data != NULL && size > 0);
-//	assert(IsOpen());
+	LIVE_ASSERT(data != NULL && size > 0);
+//	LIVE_ASSERT(IsOpen());
 	const char* databuf = static_cast<const char*>(data);
 	size_t totalBytes = 0;
 	while (totalBytes < size)
@@ -225,8 +225,8 @@ inline void SyncSocket::SendN(const void* data, size_t size)
 
 inline bool SyncSocket::SetOption(int level, int opt, const void* data, int size)
 {
-	assert(data != NULL && size > 0);
-	assert(IsOpen());
+	LIVE_ASSERT(data != NULL && size > 0);
+	LIVE_ASSERT(IsOpen());
 	if (SOCKET_ERROR == ::setsockopt(m_handle, level, opt, static_cast<const char*>(data), size))
 	{
 		UTIL_ERROR("SyncSocket::SetOption setsockopt failed " << ::WSAGetLastError());

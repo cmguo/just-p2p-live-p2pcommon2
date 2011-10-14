@@ -141,7 +141,7 @@ public:
 
 	bool join( ULONG milliseconds )
 	{
-		assert( is_open() && m_info.hProcess != NULL );
+		LIVE_ASSERT( is_open() && m_info.hProcess != NULL );
 		return ::WaitForSingleObject( m_info.hProcess, milliseconds ) == WAIT_OBJECT_0;
 	}
 
@@ -157,11 +157,11 @@ public:
 			if ( is_alive() )
 			{
 				bool success = this->kill();
-				assert( success );
+				LIVE_ASSERT( success );
 			}
-			assert( false == this->is_alive() );
-			assert( m_info.hProcess != NULL && m_info.hThread != NULL );
-			assert( m_info.dwProcessId != 0 && m_info.dwThreadId != 0 );
+			LIVE_ASSERT( false == this->is_alive() );
+			LIVE_ASSERT( m_info.hProcess != NULL && m_info.hThread != NULL );
+			LIVE_ASSERT( m_info.dwProcessId != 0 && m_info.dwThreadId != 0 );
 			::CloseHandle( m_info.hProcess );
 			::CloseHandle( m_info.hThread );
 			FILL_ZERO( m_info );
@@ -455,7 +455,7 @@ public:
 		if ( m_thread.is_alive() )
 		{
 			TRACE("subprocess::stop %d\n", m_thread.get_id());
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 		if ( m_param )
 		{

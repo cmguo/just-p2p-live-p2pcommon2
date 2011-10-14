@@ -69,13 +69,13 @@ public:
 			return std::wstring();
 		if (len > max_string_length)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return std::wstring();
 		}
 		std::wstring ws;
 		ws.resize(len);
 		size_t len2 = mbstowcs(&ws[0], s.c_str(), len);
-		assert(len2 == len);
+		LIVE_ASSERT(len2 == len);
 		if ((size_t)-1 == len2)
 			return std::wstring();
 		return ws;
@@ -93,13 +93,13 @@ public:
 			return std::string();
 		if (len > max_string_length)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return std::string();
 		}
 		std::string s;
 		s.resize(len);
 		size_t len2 = wcstombs(&s[0], ws.c_str(), len);
-		assert(len2 == len);
+		LIVE_ASSERT(len2 == len);
 		if ((size_t)-1 == len2)
 			return std::string();
 		return s;

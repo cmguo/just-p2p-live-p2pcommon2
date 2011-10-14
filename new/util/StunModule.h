@@ -61,8 +61,8 @@ public:
 	PEER_ADDRESS GetDetectedAddress() const { return CPeerAddrUtil::ToPeerAddress( m_DetectedAddress ); }
 	const InetSocketAddress& GetServerAddress() const
 	{
-		assert(!m_ServerList.empty());
-		assert( m_CurrentServer < m_ServerList.size() );
+		LIVE_ASSERT(!m_ServerList.empty());
+		LIVE_ASSERT( m_CurrentServer < m_ServerList.size() );
 		return m_ServerList[m_CurrentServer];
 	}
 

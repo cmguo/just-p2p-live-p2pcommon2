@@ -45,15 +45,15 @@ public:
 	virtual void Stop() {}
 
 	/// PeerConnection在收到一个header piece时调用
-	//virtual void OnHeaderPieceReceived(PPMediaHeaderPacketPtr packet, PeerConnection* connection) { assert(false); }
+	//virtual void OnHeaderPieceReceived(PPMediaHeaderPacketPtr packet, PeerConnection* connection) { LIVE_ASSERT(false); }
 
 	/// PeerConnection在收到一个data piece时调用
-	//virtual void OnDataPieceReceived(PPMediaDataPacketPtr packet, PeerConnection* connection) { assert(false); }
-	virtual void OnSubPieceReceived(SubMediaPiecePtr packet, PeerConnection* connection) { assert(false); }
+	//virtual void OnDataPieceReceived(PPMediaDataPacketPtr packet, PeerConnection* connection) { LIVE_ASSERT(false); }
+	virtual void OnSubPieceReceived(SubMediaPiecePtr packet, PeerConnection* connection) { LIVE_ASSERT(false); }
 
 	/// PeerConnection在接收一个piece失败时调用
-	virtual void OnPieceReceiveFailed(UINT pieceIndex, PeerConnection* connection) { assert(false); }
-	virtual void OnSubPieceReceivedFailed(SubPieceUnit subPiece, PeerConnection* connection) { assert(false); }
+	virtual void OnPieceReceiveFailed(UINT pieceIndex, PeerConnection* connection) { LIVE_ASSERT(false); }
+	virtual void OnSubPieceReceivedFailed(SubPieceUnit subPiece, PeerConnection* connection) { LIVE_ASSERT(false); }
 
 	/// 请求下一个Pieice
 	virtual void RequestNextPiece() { }
@@ -235,7 +235,7 @@ protected:
 
 	void Verify()
 	{
-		assert( m_Connections.size() == m_Tunnels.size() );
+		LIVE_ASSERT( m_Connections.size() == m_Tunnels.size() );
 	}
 
 protected:

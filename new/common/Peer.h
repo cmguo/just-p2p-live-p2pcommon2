@@ -27,9 +27,9 @@ public:
 protected:
 	void DoCreateComponents()
 	{
-		assert(!m_tracker);
-		assert(!m_streamBuffer);
-		assert(!m_Manager);
+		LIVE_ASSERT(!m_tracker);
+		LIVE_ASSERT(!m_streamBuffer);
+		LIVE_ASSERT(!m_Manager);
 		m_tracker.reset(DoCreateTracker());
 		m_streamBuffer.reset(StreamBufferFactory::PeerCreate());
 		m_Manager.reset(PeerManagerFactory::PeerCreate(this));
@@ -238,9 +238,9 @@ public:
 
 	virtual void DoCreateComponents()
 	{
-		assert(!m_tracker);
-		assert(!m_streamBuffer);
-		assert(!m_Manager);
+		LIVE_ASSERT(!m_tracker);
+		LIVE_ASSERT(!m_streamBuffer);
+		LIVE_ASSERT(!m_Manager);
 		m_tracker.reset(DoCreateTracker());
 		m_streamBuffer.reset(StreamBufferFactory::PeerCreate());
 		m_Manager.reset(PeerManagerFactory::SimpleMDSCreate(this));

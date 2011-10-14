@@ -102,7 +102,7 @@ struct CORE_TIMER_QUEUE_INFO
 	}
 	void Dec()
 	{
-		assert(this->PendingCount > 0);
+		LIVE_ASSERT(this->PendingCount > 0);
 		this->PendingCount--;
 	}
 

@@ -25,20 +25,20 @@ public:
 	/// 从输入流读取对象
 	virtual bool read_object( data_input_stream& is ) = 0;
 	//{
-	//	assert( false );
+	//	LIVE_ASSERT( false );
 	//	return false;
 	//}
 
 	/// 将对象数据输出到流
 	virtual void write_object( data_output_stream& os ) const = 0;
 	//{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 	//}
 
 	/// 获取对象大小
 	virtual size_t get_object_size() const = 0;
 	//{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 	//	return 0;
 	//}
 };
@@ -88,20 +88,20 @@ public:
 	/// 从输入流读取对象
 	// static bool read_object( data_input_stream& is );
 	//{
-	//	assert( false );
+	//	LIVE_ASSERT( false );
 	//	return false;
 	//}
 
 	/// 将对象数据输出到流
 	// static void write_object( data_output_stream& os ) const;
 	//{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 	//}
 
 	/// 获取对象大小
 	//size_t get_object_size() const = 0;
 	//{
-	//	assert(false);
+	//	LIVE_ASSERT(false);
 	//	return 0;
 	//}
 

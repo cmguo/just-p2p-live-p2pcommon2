@@ -27,20 +27,20 @@ public:
 		int i = 0;
 		for (i = 0; i < MAX_FIXED_POOL_COUNT; ++i)
 		{
-			assert(itemSize >= 64 && itemSize <= 512);
+			LIVE_ASSERT(itemSize >= 64 && itemSize <= 512);
 			m_fixedPools[i].init(itemSize, itemCount);
 			itemSize *= 2;
-			assert(itemCount > 2);
+			LIVE_ASSERT(itemCount > 2);
 			itemCount /= 2;
 		}
-		assert(itemSize == 1024);
+		LIVE_ASSERT(itemSize == 1024);
 		itemSize = 1024;
 		for (i = 0; i < MAX_RECYCLED_POOL_COUNT; ++i)
 		{
 			m_recycledPools[i].init(itemSize);
 			itemSize += 1024;
 		}
-		assert(itemSize == 17 * 1024);
+		LIVE_ASSERT(itemSize == 17 * 1024);
 	}
 
 
@@ -53,9 +53,9 @@ public:
 			m_lastCheckTime.Sync();
 		}
 
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		void* p = do_allocate(size + sizeof(alloc_header));
-		assert(p != 0);
+		LIVE_ASSERT(p != 0);
 		alloc_header* header = static_cast<alloc_header*>(p);
 		header->size = size;
 		return header + 1;
@@ -66,7 +66,7 @@ public:
 
 		alloc_header* header = static_cast<alloc_header*>(p) - 1;
 		size_t size = header->size;
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		do_deallocate(header);
 	}
 	void clear()
@@ -126,7 +126,7 @@ public:
 protected:
 	void* do_allocate(size_t size)
 	{
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		int index = 0;
 		int allocType = get_alloc_info(size, index);
 		if (allocType == 0)
@@ -135,16 +135,16 @@ protected:
 		}
 		if (allocType == 1)
 		{
-			assert(index < MAX_RECYCLED_POOL_COUNT);
+			LIVE_ASSERT(index < MAX_RECYCLED_POOL_COUNT);
 			return m_recycledPools[index].allocate();
 		}
-		assert(index < MAX_FIXED_POOL_COUNT);
+		LIVE_ASSERT(index < MAX_FIXED_POOL_COUNT);
 		return m_fixedPools[index].allocate();
 	}
 	void do_deallocate(alloc_header* node)
 	{
 		size_t size = node->size;
-		assert(size > 0);
+		LIVE_ASSERT(size > 0);
 		size += sizeof(alloc_header);
 		int index = 0;
 		int allocType = get_alloc_info(size, index);
@@ -155,11 +155,11 @@ protected:
 		}
 		if (allocType == 1)
 		{
-			assert(index < MAX_RECYCLED_POOL_COUNT);
+			LIVE_ASSERT(index < MAX_RECYCLED_POOL_COUNT);
 			m_recycledPools[index].deallocate(node);
 			return;
 		}
-		assert(index < MAX_FIXED_POOL_COUNT);
+		LIVE_ASSERT(index < MAX_FIXED_POOL_COUNT);
 		m_fixedPools[index].deallocate(node);
 	}
 
@@ -172,11 +172,11 @@ protected:
 		if (size > 512)
 		{
 			index = (size - 1) / 1024;
-			assert(index < MAX_RECYCLED_POOL_COUNT);
+			LIVE_ASSERT(index < MAX_RECYCLED_POOL_COUNT);
 			return 1;
 		}
 		index = log2_div(size - 1, 64);
-		assert(index < MAX_FIXED_POOL_COUNT);
+		LIVE_ASSERT(index < MAX_FIXED_POOL_COUNT);
 		return 2;
 	}
 
@@ -242,34 +242,34 @@ void DoRunPeer()
 {
 	TRACE(TEXT("RunPeer\n"));
 
-	assert(log2(1) == 0);
-	assert(log2(2) == 1);
-	assert(log2(3) == 1);
-	assert(log2(4) == 2);
-	assert(log2(5) == 2);
-	assert(log2(6) == 2);
-	assert(log2(7) == 2);
-	assert(log2(8) == 3);
-	assert(log2(9) == 3);
-	assert(log2(15) == 3);
-	assert(log2(16) == 4);
-	assert(log2(17) == 4);
+	LIVE_ASSERT(log2(1) == 0);
+	LIVE_ASSERT(log2(2) == 1);
+	LIVE_ASSERT(log2(3) == 1);
+	LIVE_ASSERT(log2(4) == 2);
+	LIVE_ASSERT(log2(5) == 2);
+	LIVE_ASSERT(log2(6) == 2);
+	LIVE_ASSERT(log2(7) == 2);
+	LIVE_ASSERT(log2(8) == 3);
+	LIVE_ASSERT(log2(9) == 3);
+	LIVE_ASSERT(log2(15) == 3);
+	LIVE_ASSERT(log2(16) == 4);
+	LIVE_ASSERT(log2(17) == 4);
 
-	assert(log2_div(63, 64) == 0);
-	assert(log2_div(64, 64) == 0);
-	assert(log2_div(65, 64) == 1);
-	assert(log2_div(127, 64) == 1);
-	assert(log2_div(128, 64) == 1);
-	assert(log2_div(129, 64) == 2);
-	assert(log2_div(255, 64) == 2);
-	assert(log2_div(256, 64) == 2);
-	assert(log2_div(257, 64) == 3);
-	assert(log2_div(511, 64) == 3);
-	assert(log2_div(512, 64) == 3);
-	assert(log2_div(513, 64) == 4);
-	assert(log2_div(1000, 64) == 4);
-	assert(log2_div(1024, 64) == 4);
-	assert(log2_div(1025, 64) == 5);
+	LIVE_ASSERT(log2_div(63, 64) == 0);
+	LIVE_ASSERT(log2_div(64, 64) == 0);
+	LIVE_ASSERT(log2_div(65, 64) == 1);
+	LIVE_ASSERT(log2_div(127, 64) == 1);
+	LIVE_ASSERT(log2_div(128, 64) == 1);
+	LIVE_ASSERT(log2_div(129, 64) == 2);
+	LIVE_ASSERT(log2_div(255, 64) == 2);
+	LIVE_ASSERT(log2_div(256, 64) == 2);
+	LIVE_ASSERT(log2_div(257, 64) == 3);
+	LIVE_ASSERT(log2_div(511, 64) == 3);
+	LIVE_ASSERT(log2_div(512, 64) == 3);
+	LIVE_ASSERT(log2_div(513, 64) == 4);
+	LIVE_ASSERT(log2_div(1000, 64) == 4);
+	LIVE_ASSERT(log2_div(1024, 64) == 4);
+	LIVE_ASSERT(log2_div(1025, 64) == 5);
 
 	void* p = s_pool.allocate(100);
 	s_pool.deallocate(p);

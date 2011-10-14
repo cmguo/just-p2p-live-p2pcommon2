@@ -42,7 +42,7 @@ bool MediaPieceUtil::Sign( const MonoMediaDataPiece& dataPiece, DataSignerPtr si
 	PrepareSignBuffer( dataPiece );
 	PacketOutputStream os( buf.data(), buf.size() );
 	MonoMediaPieceIO::WritePiece( os, dataPiece );
-	assert( os.position() == dataPiece.GetSize() );
+	LIVE_ASSERT( os.position() == dataPiece.GetSize() );
 	return SignBuffer( os, dataPiece, signer );
 }
 
@@ -52,7 +52,7 @@ bool MediaPieceUtil::Sign( const MonoMediaHeaderPiece& headerPiece, DataSignerPt
 	PrepareSignBuffer( headerPiece );
 	PacketOutputStream os( buf.data(), buf.size() );
 	MonoMediaPieceIO::WritePiece( os, headerPiece );
-	assert( os.position() == headerPiece.GetSize() );
+	LIVE_ASSERT( os.position() == headerPiece.GetSize() );
 	return SignBuffer( os, headerPiece, signer );
 }
 
@@ -66,10 +66,10 @@ MonoMediaPiecePtr MediaPieceUtil::MakeMonoPiece(const MediaPiece& slicedPiece)
 	for (size_t i = 0; i < slicedPiece.GetSubPieces().size(); ++i)
 	{
 		const SubMediaPiece& subPiece = *slicedPiece.GetSubPieces()[i];
-		assert(subPiece.GetSubPieceIndex() == i);
+		LIVE_ASSERT(subPiece.GetSubPieceIndex() == i);
 		pieceData.append(subPiece.SubPieceData);
 	}
-	assert(pieceData.size() == pieceInfo.PieceLength + 1 + SignatureData::static_size);
+	LIVE_ASSERT(pieceData.size() == pieceInfo.PieceLength + 1 + SignatureData::static_size);
 
 	// ½âÎöpiece data²¿·Ö
 	PacketInputStream is( pieceData.data(), pieceInfo.PieceLength );
@@ -97,14 +97,14 @@ MonoMediaPiecePtr MediaPieceUtil::MakeMonoPiece(const MediaPiece& slicedPiece)
 	else
 	{
 		VIEW_ERROR("MediaPiece::MakeMonoPiece unrecognized piece type " << pieceInfo.PieceType);
-		assert(false);
+		LIVE_ASSERT(false);
 		return MonoMediaPiecePtr();
 	}
-	assert( piece->GetPieceBodyLength() == pieceInfo.PieceLength );
+	LIVE_ASSERT( piece->GetPieceBodyLength() == pieceInfo.PieceLength );
 	if ( pieceInfo.PieceLength < piece->GetPieceBodyLength() )
 	{
 		VIEW_ERROR("MediaPiece::MakeMonoPiece invalid piece body length " << make_tuple(pieceInfo.PieceIndex, pieceInfo.PieceType));
-		assert(false);
+		LIVE_ASSERT(false);
 		return MonoMediaPiecePtr();
 	}
 	return piece;

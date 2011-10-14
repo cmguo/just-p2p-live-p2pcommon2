@@ -44,7 +44,7 @@ public:
 			if (!success)
 			{
 				TRACEOUT("File::Close CloseHandle failed with error %d\n", ::GetLastError());
-				assert(false);
+				LIVE_ASSERT(false);
 			}
 		}
 	}
@@ -52,7 +52,7 @@ public:
 	/// 打开文件
 	bool open(LPCTSTR path, DWORD access, DWORD shareMode, DWORD creationDisposition)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		close();
 		m_handle = ::CreateFile(path, access, shareMode, NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (is_open())
@@ -83,12 +83,12 @@ public:
 	/// 读取数据
 	size_t read(void* buffer, size_t size)
 	{
-		assert(buffer != NULL && size > 0);
-		assert(is_open());
+		LIVE_ASSERT(buffer != NULL && size > 0);
+		LIVE_ASSERT(is_open());
 		DWORD bytes = 0;
 		if (::ReadFile(m_handle, buffer, size, &bytes, NULL))
 		{
-			//assert(bytes > 0);
+			//LIVE_ASSERT(bytes > 0);
 			return bytes;
 		}
 		TRACE("file::read ReadFile failed. size=%u, bytes=%u error=%d\n", size, bytes, ::GetLastError());
@@ -99,7 +99,7 @@ public:
 	bool read_n(void* buffer, size_t size)
 	{
 		size_t len = read(buffer, size);
-		assert(len <= size);
+		LIVE_ASSERT(len <= size);
 		return len == size;
 	}
 
@@ -117,7 +117,7 @@ public:
 	bool write_struct(const StructT& buffer)
 	{
 		size_t size = write(&buffer, sizeof(StructT));
-		assert(size <= sizeof(StructT));
+		LIVE_ASSERT(size <= sizeof(StructT));
 		return size == sizeof(StructT);
 	}
 
@@ -132,7 +132,7 @@ public:
 	{
 		unsigned char ch = 0;
 		size_t bytes = read(&ch, 1);
-		assert(bytes == 1);
+		LIVE_ASSERT(bytes == 1);
 		return ch;
 	}
 
@@ -146,7 +146,7 @@ public:
 		int count = _vsntprintf(buffer, max_size, format, args);
 		if (count <= 0)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
 		return write(buffer, count) == static_cast<size_t>( count );
@@ -174,13 +174,13 @@ public:
 		const DWORD INVALID_SET_FILE_POINTER = -1;
 #endif
 
-		assert(is_open());
+		LIVE_ASSERT(is_open());
 		DWORD result = ::SetFilePointer(m_handle, distance, NULL, moveMethod);
 		if (result == INVALID_SET_FILE_POINTER)
 		{
 			DWORD errcode = ::GetLastError();
 			TRACE("file::seek SetFilePointer failed, result=%u,error=%d,distance=%d,move=%u\n", result, errcode, distance, moveMethod);
-			assert(errcode != ERROR_SUCCESS);
+			LIVE_ASSERT(errcode != ERROR_SUCCESS);
 			return false;
 		}
 		return true;
@@ -214,10 +214,10 @@ public:
 		size.QuadPart = 0;
 		if ( ::GetFileSizeEx( m_handle, &size ) )
 		{
-			assert( size.QuadPart >= 0 );
+			LIVE_ASSERT( size.QuadPart >= 0 );
 			return size.QuadPart;
 		}
-		assert(false);
+		LIVE_ASSERT(false);
 		return 0;
 	}
 

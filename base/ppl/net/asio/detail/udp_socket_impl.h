@@ -43,8 +43,8 @@ public:
 
 	void receive(udp_receive_session_ptr session)
 	{
-		assert(session);
-		assert(session->buffer.size() > 0);
+		LIVE_ASSERT(session);
+		LIVE_ASSERT(session->buffer.size() > 0);
 		m_impl.async_receive_from(
 			boost::asio::buffer(session->buffer.data(), session->buffer.size()), 
 			session->remote_endpoint, 

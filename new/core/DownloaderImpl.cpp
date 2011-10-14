@@ -124,7 +124,7 @@ bool PeerDownloader::CheckRquestPieceTimeout()
 	STL_FOR_EACH_CONST( PeerTunnelCollection, m_Tunnels, itr)
 	{
 		PeerTunnelPtr tunnel = *itr;
-		assert( tunnel );
+		LIVE_ASSERT( tunnel );
 		if ( CanDownload( tunnel ) )
 		{
 			tunnel->CheckRequestPieceTimeout();
@@ -415,7 +415,7 @@ void PeerDownloader::RequestNextPiece()
 			size_t subPieceCount = this->GetPossibleSubPieceCount(pieceIndex, m_streamBuffer.GetSkipIndex());
 			if( subPieceCount == 0)
 			{
-				assert(false);
+				LIVE_ASSERT(false);
 				subPieceCount = 5;
 			}
 
@@ -591,7 +591,7 @@ void PeerDownloader::OnHeaderPieceReceived(UnfinishedMediaPiecePtr headerPiece, 
 	if ( ! piece )
 	{
 		VIEW_ERROR("invalid header piece received " << headerPiece->GetPieceIndex());
-		assert( false );
+		LIVE_ASSERT( false );
 		return;
 	}
 	TEST_LOG_OUT_ONCE("header piece received " << piece->GetPieceIndex());
@@ -610,7 +610,7 @@ void PeerDownloader::OnDataPieceReceived(UnfinishedMediaPiecePtr dataPiece, Peer
 	if ( ! piece )
 	{
 		VIEW_ERROR("invalid data piece received " << dataPiece->GetPieceIndex());
-		assert( false );
+		LIVE_ASSERT( false );
 		return;
 	}
 
@@ -762,7 +762,7 @@ UnfinishedMediaPiecePtr PeerDownloader::AddDataSubPiece(SubMediaPiecePtr subPiec
 	{
 		m_Statistics.StartLocateTime = m_Statistics.StartTime.elapsed32();
 		UINT32 startIndex = subPiece->GetPieceIndex() - 1;
-		assert(startIndex > 0);
+		LIVE_ASSERT(startIndex > 0);
 		m_Statistics.FirstStartIndex = startIndex;
 		m_streamBuffer.Reset(startIndex);
 		m_LocateTimeCounter.sync();
@@ -787,7 +787,7 @@ void PeerDownloader::GetConnectionStatistics(int& highConnectionCount, int& requ
 	STL_FOR_EACH_CONST( PeerTunnelCollection, m_Tunnels, itr)
 	{
 		PeerTunnelPtr tunnel = *itr;
-		assert( tunnel );
+		LIVE_ASSERT( tunnel );
 		if( tunnel->IsHighConnection() )
 		{
 			highConnectionCount ++;
@@ -898,7 +898,7 @@ void PeerDownloader::RemoveTunnel( PeerConnection* pc )
 {
 	this->Verify();
 	size_t erasedCount = m_Tunnels.erase( pc->GetTunnel()->shared_from_this() );
-	assert( 1 == erasedCount );
+	LIVE_ASSERT( 1 == erasedCount );
 
 	// Added by Tady, 011611: Spark!
 	if (pc->GetConnectionInfo().ConnectParam.IsSpark == true && !m_sparkTunnels.empty())
@@ -950,7 +950,7 @@ SubMediaPiecePtr PeerDownloader::GetSubPiece(UINT pieceIndex, UINT8 subPieceInde
 	{
 		// 从piece中提取sub piece
 		subPiece = pieceInfo.GetSubPiece(subPieceIndex);
-		//assert( subPiece );
+		//LIVE_ASSERT( subPiece );
 	}
 	else
 	{
@@ -962,7 +962,7 @@ SubMediaPiecePtr PeerDownloader::GetSubPiece(UINT pieceIndex, UINT8 subPieceInde
 		if ( headerPiece )
 		{
 			subPiece = headerPiece->GetSubPiece(subPieceIndex);
-			//assert( subPiece );
+			//LIVE_ASSERT( subPiece );
 		}
 	}
 	return subPiece;
@@ -971,7 +971,7 @@ SubMediaPiecePtr PeerDownloader::GetSubPiece(UINT pieceIndex, UINT8 subPieceInde
 UnfinishedMediaPiecePtr PeerDownloader::AddHeaderSubPiece(SubMediaPiecePtr subPiece)
 {
 	//LIMIT_MIN(m_MaxSubPieceCountPerPiece, subPiece->GetSubPieceCount());
-	assert( PPDT_MEDIA_HEADER == subPiece->GetPieceType() );
+	LIVE_ASSERT( PPDT_MEDIA_HEADER == subPiece->GetPieceType() );
 	MediaHeaderPiecePtr piece = m_storage.GetHeader( subPiece->GetPieceIndex() );
 	if ( piece )
 	{

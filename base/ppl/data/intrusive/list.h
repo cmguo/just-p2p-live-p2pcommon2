@@ -42,7 +42,7 @@ public:
 
 	explicit list_iterator_impl(NodeStorageT node) : m_node(node)
 	{
-		assert(m_node != 0 && m_node->is_valid());
+		LIVE_ASSERT(m_node != 0 && m_node->is_valid());
 	}
 
 	void inc()
@@ -126,22 +126,22 @@ public:
 	void pop_front()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		this->erase(m_head.next);
 	}
 	list_node_base* front()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return this->m_head.next;
 	}
 	const list_node_base* front() const
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return this->m_head.next;
 	}
 
@@ -152,22 +152,22 @@ public:
 	void pop_back()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		this->erase(m_end->prev);
 	}
 	list_node_base* back()
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return m_end->prev;
 	}
 	const list_node_base* back() const
 	{
 		check();
-		assert(!empty());
-		assert(m_head.size > 0);
+		LIVE_ASSERT(!empty());
+		LIVE_ASSERT(m_head.size > 0);
 		return m_end->prev;
 	}
 
@@ -191,10 +191,10 @@ public:
 	void check() const
 	{
 #ifdef _DEBUG
-		assert(m_head.size >= 0);
-	//	assert(m_head.next == m_next);
+		LIVE_ASSERT(m_head.size >= 0);
+	//	LIVE_ASSERT(m_head.next == m_next);
 		size_t count = calc_size();
-		assert(count == m_head.size);
+		LIVE_ASSERT(count == m_head.size);
 #endif
 	}
 	int calc_size() const
@@ -211,8 +211,8 @@ public:
 	void insert(list_node_base* pos, list_node_base* node)
 	{
 		check();
-		assert(pos && node);
-		assert(pos->is_valid());
+		LIVE_ASSERT(pos && node);
+		LIVE_ASSERT(pos->is_valid());
 
 		node->prev = pos->prev;
 		node->next = pos;
@@ -220,7 +220,7 @@ public:
 		pos->prev->next = node;
 		pos->prev = node;
 
-		assert(pos->is_valid() && node->is_valid());
+		LIVE_ASSERT(pos->is_valid() && node->is_valid());
 		++m_head.size;
 		check();
 	}
@@ -228,7 +228,7 @@ public:
 	void erase(list_node_base* pos)
 	{
 		check();
-		assert(pos && pos->is_valid());
+		LIVE_ASSERT(pos && pos->is_valid());
 
 		pos->next->prev = pos->prev;
 		pos->prev->next = pos->next;

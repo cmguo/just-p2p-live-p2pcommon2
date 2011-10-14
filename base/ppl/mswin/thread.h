@@ -22,7 +22,7 @@ public:
 	}
 	virtual ~thread_base()
 	{
-		assert(!is_alive());
+		LIVE_ASSERT(!is_alive());
 		close();
 	}
 
@@ -42,8 +42,8 @@ public:
 	/// Æô¶¯Ïß³Ì
 	bool start()
 	{
-		assert(!this->is_alive());
-		//assert(!this->is_started());
+		LIVE_ASSERT(!this->is_alive());
+		//LIVE_ASSERT(!this->is_started());
 		stop();
 		close();
 		if (!create_thread())
@@ -62,7 +62,7 @@ public:
 	{
 		DWORD code = 0;
 		BOOL res = ::GetExitCodeThread(m_handle, &code);
-		assert(res);
+		LIVE_ASSERT(res);
 
 		TRACE("thread_base::get_exit_code 0x%p %d %d\n", m_handle, res, code);
 		return code;
@@ -94,7 +94,7 @@ public:
 			this->kill();
 		}
 
-		assert(false == is_alive());
+		LIVE_ASSERT(false == is_alive());
 		return true;
 	}
 	bool ensure_stopped()
@@ -109,7 +109,7 @@ public:
 		if (!::CloseHandle(m_handle))
 		{
 			UTIL_ERROR("thread_base::close CloseHandle failed " << make_tuple(m_handle, ::GetLastError()));
-			assert(false);
+			LIVE_ASSERT(false);
 		}
 		m_handle = NULL;
 		m_id = 0;
@@ -121,7 +121,7 @@ public:
 			return false;
 		BOOL success = ::TerminateThread(m_handle, 110);
 		UTIL_DEBUG("thread_base::kill 0x%p %lu %d\n", m_handle, m_id, success);
-		assert(success);
+		LIVE_ASSERT(success);
 		return ( FALSE != success );
 	}
 
@@ -147,7 +147,7 @@ public:
 protected:
 	void attach(HANDLE handle, DWORD id)
 	{
-		assert(!is_open());
+		LIVE_ASSERT(!is_open());
 		m_handle = handle;
 		m_id = id;
 	}
@@ -181,7 +181,7 @@ protected:
 	{
 		if (param == NULL)
 		{
-			assert(false);
+			LIVE_ASSERT(false);
 			return;
 		}
 	//	ThreadParam* tp = static_cast<ThreadParam*>(param);
@@ -227,13 +227,13 @@ protected:
 		if (threadobj == NULL)
 		{
 			UTIL_ERROR("AfxThread::create_thread AfxBeginThread failed " << ::GetLastError());
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
-		assert(threadobj->m_hThread != NULL && threadobj->m_nThreadID != 0);
+		LIVE_ASSERT(threadobj->m_hThread != NULL && threadobj->m_nThreadID != 0);
 		HANDLE hThread = NULL;
 		BOOL res = ::DuplicateHandle( GetCurrentProcess(), threadobj->m_hThread, GetCurrentProcess(), &hThread, THREAD_ALL_ACCESS, FALSE, DUPLICATE_SAME_ACCESS );
-		assert( res );
+		LIVE_ASSERT( res );
 		attach(hThread, threadobj->m_nThreadID);
 		return true;
 	}
@@ -258,10 +258,10 @@ protected:
 		if (hThread == NULL)
 		{
 			UTIL_ERROR("Win32Thread::create_thread _beginthreadex failed " << errno);
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
-		assert(id != 0);
+		LIVE_ASSERT(id != 0);
 		attach(hThread, id);
 		return true;
 	}
@@ -285,10 +285,10 @@ protected:
 		if (hThread == NULL)
 		{
 			UTIL_ERROR("thread_base::create_thread _beginthreadex failed");
-			assert(false);
+			LIVE_ASSERT(false);
 			return false;
 		}
-		assert(id != 0);
+		LIVE_ASSERT(id != 0);
 		attach(hThread, id);
 		return true;
 	}

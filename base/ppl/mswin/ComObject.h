@@ -12,7 +12,7 @@
 
 
 #define PPL_COM_INTERFACE_MAP_BEGIN()	\
-	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject) { assert(riid != __uuidof(IUnknown));
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject) { LIVE_ASSERT(riid != __uuidof(IUnknown));
 
 
 #define PPL_COM_INTERFACE_ENTRY(theInterface)	if (riid == __uuidof(theInterface)) { theInterface* pTempInterface = this; *ppvObject = pTempInterface; this->AddRef(); return S_OK; }

@@ -50,7 +50,7 @@ HRESULT MediaClient::SetPlayableRangeAfterSended(
 												 DWORD MinIndex,
 												 DWORD MaxIndex)
 {
-	assert( true == m_IsSending );
+	LIVE_ASSERT( true == m_IsSending );
 	
 	bool SendOk = true;
 	// 发送相应的数据
@@ -77,7 +77,7 @@ HRESULT MediaClient::SetPlayableRangeAfterSended(
 // 				// 检查了一定量的报文后仍然没有检测到关键帧，则直接开始
 // 				m_NeedStartWithKeyFrame = false;
 // 				m_KeyFrameLocated = true;
-// 				assert( false );
+// 				LIVE_ASSERT( false );
 // 				//Tracer::Trace("no key frame is found %d\n", m_CheckedDataPacketCount);
 // 			}
 // 			else if ( AsfHelper::IsKeyFramePacket( lpDataPacket->GetMediaData(), lpDataPacket->GetMediaDataLength() ) )
@@ -112,8 +112,8 @@ HRESULT MediaClient::SetPlayableRangeAfterSended(
 	m_NetWriter->SavePlaytoIndex(m_LastPlayIndex);
 	
 	//NETWRITER_WARN( "CNetWriter Now PlayIndex ! " << m_WillPlayIndex );
-	assert( m_WillPlayIndex != m_LastPlayIndex );
-	assert( m_WillPlayIndex > m_LastPlayIndex );
+	LIVE_ASSERT( m_WillPlayIndex != m_LastPlayIndex );
+	LIVE_ASSERT( m_WillPlayIndex > m_LastPlayIndex );
 	
 	return S_OK;
 }
@@ -215,8 +215,8 @@ CNetWriter::CNetWriter(CMediaServer* lpMediaServer, MonoMediaHeaderPiecePtr lpPa
 {
 	m_IntervalTimer.set_callback(boost::bind(&CNetWriter::OnTimer, this));
 
-	assert( lpPacket );
-	assert( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
+	LIVE_ASSERT( lpPacket );
+	LIVE_ASSERT( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
 
 	m_DataUnitSize = AsfHelper::GetDataUnitSizeFromHeader(lpPacket->GetHeader(), lpPacket->GetHeaderLength());
 
@@ -240,10 +240,10 @@ CNetWriter::CNetWriter(CMediaServer* lpMediaServer, MonoMediaHeaderPiecePtr lpPa
 				break;			//---------------------------------|
 			}					//                                 |
 		}						//                                 |                   
-		assert( i < length );	// 这说明头部不对啊                |
+		LIVE_ASSERT( i < length );	// 这说明头部不对啊                |
 		//	   <---------------------------------------------------|
-		assert( i > 0 );
-		assert( m_MediaHeaderPosition > 0 );
+		LIVE_ASSERT( i > 0 );
+		LIVE_ASSERT( m_MediaHeaderPosition > 0 );
 	}
 	else
 	{	// 还好，这说明在Source处还没有打上HTTP的头部
@@ -307,7 +307,7 @@ bool CNetWriter::OnAcceptConnection(tcp_socket_ptr newClient, const SocketAddres
 {
 	MEDIASERVER_INFO("CNetWriter::OnAcceptConnection " << *newClient << " from " << addr);
 	tcp_socket_ptr client(newClient);
-	assert(client->is_open());
+	LIVE_ASSERT(client->is_open());
 	client->set_listener(this);
 	// 启动收包
 	if (!client->receive())
@@ -337,7 +337,7 @@ bool CNetWriter::OnClientReceive(tcp_socket_ptr s, const BYTE* data, size_t size
 	// 检查 m_ClientHandles 是否有此套接字，如果有此套接字，则退出
 	if( ContainsClient(s.get()) )
 	{
-		assert( 0 );
+		LIVE_ASSERT( 0 );
 		NETWRITER_ERROR( "CNetWriter::ContainsClient has this SOCKET "<<*s );
 		return true;
 	}
@@ -371,7 +371,7 @@ void CNetWriter::on_socket_receive(tcp_socket* sender, BYTE* data, size_t size)
 	TCPClientSocketCollection::iterator iter = m_PendingClients.find(sender);
 	if ( iter == m_PendingClients.end() )
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return;
 	}
 
@@ -420,7 +420,7 @@ void CNetWriter::SavePlaytoIndex(UINT playtoIndex)
 		statistics.FirstPlayIndex = playtoIndex;
 		statistics.FirstPlayTime = time_counter().get_count();
 		MediaDataPiecePtr dataPiece = m_lpMediaServer->GetStorage().GetDataPiece( playtoIndex );
-		//assert( dataPiece );
+		//LIVE_ASSERT( dataPiece );
 		if ( dataPiece )
 		{
 			statistics.FirstPlayPieceTimeStamp = dataPiece->GetTimeStamp();
@@ -442,14 +442,14 @@ void CNetWriter::Reset()
 
 CNetWriter* NetWriterFactory::Create(CMediaServer* mediaServer, MonoMediaHeaderPiecePtr headerPiece)
 {
-	assert( headerPiece );
+	LIVE_ASSERT( headerPiece );
 	if( !headerPiece )
 		return NULL;
 
 	UINT mediaType = headerPiece->GetMediaType();
 	if (mediaType == PPMT_MEDIA_WMF_SAMPLE2)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		return NULL;
 		//mediaServer->StopServer();
 		//return CreateNewSampleNetWriter(mediaServer, headerPiece);
@@ -510,7 +510,7 @@ CNetWriter* NetWriterFactory::Create(CMediaServer* mediaServer, MonoMediaHeaderP
 		}
 		else
 		{
-			assert(0);
+			LIVE_ASSERT(0);
 			return CreateVistaHttpMediaNetWriter(mediaServer, headerPiece);
 		}
 	}
@@ -585,14 +585,14 @@ void CNetWriter::ParseHeader()
 {
 	if ( ! m_lpMediaHead )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return;
 	}
 	const BYTE *buffer = m_lpMediaHead->GetHeader();
 	int length = m_lpMediaHead->GetHeaderLength();
 	if ( length < m_MediaHeaderPosition )
 	{
-		assert( false );
+		LIVE_ASSERT( false );
 		return;
 	}
 	buffer += m_MediaHeaderPosition;
@@ -619,7 +619,7 @@ UINT32 CNetWriter::GetPreroll() const
 		return 5000;
 
 	UINT64 preroll = m_AsfHeaderObject.GetFilePropertiesObject()->GetPreroll();
-	assert( preroll > 0 && preroll < UINT_MAX );
+	LIVE_ASSERT( preroll > 0 && preroll < UINT_MAX );
 	LIMIT_MIN( preroll, 1 );
 	LIMIT_MAX( preroll, UINT_MAX );
 	return static_cast<UINT32>( preroll );

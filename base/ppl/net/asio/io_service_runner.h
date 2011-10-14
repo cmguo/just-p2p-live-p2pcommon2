@@ -27,7 +27,7 @@ public:
 	explicit io_service_runner() : m_ioservice(new boost::asio::io_service) { }
 	explicit io_service_runner(io_service_ptr ioservice) : m_ioservice(ioservice)
 	{
-		assert(m_ioservice);
+		LIVE_ASSERT(m_ioservice);
 	}
 
 	io_service_ptr get_service()

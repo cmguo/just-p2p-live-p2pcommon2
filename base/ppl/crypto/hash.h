@@ -22,7 +22,7 @@ public:
 		if ( false == fin.OpenRead( filename, FILE_SHARE_READ ) )
 #endif
 		{
-//			assert(false);
+//			LIVE_ASSERT(false);
 			return false;
 		}
 		HasherT hasher;
@@ -44,7 +44,7 @@ public:
 	template <typename HasherT>
 	static bool hash_file( const TCHAR* filename, BYTE* outbuf, size_t blockSize )
 	{
-		assert( blockSize > 0 );
+		LIVE_ASSERT( blockSize > 0 );
 		boost::scoped_array<BYTE> buf( new BYTE[blockSize] );
 		return hash_file_with<HasherT>( filename, outbuf, buf.get(), blockSize );
 	}

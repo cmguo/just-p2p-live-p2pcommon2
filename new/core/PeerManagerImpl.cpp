@@ -294,8 +294,8 @@ void UploaderConfig::Load( ini_file& ini )
 	// 		{
 	// 			InitialMaxUploadTimesPerSubPiece = 1;
 	// 		}
-	// assert(this->MaxUploadSpeed > 50);
-	// assert(this->InitialMaxUploadTimesPerSubPiece > 0);
+	// LIVE_ASSERT(this->MaxUploadSpeed > 50);
+	// LIVE_ASSERT(this->InitialMaxUploadTimesPerSubPiece > 0);
 }
 
 
@@ -315,7 +315,7 @@ CPeerManager::CPeerManager(AppModule * lpPeerModule) :
 		m_HuffmanCoding( new HuffmanCoding )
 {
 	APP_DEBUG("New CPeerManager");
-	assert(&m_streamBuffer != NULL);
+	LIVE_ASSERT(&m_streamBuffer != NULL);
 
 	m_state = st_none;
 
@@ -385,7 +385,7 @@ bool CPeerManager::Stop()
 	{
 		DelPeer(*m_Connections.begin(), PP_LEAVE_QUIT);
 	}
-	assert(m_Connections.empty());
+	LIVE_ASSERT(m_Connections.empty());
 	m_Connections.clear();
 	m_connectionIndex.clear();
 	m_AddressIndex.clear();
@@ -404,7 +404,7 @@ bool CPeerManager::Stop()
 //	STL_FOR_EACH_CONST(PeerConnectionCollection, m_Connections, itr)
 //	{
 //		PeerConnection *pc = *itr;
-//		assert(pc != NULL);
+//		LIVE_ASSERT(pc != NULL);
 //		if (pc->GetPeerGUID() == PeerGuid)
 //		{
 //			++count;
@@ -466,18 +466,18 @@ bool CPeerManager::DoDelPeer( PeerConnection* pc, UINT16 errcode )
 	//TRACE( TEXT("CPeerManager::DoDelPeer %p 0x%04x\n"), pc, errcode );
 	if (errcode == 0)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 	if (errcode == PP_LEAVE_INVALID_PACKET)
 	{
 		VIEW_ERROR("CPeerManager::DelPeer PP_LEAVE_INVALID_PACKET");
-		//assert(false);
+		//LIVE_ASSERT(false);
 	}
 	PeerConnectionCollection::iterator itr = m_Connections.find(pc);
 	if (pc == NULL || itr == m_Connections.end())
 	{
 		MANAGER_ERROR("CPeerManager::DelPeer cannot found Peer to del!");
-		assert( false );
+		LIVE_ASSERT( false );
 		return false;
 	}
 	TEST_LOG_OUT_ONCE("delete peer " << *pc << " with error=" << errcode);
@@ -487,13 +487,13 @@ bool CPeerManager::DoDelPeer( PeerConnection* pc, UINT16 errcode )
 	//m_statistics.ErrorCodes[errcode]++;
 	m_connectionIndex.erase(pc->GetPeerGUID());
 	bool res = multimaps::erase( m_AddressIndex, pc->GetKeyAddress(), pc );
-	assert(res);
+	LIVE_ASSERT(res);
 	res = multimaps::erase( m_IPIndex, pc->GetKeyAddress().IP, pc );
-	assert(res);
+	LIVE_ASSERT(res);
 	if (pc->IsUDP()/* && UDPPeerConnectionInfo::IsValidSessionKey(pc->GetRemoteSessionKey())*/)
 	{
 		int erasedCount = m_SessionKeyIndex.erase(pc->GetRemoteSessionKey());
-		assert( 1 == erasedCount );
+		LIVE_ASSERT( 1 == erasedCount );
 		VIEW_DEBUG( "PeerManager::DelPeer session peer " << *pc << " " << pc->GetRemoteSessionKey() );
 	}
 	m_Connections.erase(itr);
@@ -619,10 +619,10 @@ void CPeerManager::SyncConnectionInfo()
 	const DEGREE_COUNTER& degrees = m_statistics.Degrees;
 	m_PeerInformation->StatusInfo->Degrees = degrees.ToSimple();
 
-	assert((size_t)(degrees.Left + degrees.All.GetTotal()) == m_PeerModule.GetMaxConnectionCount());
-	assert(degrees.Left + m_Connections.size() == (size_t)m_PeerModule.GetMaxConnectionCount());
-	assert(degrees.Left == GetDegreeLeft());
-	assert(degrees.All.GetTotal() == (int)m_Connections.size());
+	LIVE_ASSERT((size_t)(degrees.Left + degrees.All.GetTotal()) == m_PeerModule.GetMaxConnectionCount());
+	LIVE_ASSERT(degrees.Left + m_Connections.size() == (size_t)m_PeerModule.GetMaxConnectionCount());
+	LIVE_ASSERT(degrees.Left == GetDegreeLeft());
+	LIVE_ASSERT(degrees.All.GetTotal() == (int)m_Connections.size());
 	VIEW_DEBUG("PeerManager:DegreeInfo " << make_tuple(degrees.Left, degrees.All.In, degrees.All.Out) << m_PeerModule.GetMaxConnectionCount());
 }
 
@@ -635,7 +635,7 @@ UINT CPeerManager::GetAnnounceInterval() const
 /*
 void CPeerManager::OnTimerElapsed(Timer* sender)
 {
-	assert(&m_IntervalTimer == sender);
+	LIVE_ASSERT(&m_IntervalTimer == sender);
 	OnAppTimer(m_IntervalTimer.GetTimes());
 }
 */
@@ -728,9 +728,9 @@ void CPeerManager::OnAppTimer(UINT times)
 
 		UINT minIndex = m_storage.GetMinIndex();
 		UINT maxIndex = m_storage.GetMaxIndex();
-		assert(maxIndex >= minIndex);
+		LIVE_ASSERT(maxIndex >= minIndex);
 		UINT minmaxRange = m_storage.GetBufferSize();
-		assert(minmaxRange < USHRT_MAX);
+		LIVE_ASSERT(minmaxRange < USHRT_MAX);
 		LIMIT_MAX(minmaxRange, USHRT_MAX);
 
 		DoStatistics();
@@ -741,7 +741,7 @@ void CPeerManager::OnAppTimer(UINT times)
 		if (seconds % announceInterval == 0)
 		{
 			BitMap totalResource = m_streamBuffer.BuildTotalBitmap();
-			assert(totalResource.GetMinIndex() == minIndex);
+			LIVE_ASSERT(totalResource.GetMinIndex() == minIndex);
 			m_huffmanAnnouncePacket->Status = m_StatusInfo->GetStatusEx();
 			m_huffmanAnnouncePacket->Status.Degrees = m_statistics.Degrees.ToSimple();
 			m_huffmanAnnouncePacket->MinIndex = totalResource.GetMinIndex();
@@ -808,11 +808,11 @@ bool CPeerManager::CheckConnected( UINT Ip, unsigned short TcpPort, bool isVip )
 	STL_FOR_EACH_CONST(PeerConnectionCollection, m_Connections, itr)
 	{
 		PeerConnection *pc = *itr;
-		assert(pc != NULL);
+		LIVE_ASSERT(pc != NULL);
 		//未连接的也可以查找，需要根据RemoteAddress，而不是握手时汇报过来的地址来进行检查
 		//const PEER_ADDRESS& thisAddr = pc->GetHandshakeInfo().OuterAddress;
 		const PEER_ADDRESS& thisAddr = pc->GetKeyAddress();
-		//assert(thisAddr.IsFullyValid());
+		//LIVE_ASSERT(thisAddr.IsFullyValid());
 		//const PEER_ADDRESS& thisAddr = pc->GetPeerInfo()->LocalAddress;
 		if ((thisAddr.IP == Ip) && (thisAddr.TcpPort == TcpPort))
 		{
@@ -830,10 +830,10 @@ bool CPeerManager::CheckConnected( UINT Ip, unsigned short TcpPort, bool isVip )
 
 void CPeerManager::DoAddPeer(PeerConnection* conn)
 {
-	assert( false == containers::contains( m_Connections, conn ) );
+	LIVE_ASSERT( false == containers::contains( m_Connections, conn ) );
 	m_Connections.insert(conn);
 	pair<PeerConnectionIndex::iterator, bool> res = m_connectionIndex.insert(make_pair(conn->GetPeerGUID(), conn));
-	assert(res.second);
+	LIVE_ASSERT(res.second);
 	m_AddressIndex.insert( make_pair( conn->GetKeyAddress(), conn ) );
 	m_IPIndex.insert( make_pair( conn->GetKeyAddress().IP, conn ) );
 	m_statistics.Degrees.Inc(conn->IsUDP(), conn->IsInitFromRemote(), conn->IsVIP(), m_PeerModule.GetMaxConnectionCount());
@@ -853,7 +853,7 @@ void CPeerManager::DoAddPeer(PeerConnection* conn)
 PeerConnection* CPeerManager::AddUDPTPeer(boost::shared_ptr<UDPPeerConnectionInfo> connInfo, const PeerHandshakeInfo& handshakeInfo)
 {
 	this->Validate();
-	assert(!HasPeer(handshakeInfo.PeerGUID));
+	LIVE_ASSERT(!HasPeer(handshakeInfo.PeerGUID));
 //	double quota = GetInitialQuota(connInfo->ConnectParam.IsVIP);
 
 	boost::shared_ptr<PeerInfoItemProvider> peerInfoItemProvider;
@@ -867,12 +867,12 @@ PeerConnection* CPeerManager::AddUDPTPeer(boost::shared_ptr<UDPPeerConnectionInf
 		peerInfoItemProvider.reset(PeerInfoItemProviderFactory::CreateStatic(peerInfoItem));
 	}
 	PeerConnection* conn = NULL;
-	assert(connInfo->IsBothSessionKeyValid());
+	LIVE_ASSERT(connInfo->IsBothSessionKeyValid());
 	conn = PeerConnectionFactory::CreateUDPSession(*this, peerInfoItemProvider, connInfo, handshakeInfo, m_PeerModule.GetUDPConnectionPacketSender());
 	//TRACE( TEXT("AddUDPPeer %p\n"), conn );
 	pair<PeerSessionKeyIndex::iterator, bool> res = m_SessionKeyIndex.insert(make_pair(connInfo->RemoteSessionKey, conn));
 	VIEW_DEBUG( "PeerManager::AddUDPPeer " << *conn << " " << connInfo->RemoteSessionKey);
-	assert(res.second);
+	LIVE_ASSERT(res.second);
 	DoAddPeer(conn);
 	this->Validate();
 	return conn;
@@ -882,7 +882,7 @@ PeerConnection* CPeerManager::AddUDPTPeer(boost::shared_ptr<UDPPeerConnectionInf
 bool CPeerManager::AddPeer(boost::shared_ptr<TCPPeerConnectionInfo> connInfo, const PeerHandshakeInfo& handshakeInfo)
 {
 	this->Validate();
-	assert(!HasPeer(handshakeInfo.PeerGUID));
+	LIVE_ASSERT(!HasPeer(handshakeInfo.PeerGUID));
 //	double quota = GetInitialQuota(connInfo->ConnectParam.IsVIP);
 
 	boost::shared_ptr<PeerInfoItemProvider> peerInfoItemProvider;
@@ -941,13 +941,13 @@ size_t CPeerManager::FillPeerAddresses(std::vector<PeerExchangeItem>& peers, siz
 		{
 			// 公网peer，返回peer地址
 			peerAddress = handshakeInfo.Address;
-			assert( false == IsPrivateIP( peerAddress.IP ) );
+			LIVE_ASSERT( false == IsPrivateIP( peerAddress.IP ) );
 		}
 		else if ( pc->IsUPNP() )
 		{
 			// 启用upnp的peer，返回OuterAddress;
 			peerAddress = handshakeInfo.OuterAddress;
-			assert( false == IsPrivateIP( peerAddress.IP ) );
+			LIVE_ASSERT( false == IsPrivateIP( peerAddress.IP ) );
 		}
 		else
 		{
@@ -959,7 +959,7 @@ size_t CPeerManager::FillPeerAddresses(std::vector<PeerExchangeItem>& peers, siz
 				{
 					// target和peer都和我在同一局域网
 					peerAddress = handshakeInfo.Address;
-					assert( IsPrivateIP( peerAddress.IP ) );
+					LIVE_ASSERT( IsPrivateIP( peerAddress.IP ) );
 				}
 				else
 				{
@@ -980,7 +980,7 @@ size_t CPeerManager::FillPeerAddresses(std::vector<PeerExchangeItem>& peers, siz
 					// 本地发起的连接，并且不是局域网连接，返回KeyAddress
 					//? 可能是遗漏的upnp节点，或者是其它一些异常的情况？
 					peerAddress = pc->GetKeyAddress();
-					assert( false == IsPrivateIP( peerAddress.IP ) );
+					LIVE_ASSERT( false == IsPrivateIP( peerAddress.IP ) );
 				}
 				else
 				{
@@ -992,7 +992,7 @@ size_t CPeerManager::FillPeerAddresses(std::vector<PeerExchangeItem>& peers, siz
 		{
 			continue;
 		}
-		//assert( CheckIPValid( peerAddress.IP ) );
+		//LIVE_ASSERT( CheckIPValid( peerAddress.IP ) );
 
 
 		PeerExchangeItem info;
@@ -1045,9 +1045,9 @@ inline bool AddRedirectPeerInfo( std::vector<REDIRECT_PEER_INFO>& peers, size_t 
 	if ( 0 == peer.OuterAddress.IP )
 	{
 		peer.OuterAddress = pc->GetKeyAddress();
-		assert( false );
+		LIVE_ASSERT( false );
 	}
-//	assert( peer.OuterAddress.IsAddressValid() );
+//	LIVE_ASSERT( peer.OuterAddress.IsAddressValid() );
 	peer.AppVersion = pc->GetHandshakeInfo().AppVersion;
 	peer.ConnectionType = pc->IsUDP();
 	peer.DegreeLeft = pc->GetDegrees().Left;
@@ -1059,12 +1059,12 @@ inline bool AddRedirectPeerInfo( std::vector<REDIRECT_PEER_INFO>& peers, size_t 
 	//peer.DetectedAddress.Port = pc->GetSocketAddress().GetPort();
 	//peer.DetectedAddress.Clear();
 	//peer.Status = pc->GetPeerInfo().StatusInfo.Status;
-	assert( peer.Address.IsFullyValid() );
-//	assert( peer.OuterAddress.IsAddressValid() );
-	assert( CheckIPValid( peer.Address.IP ) );
-//	assert( CheckIPValid( peer.OuterAddress.IP ) );
-	//assert(peer.DetectedAddress.IP != 0);
-	//assert(peer.DetectedAddress.Port != 0);
+	LIVE_ASSERT( peer.Address.IsFullyValid() );
+//	LIVE_ASSERT( peer.OuterAddress.IsAddressValid() );
+	LIVE_ASSERT( CheckIPValid( peer.Address.IP ) );
+//	LIVE_ASSERT( CheckIPValid( peer.OuterAddress.IP ) );
+	//LIVE_ASSERT(peer.DetectedAddress.IP != 0);
+	//LIVE_ASSERT(peer.DetectedAddress.Port != 0);
 	peers.push_back( peer );
 	VIEW_EVENT( "PeerManager::Redirect do " << peer.Address << " " << peer.OuterAddress << " " << *pc );
 	return true;

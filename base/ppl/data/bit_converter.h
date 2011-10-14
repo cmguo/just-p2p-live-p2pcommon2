@@ -89,7 +89,7 @@ public:
 
 	UINT16 to_word( const BYTE* data )
 	{
-		assert( data );
+		LIVE_ASSERT( data );
 		if ( m_big_endian )
 		{
 			return  ( static_cast<UINT16>( data[0] ) << 8 ) | 
@@ -101,7 +101,7 @@ public:
 
 	UINT32 to_dword( const BYTE* data )
 	{
-		assert( data );
+		LIVE_ASSERT( data );
 		if ( m_big_endian )
 		{
 			return  ( static_cast<UINT32>( data[0] ) << 24 ) | 
@@ -117,7 +117,7 @@ public:
 
 	UINT64 to_qword( const BYTE* data )
 	{
-		assert( data );
+		LIVE_ASSERT( data );
 		if ( m_big_endian )
 		{
 			return  ( static_cast<UINT64>( data[0] ) << 56 ) | 
@@ -154,7 +154,7 @@ public:
 
 	void from_word( UINT16 x, BYTE* buf )
 	{
-		assert(buf);
+		LIVE_ASSERT(buf);
 		if ( m_big_endian )
 		{
 			buf[0] = high_byte( x );
@@ -168,7 +168,7 @@ public:
 	}
 	void from_dword( UINT32 x, BYTE* buf )
 	{
-		assert(buf);
+		LIVE_ASSERT(buf);
 		if ( m_big_endian )
 		{
 			buf[0] = static_cast<BYTE>( ( x & 0xFF000000UL ) >> 24 );
@@ -186,7 +186,7 @@ public:
 	}
 	void from_qword( UINT64 x, BYTE* buf )
 	{
-		assert(buf);
+		LIVE_ASSERT(buf);
 		UINT32 h = high_dword( x );
 		UINT32 l = low_dword( x );
 		if ( m_big_endian )
@@ -229,72 +229,72 @@ protected:
 	{
 		{
 			bit_converter bc( true );
-			assert( bc.to_word("\x12\x33") != 0x1234 );
-			assert( bc.to_word("\x12\x34") == 0x1234 );
-			assert( bc.to_dword("\x12\x34\x56\x18") != 0x12345678 );
-			assert( bc.to_dword("\x12\x34\x56\x78") == 0x12345678 );
+			LIVE_ASSERT( bc.to_word("\x12\x33") != 0x1234 );
+			LIVE_ASSERT( bc.to_word("\x12\x34") == 0x1234 );
+			LIVE_ASSERT( bc.to_dword("\x12\x34\x56\x18") != 0x12345678 );
+			LIVE_ASSERT( bc.to_dword("\x12\x34\x56\x78") == 0x12345678 );
 
 			BYTE buf[4];
 			bc.from_word( 0x1234, buf );
-			assert( memcmp("\x12\x34", buf, 2 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34", buf, 2 ) == 0 );
 			bc.from_dword( 0x12345678, buf );
-			assert( memcmp("\x12\x34\x56\x78", buf, 4 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78", buf, 4 ) == 0 );
 		}
 		{
 			bit_converter bc( false );
-			assert( bc.to_word("\x12\x31") != 0x3412 );
-			assert( bc.to_word("\x12\x34") == 0x3412 );
-			assert( bc.to_dword("\x12\x34\x56\x71") != 0x78563412 );
-			assert( bc.to_dword("\x12\x34\x56\x78") == 0x78563412 );
+			LIVE_ASSERT( bc.to_word("\x12\x31") != 0x3412 );
+			LIVE_ASSERT( bc.to_word("\x12\x34") == 0x3412 );
+			LIVE_ASSERT( bc.to_dword("\x12\x34\x56\x71") != 0x78563412 );
+			LIVE_ASSERT( bc.to_dword("\x12\x34\x56\x78") == 0x78563412 );
 
 			BYTE buf[4];
 			bc.from_word( 0x3412, buf );
-			assert( memcmp("\x12\x34", buf, 2 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34", buf, 2 ) == 0 );
 			bc.from_dword( 0x78563412, buf );
-			assert( memcmp("\x12\x34\x56\x78", buf, 4 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78", buf, 4 ) == 0 );
 		}
-		assert(bit_converter::make_word(0x34, 0x12) == 0x3412);
-		assert(bit_converter::low_byte(0x3412) == 0x12);
-		assert(bit_converter::high_byte(0x3412) == 0x34);
-		assert(bit_converter::make_dword(0x5678, 0x1234) == 0x56781234UL);
-		assert(bit_converter::low_word(0x56781234UL) == 0x1234);
-		assert(bit_converter::high_word(0x56781234UL) == 0x5678);
+		LIVE_ASSERT(bit_converter::make_word(0x34, 0x12) == 0x3412);
+		LIVE_ASSERT(bit_converter::low_byte(0x3412) == 0x12);
+		LIVE_ASSERT(bit_converter::high_byte(0x3412) == 0x34);
+		LIVE_ASSERT(bit_converter::make_dword(0x5678, 0x1234) == 0x56781234UL);
+		LIVE_ASSERT(bit_converter::low_word(0x56781234UL) == 0x1234);
+		LIVE_ASSERT(bit_converter::high_word(0x56781234UL) == 0x5678);
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		assert(bit_converter::make_qword(0x90abcdefUL, 0x12345678UL) == 0x90abcdef12345678UI64);
-		assert(bit_converter::low_dword(0x90abcdef12345678UI64) == 0x12345678UL);
-		assert(bit_converter::high_dword(0x90abcdef12345678UI64) == 0x90abcdefUL);
+		LIVE_ASSERT(bit_converter::make_qword(0x90abcdefUL, 0x12345678UL) == 0x90abcdef12345678UI64);
+		LIVE_ASSERT(bit_converter::low_dword(0x90abcdef12345678UI64) == 0x12345678UL);
+		LIVE_ASSERT(bit_converter::high_dword(0x90abcdef12345678UI64) == 0x90abcdefUL);
 		{
 			bit_converter bc( true );
-			assert( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0x1234567890abcdefUI64 );
+			LIVE_ASSERT( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0x1234567890abcdefUI64 );
 			BYTE buf[8];
 			bc.from_qword( 0x1234567890abcdefUI64, buf );
-			assert( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
 		}
 		{
 			bit_converter bc( false );
-			assert( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0xefcdab9078563412UI64 );
+			LIVE_ASSERT( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0xefcdab9078563412UI64 );
 			BYTE buf[8];
 			bc.from_qword( 0xefcdab9078563412UI64, buf );
-			assert( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
 		}
 #else
-		assert(bit_converter::make_qword(0x90abcdefUL, 0x12345678UL) == 0x90abcdef12345678ULL);
-		assert(bit_converter::low_dword(0x90abcdef12345678UI64) == 0x12345678UL);
-		assert(bit_converter::high_dword(0x90abcdef12345678UI64) == 0x90abcdefUL);
+		LIVE_ASSERT(bit_converter::make_qword(0x90abcdefUL, 0x12345678UL) == 0x90abcdef12345678ULL);
+		LIVE_ASSERT(bit_converter::low_dword(0x90abcdef12345678UI64) == 0x12345678UL);
+		LIVE_ASSERT(bit_converter::high_dword(0x90abcdef12345678UI64) == 0x90abcdefUL);
 		{
 			bit_converter bc( true );
-			assert( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0x1234567890abcdefULL );
+			LIVE_ASSERT( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0x1234567890abcdefULL );
 			BYTE buf[8];
 			bc.from_qword( 0x1234567890abcdefULL, buf );
-			assert( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
 		}
 		{
 			bit_converter bc( false );
-			assert( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0xefcdab9078563412ULL );
+			LIVE_ASSERT( bc.to_qword("\x12\x34\x56\x78\x90\xab\xcd\xef") == 0xefcdab9078563412ULL );
 			BYTE buf[8];
 			bc.from_qword( 0xefcdab9078563412ULL, buf );
-			assert( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
+			LIVE_ASSERT( memcmp("\x12\x34\x56\x78\x90\xab\xcd\xef", buf, 8 ) == 0 );
 		}
 #endif
 	}

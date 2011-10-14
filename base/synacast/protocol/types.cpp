@@ -303,40 +303,40 @@ void RandomData(PEER_STATUS& status)
 #ifdef _DEBUG
 void CheckDataPiece(const MonoMediaDataPiece* piece)
 {
-	assert(piece != NULL);
-	assert(piece->GetPieceType() == PPDT_MEDIA_DATA);
-	assert(piece->GetPieceIndex() > piece->GetHeaderPiece());
-	//assert(piece->CheckValid());
+	LIVE_ASSERT(piece != NULL);
+	LIVE_ASSERT(piece->GetPieceType() == PPDT_MEDIA_DATA);
+	LIVE_ASSERT(piece->GetPieceIndex() > piece->GetHeaderPiece());
+	//LIVE_ASSERT(piece->CheckValid());
 }
 void CheckHeaderPiece(const MonoMediaHeaderPiece* piece)
 {
-	assert(piece != NULL);
-	assert(piece->GetPieceType() == PPDT_MEDIA_HEADER);
-	//assert(piece->CheckValid());
+	LIVE_ASSERT(piece != NULL);
+	LIVE_ASSERT(piece->GetPieceType() == PPDT_MEDIA_HEADER);
+	//LIVE_ASSERT(piece->CheckValid());
 }
 
 #ifdef BOOST_SHARED_PTR_HPP_INCLUDED
 void CheckDataPiece(MonoMediaDataPiecePtr piece)
 {
-	assert(piece);
+	LIVE_ASSERT(piece);
 	CheckDataPiece(piece.get());
-	//assert(piece->CheckValid());
+	//LIVE_ASSERT(piece->CheckValid());
 }
 void CheckHeaderPiece(MonoMediaHeaderPiecePtr piece)
 {
-	assert(piece);
+	LIVE_ASSERT(piece);
 	CheckHeaderPiece(piece.get());
-	//assert(piece->CheckValid());
+	//LIVE_ASSERT(piece->CheckValid());
 }
 void CheckSubPiece(SubMediaPiecePtr subPiece)
 {
-	assert(subPiece);
-	//	assert(subPiece->GetPieceType() == PPDT_MEDIA_DATA);
-	//	assert(subPiece->GetPieceLength() == subPiece->GetSubPieceDataSize());
-	assert(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
-	//	assert(subPiece->GetPieceIndex() > subPiece->GetHeaderPiece());
-	//	assert(subPiece->GetSubPieceCount() < 64 && subPiece->GetSubPieceCount() > 0);
-	//	assert(subPiece->GetSubPieceDataSize() > 0 && subPiece->GetSubPieceDataSize() <= 1400);
+	LIVE_ASSERT(subPiece);
+	//	LIVE_ASSERT(subPiece->GetPieceType() == PPDT_MEDIA_DATA);
+	//	LIVE_ASSERT(subPiece->GetPieceLength() == subPiece->GetSubPieceDataSize());
+	LIVE_ASSERT(subPiece->GetSubPieceIndex() < subPiece->GetSubPieceCount());
+	//	LIVE_ASSERT(subPiece->GetPieceIndex() > subPiece->GetHeaderPiece());
+	//	LIVE_ASSERT(subPiece->GetSubPieceCount() < 64 && subPiece->GetSubPieceCount() > 0);
+	//	LIVE_ASSERT(subPiece->GetSubPieceDataSize() > 0 && subPiece->GetSubPieceDataSize() <= 1400);
 }
 #endif
 
@@ -361,26 +361,26 @@ public:
 		{
 			SubPieceUnitRequestPacket req;
 			req.AddOneSubPieceUnit( SubPieceUnit( 2, 3 ) );
-			assert( req.get_object_size() == 8 );
+			LIVE_ASSERT( req.get_object_size() == 8 );
 			req.SubPieces.assign( 15, SubPieceUnit( 12, 43 ) );
-			assert( req.get_object_size() == 78 );
+			LIVE_ASSERT( req.get_object_size() == 78 );
 			req.Write( buf, 1920 );
 			{
 				SubPieceUnitRequestPacket req2;
-				assert( req2.Read( buf, req.get_object_size() ) );
-				assert( req2.SubPieceLength == req.SubPieceLength );
-				assert( req2.SubPieces == req.SubPieces );
+				LIVE_ASSERT( req2.Read( buf, req.get_object_size() ) );
+				LIVE_ASSERT( req2.SubPieceLength == req.SubPieceLength );
+				LIVE_ASSERT( req2.SubPieces == req.SubPieces );
 			}
 			{
 				SubPieceUnitRequestPacket emptyPacket;
 				emptyPacket.Write( buf, 1920 );
 				SubPieceUnitRequestPacket emptyPacketParser;
-				assert( emptyPacketParser.Read( buf, emptyPacket.get_object_size() ) );
+				LIVE_ASSERT( emptyPacketParser.Read( buf, emptyPacket.get_object_size() ) );
 			}
 		}
 		{
 			PPHuffmanAnnounce announce;
-			assert( announce.get_object_size() == 17 );
+			LIVE_ASSERT( announce.get_object_size() == 17 );
 		}
 	}
 };
@@ -388,8 +388,8 @@ public:
 
 inline void CheckPacketValid(const MonoMediaPiece& packet)
 {
-	//	assert(packet.CheckValid());
-	//	assert(packet.GetPieceLength() + sizeof(PP_MEDIA) + sizeof(UINT8) + MediaPiecePacket::SIGNATURE_LENGTH == packet.GetSize());
+	//	LIVE_ASSERT(packet.CheckValid());
+	//	LIVE_ASSERT(packet.GetPieceLength() + sizeof(PP_MEDIA) + sizeof(UINT8) + MediaPiecePacket::SIGNATURE_LENGTH == packet.GetSize());
 }
 
 class MediaPieceTestCase : public ppl::util::test_case
@@ -397,12 +397,12 @@ class MediaPieceTestCase : public ppl::util::test_case
 	virtual void DoRun()
 	{
 		MonoMediaDataPiece dataPiece(3, 2, 1, 5, "12345");
-		//	assert(dataPiece.CheckValid());
-		assert(dataPiece.GetPieceIndex() == 3);
-		assert(dataPiece.GetTimeStamp() == 2);
-		assert(dataPiece.GetHeaderPiece() == 1);
-		assert(dataPiece.GetPieceLevel() == 1);
-		assert(dataPiece.GetPieceType() == PPDT_MEDIA_DATA);
+		//	LIVE_ASSERT(dataPiece.CheckValid());
+		LIVE_ASSERT(dataPiece.GetPieceIndex() == 3);
+		LIVE_ASSERT(dataPiece.GetTimeStamp() == 2);
+		LIVE_ASSERT(dataPiece.GetHeaderPiece() == 1);
+		LIVE_ASSERT(dataPiece.GetPieceLevel() == 1);
+		LIVE_ASSERT(dataPiece.GetPieceType() == PPDT_MEDIA_DATA);
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(MediaPieceTestCase);
@@ -418,11 +418,11 @@ public:
 		string info(mediaHeader.GetInfo(), mediaHeader.GetInfoLength());
 		string header(mediaHeader.GetHeader(), mediaHeader.GetHeaderLength());
 		string profile(mediaHeader.GetProfile(), mediaHeader.GetProfileLength());
-		assert(info == "ASF.FILE");
-		assert(header == "asf.file11");
-		assert(profile == "4444");
-		assert(mediaHeader.GetMediaType() == PPMT_MEDIA_ASF_FILE);
-		assert(mediaHeader.GetPieceIndex() == 113);
+		LIVE_ASSERT(info == "ASF.FILE");
+		LIVE_ASSERT(header == "asf.file11");
+		LIVE_ASSERT(profile == "4444");
+		LIVE_ASSERT(mediaHeader.GetMediaType() == PPMT_MEDIA_ASF_FILE);
+		LIVE_ASSERT(mediaHeader.GetPieceIndex() == 113);
 		std::vector<BYTE> key(20, 20);
 		mediaHeader.Sign(key);
 		mediaHeader.Write(m_buffer.c_array(), mediaHeader.GetSize());
@@ -432,17 +432,17 @@ public:
 		string info(mediaHeader.GetInfo(), mediaHeader.GetInfoLength());
 		string header(mediaHeader.GetHeader(), mediaHeader.GetHeaderLength());
 		string profile(mediaHeader.GetProfile(), mediaHeader.GetProfileLength());
-		assert(info == "ASF.FILE");
-		assert(header == "asf.file11");
-		assert(profile == "4444");
-		assert(mediaHeader.GetMediaType() == PPMT_MEDIA_ASF_FILE);
-		assert(mediaHeader.GetPieceIndex() == 113);
+		LIVE_ASSERT(info == "ASF.FILE");
+		LIVE_ASSERT(header == "asf.file11");
+		LIVE_ASSERT(profile == "4444");
+		LIVE_ASSERT(mediaHeader.GetMediaType() == PPMT_MEDIA_ASF_FILE);
+		LIVE_ASSERT(mediaHeader.GetPieceIndex() == 113);
 		}
-		assert(mediaHeader2.CheckValid());
-		assert(mediaHeader2->PieceLength + sizeof(PP_MEDIA) == mediaHeader2->GetSize());
+		LIVE_ASSERT(mediaHeader2.CheckValid());
+		LIVE_ASSERT(mediaHeader2->PieceLength + sizeof(PP_MEDIA) == mediaHeader2->GetSize());
 		{
 		MediaHeaderPiecePacketParser mediaHeader3(mediaHeader.GetData(), mediaHeader.GetSize() - 1);
-		assert(!mediaHeader3.CheckValid());
+		LIVE_ASSERT(!mediaHeader3.CheckValid());
 		}*/
 	}
 	void TestMediaPayload()
@@ -450,15 +450,15 @@ public:
 		/*		PPMediaPayloadPacket mediaPayload(2, 7, "Payload");
 		CheckPacketValid(mediaPayload);
 		string payload(mediaPayload.GetPayload(), mediaPayload.GetPayloadLength());
-		assert(payload == "Payload");
+		LIVE_ASSERT(payload == "Payload");
 
 		PPMediaPayloadPacket mediaPayload2(mediaPayload.GetData(), mediaPayload.GetSize());
 		payload.assign(mediaPayload2.GetPayload(), mediaPayload2.GetPayloadLength());
-		assert(payload == "Payload");
+		LIVE_ASSERT(payload == "Payload");
 		CheckPacketValid(mediaPayload2);
 		{
 		PPMediaPayloadPacket mediaPayload3(mediaPayload.GetData(), mediaPayload.GetSize() - 1);
-		assert(!mediaPayload3.CheckValid());
+		LIVE_ASSERT(!mediaPayload3.CheckValid());
 		}*/
 	}
 	void TestMediaData()
@@ -466,18 +466,18 @@ public:
 		/*		string str = m_random.GenerateRandomString(30);
 		MediaDataPiecePacket oldMediaData(5, 66665, 55, str.size(), str.data(), 20, reinterpret_cast<const BYTE*>(string(20, '1').data()));
 		string str2((const BYTE*)oldMediaData.GetMediaData(), oldMediaData.GetMediaDataLength());
-		assert(str == str2);
-		assert(oldMediaData.GetTimeStamp() == 66665);
+		LIVE_ASSERT(str == str2);
+		LIVE_ASSERT(oldMediaData.GetTimeStamp() == 66665);
 
 		MediaDataPiecePacket datapack(110, 111, 011);
 		bool res = datapack.AppendData(1, "1");
-		assert(res);
+		LIVE_ASSERT(res);
 		res = datapack.AppendData(2, "22");
-		assert(res);
+		LIVE_ASSERT(res);
 		res = datapack.AppendData(3, "333");
-		assert(res);
+		LIVE_ASSERT(res);
 		res = datapack.AppendData(4, "4444");
-		assert(res);
+		LIVE_ASSERT(res);
 		std::vector<BYTE> key(20, 30);
 		datapack.Sign(key);
 		datapack.Write(m_buffer.c_array(), datapack.GetSize());
@@ -486,13 +486,13 @@ public:
 
 		MediaDataPiecePacket datapack2(datapack.GetData(), datapack.GetSize());
 		int len = datapack2.GetPieceLength();
-		assert(len == 10 + sizeof(PP_MEDIA_DATA));
+		LIVE_ASSERT(len == 10 + sizeof(PP_MEDIA_DATA));
 		str.assign((const BYTE*)datapack2.GetMediaData(), datapack2.GetMediaDataLength());
-		assert(str == "1223334444");
+		LIVE_ASSERT(str == "1223334444");
 
 		{
 		MediaDataPiecePacket datapack3(datapack.GetData(), datapack.GetSize() - 1);
-		assert(!datapack3.CheckValid());
+		LIVE_ASSERT(!datapack3.CheckValid());
 		}*/
 	}
 	void TestData2()
@@ -522,38 +522,38 @@ virtual void DoRun()
 TestDynamicPacket packet;
 CheckBuffer(packet, 0, true);
 
-assert(!packet.IncreaseSize(1));
+LIVE_ASSERT(!packet.IncreaseSize(1));
 CheckBuffer(packet, 0, true);
 
 packet.InitBuffer(111, 100);
 CheckBuffer(packet, 100);
 
-assert(packet.IncreaseSize(1));
+LIVE_ASSERT(packet.IncreaseSize(1));
 CheckBuffer(packet, 101);
 
-assert(packet.IncreaseSize(10));
+LIVE_ASSERT(packet.IncreaseSize(10));
 CheckBuffer(packet, 111);
 
-assert(!packet.IncreaseSize(1));
+LIVE_ASSERT(!packet.IncreaseSize(1));
 CheckBuffer(packet, 111);
 
 string str("nihao, world.");
 packet.Assign(str.data(), str.size());
 CheckBuffer(packet, str.size());
-assert(0 == memcmp(packet.GetData(), str.data(), str.size()));
+LIVE_ASSERT(0 == memcmp(packet.GetData(), str.data(), str.size()));
 }
 
 void CheckBuffer(TestDynamicPacket& packet, size_t size, bool isNull = false)
 {
-assert(packet.GetSize() == size);
-assert(packet.GetBuffer() == packet.GetData());
+LIVE_ASSERT(packet.GetSize() == size);
+LIVE_ASSERT(packet.GetBuffer() == packet.GetData());
 if (isNull)
 {
-assert(packet.GetData() == NULL);
+LIVE_ASSERT(packet.GetData() == NULL);
 }
 else
 {
-assert(packet.GetData() != NULL);
+LIVE_ASSERT(packet.GetData() != NULL);
 }
 }
 };*/
@@ -571,7 +571,7 @@ class HMACTestCase : public ppl::util::test_case
 			}
 			DataSigner signer(src);
 			bool res = signer.Sign(&src[0], src.size(), result);
-			assert(res);
+			LIVE_ASSERT(res);
 		}
 		{
 			std::vector<BYTE> src(16);
@@ -581,7 +581,7 @@ class HMACTestCase : public ppl::util::test_case
 			}
 			DataSigner signer(src);
 			bool res = signer.Verify(&src[0], src.size(), result.data());
-			assert(res);
+			LIVE_ASSERT(res);
 		}
 	}
 };
@@ -601,7 +601,7 @@ BYTE src[8] = { 1, 2, 3, 4, 5};
 BYTE digest[20] = { 0 };
 
 bool res = hmac.HashData(key, 8, src, 8, digest);
-assert(res);
+LIVE_ASSERT(res);
 */
 
 #endif

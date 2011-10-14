@@ -61,7 +61,7 @@ void PublisherUploader::CalPublishBitmap()
 			{
 				PeerConnection* pc = *itr;
 
-				assert(!pc->IsUDP());
+				LIVE_ASSERT(!pc->IsUDP());
 
 				if (pc->HasPiece(pieceIndex))
 				{
@@ -81,7 +81,7 @@ void PublisherUploader::CalPublishBitmap()
 			STL_FOR_EACH_CONST( PeerConnectionCollection, m_PeerManager.GetConnections(), itr_p)
 			{
 				PeerConnection* pc = *itr_p;
-				assert(!pc->IsUDP());
+				LIVE_ASSERT(!pc->IsUDP());
 
 				if (pc->GetSendPending() < (int)max_pending)
 				{
@@ -100,7 +100,7 @@ void PublisherUploader::CalPublishBitmap()
 			// NOTE: 这里没有做预分配，直接发送，可能对网络适应不太好
 			if (max_pending != 40)
 			{
-				assert(usePC);
+				LIVE_ASSERT(usePC);
 				SendMonoPiece(dataPiece, usePC);
 				//加入正在请求的集合中  10秒后可以再次发送
 				m_publishPiecePushTimeOut.insert(std::make_pair(pieceIndex,time_counter()));
@@ -129,7 +129,7 @@ void PublisherUploader::UploadSubPieces( UINT pieceIndex, PeerConnection* pc )
 		return;
 	}
 	//ss向我发了piece请求 错误
-	assert(0);
+	LIVE_ASSERT(0);
 	pc->DoSendPieceNotFound(pieceIndex);
 }*/
 
@@ -144,7 +144,7 @@ void PublisherUploader::UploadMonoPiece( UINT pieceIndex, PeerConnection* pc )
 		return;
 	}
 	//ss向我发了piece请求 错误
-	assert(0);
+	LIVE_ASSERT(0);
 
 	pc->DoSendPieceNotFound(pieceIndex);
 }

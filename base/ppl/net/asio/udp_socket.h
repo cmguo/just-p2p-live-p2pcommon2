@@ -41,7 +41,7 @@ public:
 	{
 		//m_impl->get_socket().cancel(m_last_error);
 		m_impl->get_socket().close(m_last_error);
-		assert( !m_last_error );
+		LIVE_ASSERT( !m_last_error );
 		return !m_last_error;
 	}
 
@@ -113,7 +113,7 @@ protected:
 		}
 		else
 		{
-			assert( bytes > 0 );
+			LIVE_ASSERT( bytes > 0 );
 			// ³É¹¦
 			InetSocketAddress addr = ppl::boostlib::from_endpoint( session->remote_endpoint );
 			this->get_listener()->on_socket_receive(this, addr, session->buffer.data(), bytes );

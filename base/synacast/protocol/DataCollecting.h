@@ -653,12 +653,12 @@ struct DEGREE_PAIR_COUNTER
 	{
 		if (isInitFromRemote)
 		{
-			assert(this->In > 0);
+			LIVE_ASSERT(this->In > 0);
 			this->In--;
 		}
 		else
 		{
-			assert(this->Out > 0);
+			LIVE_ASSERT(this->Out > 0);
 			this->Out--;
 		}
 	}

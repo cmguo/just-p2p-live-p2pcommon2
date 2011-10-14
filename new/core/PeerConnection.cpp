@@ -78,7 +78,7 @@ public:
 		m_LocalSessionKey = connInfo->LocalSessionKey;
 		m_RemoteSessionKey = connInfo->RemoteSessionKey;
 		UDPT_DEBUG("construct UDPSessionPeerConnection " << connInfo->RemoteAddress << " " << GetKeyAddress() << " " << make_tuple(m_UDPConnectionInfo->RemoteSessionKey, m_UDPConnectionInfo->LocalSessionKey));
-		assert( m_UDPConnectionInfo->IsBothSessionKeyValid() );
+		LIVE_ASSERT( m_UDPConnectionInfo->IsBothSessionKeyValid() );
 	}
 	~UDPTSessionPeerConnection()
 	{
@@ -161,18 +161,18 @@ PeerConnection::PeerConnection(CPeerManager& peerManager, boost::shared_ptr<Peer
 	m_receivedSubPieceCount = 0;
 	m_receiveUnusedSubPieceCount = 0;
 
-	assert( m_HandshakeInfo.Address.IsFullyValid() );
-//	assert( m_HandshakeInfo.OuterAddress.IsAddressValid() );
-	assert( INADDR_BROADCAST != m_HandshakeInfo.Address.IP );
-//	assert( 0 != m_HandshakeInfo.OuterAddress.IP );
-	assert( INADDR_BROADCAST != m_HandshakeInfo.OuterAddress.IP );
+	LIVE_ASSERT( m_HandshakeInfo.Address.IsFullyValid() );
+//	LIVE_ASSERT( m_HandshakeInfo.OuterAddress.IsAddressValid() );
+	LIVE_ASSERT( INADDR_BROADCAST != m_HandshakeInfo.Address.IP );
+//	LIVE_ASSERT( 0 != m_HandshakeInfo.OuterAddress.IP );
+	LIVE_ASSERT( INADDR_BROADCAST != m_HandshakeInfo.OuterAddress.IP );
 
 	// 将socket的RemoteAddress写入到PeerInfo中
 	m_PeerInfo.DetectedIP = m_SocketAddress.GetIP();
 	m_PeerInfo.NetInfo.Address = handshakeInfo.Address;
 	m_PeerInfo.StatusInfo.Status.DegreeLeft = m_Degrees.Left;
 	m_PeerInfo.PeerGUID = handshakeInfo.PeerGUID;
-	assert(m_HandshakeInfo.AppVersion != 0xB72A33A1);
+	LIVE_ASSERT(m_HandshakeInfo.AppVersion != 0xB72A33A1);
 
 
 	// 公网或者upnp节点的IsInner都是false
@@ -227,7 +227,7 @@ PeerConnection::PeerConnection(CPeerManager& peerManager, boost::shared_ptr<Peer
 		m_IsLANConnection = false;
 		if ( false == m_NetInfo->IsExternalIP() )
 		{
-			assert( m_ConnectionInfo->RemoteAddress.IP == m_SocketAddress.IP );
+			LIVE_ASSERT( m_ConnectionInfo->RemoteAddress.IP == m_SocketAddress.IP );
 		}
 	}
 	else
@@ -239,8 +239,8 @@ PeerConnection::PeerConnection(CPeerManager& peerManager, boost::shared_ptr<Peer
 		if ( isInnerIP )
 		{
 			// 对于既有公网ip又有内网ip的peer，可能会遇到这种情况？
-			assert( false == m_NetInfo->IsExternalIP() );
-			assert( m_SocketAddress.IP == m_HandshakeInfo.Address.IP );
+			LIVE_ASSERT( false == m_NetInfo->IsExternalIP() );
+			LIVE_ASSERT( m_SocketAddress.IP == m_HandshakeInfo.Address.IP );
 		}
 		else
 		{
@@ -250,15 +250,15 @@ PeerConnection::PeerConnection(CPeerManager& peerManager, boost::shared_ptr<Peer
 	if ( PNT_UPNP == m_HandshakeInfo.CoreInfo.PeerNetType )
 	{
 		// 检查
-		assert( m_IsUPNP );
-		//assert( ( m_ConnectionInfo->IsInitFromRemote && m_SocketAddress.IP != m_HandshakeInfo.Address.IP ) || m_IsInner );
-		assert( m_HandshakeInfo.OuterAddress.IsValid() );
+		LIVE_ASSERT( m_IsUPNP );
+		//LIVE_ASSERT( ( m_ConnectionInfo->IsInitFromRemote && m_SocketAddress.IP != m_HandshakeInfo.Address.IP ) || m_IsInner );
+		LIVE_ASSERT( m_HandshakeInfo.OuterAddress.IsValid() );
 	}
 
 	if ( false == m_IsInner && false == m_IsUPNP )
 	{
-		//assert( m_SocketAddress.IP == m_HandshakeInfo.Address.IP );
-		assert( false == IsPrivateIP( m_HandshakeInfo.Address.IP ) );
+		//LIVE_ASSERT( m_SocketAddress.IP == m_HandshakeInfo.Address.IP );
+		LIVE_ASSERT( false == IsPrivateIP( m_HandshakeInfo.Address.IP ) );
 	}
 
 
@@ -370,7 +370,7 @@ bool PeerConnection::RequestHeaderPiece(UINT32 index, UINT timeout )
 	SubPieceUnitRequestPacket req(subPiece);
 	if (!this->SendPacket(req))
 	{
-		//assert(!"Send Data Request Packet failed.");
+		//LIVE_ASSERT(!"Send Data Request Packet failed.");
 		PEERCON_ERROR("Send Data Request Packet failed " << index << " with " << *this);
 		return false;
 	}
@@ -432,7 +432,7 @@ void PeerConnection::UpdateFlowStatics()
 	m_LongTimeFlow.Update();
 	//m_recentUploadFlow.Update();
 	SaveFlowInfo(m_PeerInfo.Flow, m_Flow);
-	assert(m_PeerInfo.DownloadingPieces[7] == m_HandshakeInfo.AppVersion);
+	LIVE_ASSERT(m_PeerInfo.DownloadingPieces[7] == m_HandshakeInfo.AppVersion);
 //	VIEW_INFO("PeerConnection::UpdateFlowStatics Flow: " << make_tuple(m_flow.Download.GetRate(), m_PeerManager.GetFlow().Download.GetRate()) 
 //		<< make_tuple(m_PeerInfo.Flow.Download.Recent[0], m_LocalInfo.Flow.Download.Recent[0]));
 }
@@ -470,7 +470,7 @@ void PeerConnection::UpdateDownloadingInfo()
 
 bool PeerConnection::SendPacket(const PacketBase& packet)
 {
-	assert(IsValidPeerConnectionActionForSend(packet.GetAction()));
+	LIVE_ASSERT(IsValidPeerConnectionActionForSend(packet.GetAction()));
 	size_t totalSize = DoSendPacket(packet);
 	if (totalSize == 0)
 	{
@@ -515,7 +515,7 @@ void PeerConnection::DoClose(UINT16 reason)
 	long errcode = reason;
 	if (errcode == 0)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 	this->Disconnect( reason, NULL );
 
@@ -660,7 +660,7 @@ void PeerConnection::Echo(bool isResponse)
 
 	const UINT max_echo_peer_count = 60; // 避免echo报文超过1K字节
 	size_t count = m_PeerManager.FillPeerAddresses(packet.Peers, max_echo_peer_count, m_PeerInfo.DetectedIP);
-	assert(count <= max_echo_peer_count);
+	LIVE_ASSERT(count <= max_echo_peer_count);
 	for (size_t i = 0; i < count; ++i)
 	{
 		VIEW_INFO("Peer:" << *this << " TCP SendEchoPeer " << packet.Peers[i].Address << " to " << m_HandshakeInfo.OuterAddress << " " << *this);
@@ -794,12 +794,12 @@ UINT16 PeerConnection::HandleSubPieceData(data_input_stream& is)
 		<<" "<< subPiece->SubPieceInfo.SubPieceCount<<" "<< subPiece->SubPieceInfo.SubPieceIndex);
 	if (subPiece->PieceInfo.PieceIndex == 0x0201ab98)
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 	}
 	if (subPiece->SubPieceInfo.SubPieceCount >= 64)
 	{
 		VIEW_ERROR("Peer:" << *this << " sub piece invalid " << make_tuple(subPiece->PieceInfo.PieceIndex, subPiece->SubPieceInfo.SubPieceCount, subPiece->SubPieceInfo.SubPieceIndex));
-		assert(false);
+		LIVE_ASSERT(false);
 		return PP_LEAVE_INVALID_PACKET;
 	}
 
@@ -861,7 +861,7 @@ UINT16 PeerConnection::HandleSubPieceData(data_input_stream& is)
 //
 //void PeerConnection::OnReceiveSubPiece(SubPieceDataPacketPtr subPiece)
 //{
-//	assert(false);
+//	LIVE_ASSERT(false);
 //}
 
 bool PeerConnection::SendSubPiece(SubMediaPiecePtr subPiece)
@@ -958,7 +958,7 @@ bool PeerConnection::OnPeerChannelError(long errcode, ErrorTypeEnum errType)
 	}
 	else
 	{
-		assert(false);
+		LIVE_ASSERT(false);
 		this->DoClose( PP_LEAVE_NETWORK_ERROR );
 	}
 	return false;
@@ -1080,8 +1080,8 @@ bool PeerConnection::FlushOutMRP()
 
 bool PeerConnection::SendMRP(bool bNeedRepeatMRP)
 {
-	assert(m_multiRequestsPacket->GetRequestCount() > 0);
-	assert(IsValidPeerConnectionActionForSend(m_multiRequestsPacket->GetAction()));
+	LIVE_ASSERT(m_multiRequestsPacket->GetRequestCount() > 0);
+	LIVE_ASSERT(IsValidPeerConnectionActionForSend(m_multiRequestsPacket->GetAction()));
 
 //	size_t totalSize = m_Channel->SendPacket(*m_multiRequestsPacket, bNeedRepeatMRP);
 	size_t totalSize = m_Channel->SendPacket(m_multiRequestsPacket);

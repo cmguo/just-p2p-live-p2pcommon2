@@ -47,7 +47,7 @@ public:
 			if ( is_alive() )
 			{
 				bool success = this->kill(123);
-				assert( success );
+				LIVE_ASSERT( success );
 			}
 		}
 		m_object.close();
@@ -81,8 +81,8 @@ public:
 
 	bool start( const string& cmdline, STARTUPINFO& si, bool inheritHandles = false )
 	{
-		assert( false == is_open() );
-		assert( false == is_alive() );
+		LIVE_ASSERT( false == is_open() );
+		LIVE_ASSERT( false == is_alive() );
 		this->close();
 		string cmdlinestr = cmdline;
 		PROCESS_INFORMATION pi = { 0 };

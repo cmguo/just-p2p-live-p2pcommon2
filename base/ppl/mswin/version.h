@@ -22,7 +22,7 @@ public:
 	/// 获取基本信息
 	const VS_FIXEDFILEINFO& GetFixedInfo() const
 	{
-		assert(!m_data.empty());
+		LIVE_ASSERT(!m_data.empty());
 		return m_fixedInfo;
 	}
 

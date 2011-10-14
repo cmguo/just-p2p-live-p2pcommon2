@@ -21,8 +21,8 @@ class memory_output_stream : public output_stream, private boost::noncopyable
 public:
 	explicit memory_output_stream(void* buf, size_t capacity) : m_buffer(static_cast<BYTE*>(buf)), m_capacity(capacity), m_size(0)
 	{
-		assert(m_buffer != NULL && m_capacity > 0);
-		assert( ! ::IsBadWritePtr(m_buffer, m_capacity));
+		LIVE_ASSERT(m_buffer != NULL && m_capacity > 0);
+		LIVE_ASSERT( ! ::IsBadWritePtr(m_buffer, m_capacity));
 	}
 
 	size_t capacity() const { return m_capacity; }

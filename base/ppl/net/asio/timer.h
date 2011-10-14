@@ -41,7 +41,7 @@ public:
 	/// 启动定时器
 	bool start(UINT elapse)
 	{
-		//assert( false == this->IsStarted() );
+		//LIVE_ASSERT( false == this->IsStarted() );
 		this->stop();
 		return do_start(elapse);
 	}
@@ -88,7 +88,7 @@ public:
 	virtual ~once_timer()
 	{
 		this->stop();
-		assert( false == this->is_started() );
+		LIVE_ASSERT( false == this->is_started() );
 	}
 
 	/// 是否已启动
@@ -132,7 +132,7 @@ public:
 	virtual ~periodic_timer()
 	{
 		this->stop();
-		assert( false == this->is_started() );
+		LIVE_ASSERT( false == this->is_started() );
 	}
 
 	/// 是否已启动
@@ -153,7 +153,7 @@ protected:
 	/// 启动定时器
 	virtual bool do_start(UINT elapse)
 	{
-		assert(elapse >= 50 );
+		LIVE_ASSERT(elapse >= 50 );
 		//	TRACE("PeriodicTimer::Start %p %d\n", this, elapse);
 		//	m_starttime = my_timer_type::traits_type::now();
 		m_firetime = my_timer_type::traits_type::now();
@@ -175,7 +175,7 @@ protected:
 	{
 		++m_times;
 		//	TRACE("Timer::OnTimer %p \n", this);
-		assert(m_started);
+		LIVE_ASSERT(m_started);
 		if ( m_started )
 		{
 			this->do_start_once();

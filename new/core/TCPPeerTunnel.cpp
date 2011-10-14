@@ -105,7 +105,7 @@ void TCPPeerTunnel::OnReceiveSubPiece(SubMediaPiecePtr subPiecePtr)
 	{
 		if (iter->first == subPiece)
 		{
-			assert(iter == m_RequestSubPieces.begin());
+			LIVE_ASSERT(iter == m_RequestSubPieces.begin());
 
 			VIEW_INFO("TCPPeerTunnel::OnReceiveSubPiece - subPiece recieve time(TCP): "<< m_RequestTime.elapsed() << " " << subPiece );
 			UpdateAvrgUsedTime(m_RequestTime.elapsed()); 
@@ -144,7 +144,7 @@ void TCPPeerTunnel::OnPieceNotFound(UINT pieceIndex)
 	{
 		if (iter->first.PieceIndex == pieceIndex)
 		{
-			assert(iter == m_RequestSubPieces.begin());
+			LIVE_ASSERT(iter == m_RequestSubPieces.begin());
 
 			UpdateAvrgUsedTime(m_RequestTime.elapsed()); 
 			m_RequestTime.sync();
@@ -173,7 +173,7 @@ void TCPPeerTunnel::OnSubPieceNotFound(SubPieceUnit subPiece)
 	{
 		if (iter->first == subPiece)
 		{
-			assert(iter == m_RequestSubPieces.begin());
+			LIVE_ASSERT(iter == m_RequestSubPieces.begin());
 
 			UpdateAvrgUsedTime(m_RequestTime.elapsed()); 
 			m_RequestTime.sync();

@@ -62,9 +62,9 @@ void CStunClient::Stop()
 }
 MY_STUN_NAT_TYPE CStunClient::getNatType(char *pcServer)
 {
-    assert( sizeof(UInt8 ) == 1 );
-    assert( sizeof(UInt16) == 2 );
-    assert( sizeof(UInt32) == 4 );
+    LIVE_ASSERT( sizeof(UInt8 ) == 1 );
+    LIVE_ASSERT( sizeof(UInt16) == 2 );
+    LIVE_ASSERT( sizeof(UInt32) == 4 );
 
     MY_STUN_NAT_TYPE snt_tpye = STUN_TYPE_ERROR;
 
