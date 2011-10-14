@@ -15,7 +15,6 @@
 #define _PPL_USE_ASIO
 #define _WIN32_WINNT 0x0500
 
-#include <stdio.h>
 
 #include <common/stdbase.h>
 //#include <objbase.h>
