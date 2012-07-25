@@ -224,7 +224,7 @@ inline bool CIniFile::Load(string FileName, vector<Record>& content)
 inline bool CIniFile::Save(string FileName, vector<Record>& content)
 {
 	std::ostringstream tmpName;
-        tmpName << ((int)FileName.c_str() + (int)getpid());
+        tmpName << FileName << ((int)FileName.c_str() + (int)getpid());
 	std::ofstream outFile (tmpName.str().c_str());							// Create an output filestream
 	if (!outFile.is_open()) return false;									// If the output file doesn't open, then return
 
@@ -243,6 +243,7 @@ inline bool CIniFile::Save(string FileName, vector<Record>& content)
 
 	::remove(FileName.c_str());
 	::rename(tmpName.str().c_str(), FileName.c_str());
+	::remove(tmpName.str().c_str());
 	return true;
 }
 
