@@ -681,7 +681,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 		externalTimeout = 2500;
 	else
 		externalTimeout = 3500;
-	PPLTRACE("Tady-> ||| redundantRate[%f] |||", redundantRate);
+	//PPLTRACE("Tady-> ||| redundantRate[%f] |||", redundantRate);
 	RandomGenerator rnd;
 
 	UINT uiDoubleKick(0);

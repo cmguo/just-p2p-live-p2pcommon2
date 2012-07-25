@@ -160,9 +160,9 @@ void ClientPeerManager::InitiateConnections(UINT times, UINT maxTCPPendingCount,
 			LIMIT_MAX(maxConnections,(UINT) m_PeerModule.GetSysInfo().MaxAppPeerCount + 5	);
 		LIMIT_MAX(maxConnections, 36);
 
-		TRACE("Tady -> Succeeded Rate = [%.4f] \n", m_statistics.DownloaderData.CalcSubPieceSucceededRate());
-		TRACE("Tady -> PrepaDataTime0 = [%d] , \n", prepaDataTime );
-		TRACE("Tady ->                          MaxConnectionCount = [%d] \n", maxConnections);
+		//TRACE("Tady -> Succeeded Rate = [%.4f] \n", m_statistics.DownloaderData.CalcSubPieceSucceededRate());
+		//TRACE("Tady -> PrepaDataTime0 = [%d] , \n", prepaDataTime );
+		//TRACE("Tady ->                          MaxConnectionCount = [%d] \n", maxConnections);
 //	maxConnections = 20;
 		if (/*m_PeerInformation->NetInfo->GetNATType() >= STUN_TYPE_FULLCONENAT || */m_PeerInformation->NetInfo->IsExposedIP())
 		{
