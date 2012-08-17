@@ -357,7 +357,7 @@ void ClientPeerManager::KickConnections2(UINT seconds)
 
 	if (m_Connections.size() > 0)
 	{
-		TRACE("Tady ->   avrgSpeed = [%d],           MaxConnectionCount2 = [%d] \n", this->GetAvrgDownloadSpeed()/* / m_Connections.size()*/,curMaxConnections);
+		//TRACE("Tady ->   avrgSpeed = [%d],           MaxConnectionCount2 = [%d] \n", this->GetAvrgDownloadSpeed()/* / m_Connections.size()*/,curMaxConnections);
 	}
 
 	if (m_Connections.size() >(size_t) curMaxConnections)
