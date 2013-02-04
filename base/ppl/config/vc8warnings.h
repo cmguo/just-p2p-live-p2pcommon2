@@ -34,11 +34,4 @@
 #pragma warning(disable: 4819)
 #endif
 
-#ifdef _DEBUG
-
-#define _HAS_ITERATOR_DEBUGGING 0
-#define _SECURE_SCL 0
-
-#endif
-
 #endif

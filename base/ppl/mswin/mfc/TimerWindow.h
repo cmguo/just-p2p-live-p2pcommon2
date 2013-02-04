@@ -2,7 +2,7 @@
 #define AFX_TIMERWINDOW_H__985C20CC_9F3B_4F9B_ABD4_EBF4AA8057B2__INCLUDED_
 
 #if _MSC_VER > 1000
-#gragma once
+#pragma once
 #endif // _MSC_VER > 1000
 // TimerWindow.h : header file
 //

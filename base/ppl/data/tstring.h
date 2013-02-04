@@ -10,7 +10,7 @@
 #include <ppl/data/tchar.h>
 
 using std::string;
-#ifdef _GLIBCXX_USE_WCHAR_T
+#if (defined _PPL_PLATFORM_MSWIN || defined _GLIBCXX_USE_WCHAR_T)
 using std::wstring;
 #endif
 
