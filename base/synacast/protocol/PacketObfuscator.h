@@ -50,7 +50,7 @@ public:
 	/// 计算需要填补的长度
 	static UINT CalcPaddingLength( BYTE checksum )
 	{
-		BYTE val = checksum ^ 0x49;
+		BYTE val = checksum ^ CHECK_SUM_XOR;
 		val |= 0x01;
 		return static_cast<UINT>( val & 0x07 );
 	}
@@ -83,7 +83,7 @@ public:
                 memcpy(data + len, realData, sizeof(realData));
 
 		std::pair<BYTE, WORD> checksum = ChecksumCalculator::Calc( data + len, size - len );
-		checksum.second ^= 0xE903;
+		checksum.second ^= CHECK_SUM_XOR2;
 		if ( checksum.first != firstByte || checksum.second != checksumWord	)
 		{
 			// 解混淆失败，还原被修改的数据，不是安全协议报文，可能是vod能其它模块的报文，还原后交给其它模块处理

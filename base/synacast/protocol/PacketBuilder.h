@@ -135,7 +135,7 @@ protected:
 			return;
 		}
 		std::pair<BYTE, WORD> checksum = this->CalcChecksum();
-		checksum.second ^= 0xE903;
+		checksum.second ^= CHECK_SUM_XOR2;
 		size_t len = PacketObfuscator::CalcPaddingLength( checksum.first );
 		LIVE_ASSERT( len == 1 || len == 3 || len == 5 || len == 7 );
 		m_ShuffleSize = len + 3;
