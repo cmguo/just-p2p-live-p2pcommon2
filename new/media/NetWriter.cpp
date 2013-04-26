@@ -342,6 +342,10 @@ bool CNetWriter::OnClientReceive(tcp_socket_ptr s, const BYTE* data, size_t size
 		return true;
 	}
 	
+    if (strstr((char const *)data, "/secret.tmp") == NULL)
+    {
+        return false;
+    }
 
 	// 发送HTTP的头部
 	SendOk = s->send(HTTP_HEADER, sizeof(HTTP_HEADER)-1 );

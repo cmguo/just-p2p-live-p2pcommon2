@@ -18,7 +18,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <vector>
 
-const char SynacastUrlCypherKey[] = "pplive";
+const char SynacastUrlCypherKey[] = "trinity";
 const TCHAR SynacastUrlDelimiter1 = _T('&');
 const TCHAR SynacastUrlDelimiter2 = _T(';');
 const TCHAR SynacastUrlDelimiter3 = _T(':');

@@ -8,7 +8,7 @@
 #include <ppl/net/uri.h>
 #include <synacast/protocol/types.h>
 
-const TCHAR SynacastUrlCypherKey[] = TEXT("pplive");
+const TCHAR SynacastUrlCypherKey[] = TEXT("trinity");
 const TCHAR SynacastUrlParamInnerDelimiter = TEXT(';');
 const TCHAR SynacastUrlUDPTracker[] = TEXT("udpt");
 const TCHAR SynacastUrlTCPTracker[] = TEXT("tcpt");

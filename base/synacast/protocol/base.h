@@ -133,8 +133,8 @@ enum CookieTypeEnum
 	COOKIE_TIME		= 1, 
 };
 
-#define CHECK_SUM_XOR   0x49
-#define CHECK_SUM_XOR2  0xE903
+#define CHECK_SUM_XOR   0x47
+#define CHECK_SUM_XOR2  0x434D
 
 #endif
 
