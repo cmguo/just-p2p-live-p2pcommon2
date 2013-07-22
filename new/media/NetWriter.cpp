@@ -218,7 +218,7 @@ CNetWriter::CNetWriter(CMediaServer* lpMediaServer, MonoMediaHeaderPiecePtr lpPa
 	LIVE_ASSERT( lpPacket );
 	LIVE_ASSERT( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
 
-	m_DataUnitSize = AsfHelper::GetDataUnitSizeFromHeader(lpPacket->GetHeader(), lpPacket->GetHeaderLength());
+	//m_DataUnitSize = AsfHelper::GetDataUnitSizeFromHeader(lpPacket->GetHeader(), lpPacket->GetHeaderLength());
 
 	const BYTE* buffer = m_lpMediaHead->GetHeader();
 	int length = m_lpMediaHead->GetHeaderLength();
@@ -471,7 +471,7 @@ CNetWriter* NetWriterFactory::Create(CMediaServer* mediaServer, MonoMediaHeaderP
 	{	// Mmshœµ¡–”√ CMmshNetWriter
 		return CreateMmshMediaNetWriter(mediaServer, headerPiece);
 	}
-	else if( mediaType == PPMT_MEDIA_MKV_FILE)
+	else if( mediaType == PPMT_MEDIA_MKV_FILE || mediaType == PPMT_MEDIA_FLV_FILE)
 	{
 		return CreateMkvNetWriter(mediaServer, headerPiece);
 	}

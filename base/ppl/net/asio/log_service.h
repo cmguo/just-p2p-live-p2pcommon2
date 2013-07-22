@@ -296,7 +296,7 @@ inline void log_impl(int type, int level, const string& text)
 	{
 		date_time dt = date_time::now();
 		string timestr = dt.str();
-		printf("%s %04u %04u %s\n", timestr.c_str(), type, level, text.c_str());
+		//printf("%s %04u %04u %s\n", timestr.c_str(), type, level, text.c_str());
 	}
 }
 

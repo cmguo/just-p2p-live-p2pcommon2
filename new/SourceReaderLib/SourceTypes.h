@@ -91,7 +91,8 @@ namespace Synacast
 			RAW					= 0x00,
 			ASF					= 0x01,
 			RMFF				= 0x02,
-			MKV					= 0x03
+            MKV					= 0x03, 
+            FLV                 = 0x04
 		};
 
 		enum SeekOrigin 

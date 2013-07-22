@@ -93,7 +93,7 @@ bool UnfinishedMediaPiece::AddSubPiece(SubMediaPiecePtr subPiece)
 	LIVE_ASSERT(subPieceIndex < m_totalCount);
 	if (containers::contains(m_subPieces, subPieceIndex))
 	{
-		UDPT_ERROR("Storage::AddSubPiece subpiece already exists " << make_tuple(pieceIndex, m_totalCount, subPieceIndex));
+        UDPT_ERROR("Storage::AddSubPiece subpiece already exists " << std::make_pair(m_totalCount, subPieceIndex));
 		return false;
 	}
 	m_subPieces[subPieceIndex] = subPiece;
