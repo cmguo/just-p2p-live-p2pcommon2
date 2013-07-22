@@ -24,7 +24,7 @@ enum PLAYER_TYPE
 
 const char HTTP_HEADER[] = 
 "HTTP/1.1 200 OK\r\n"
-"Server: Synacast Media Server/1.0\r\n"
+"Server: Trinity Media Server/1.0\r\n"
 "Connection: Close\r\n"
 "\r\n";
 

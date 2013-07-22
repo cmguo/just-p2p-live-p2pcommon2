@@ -129,7 +129,7 @@ void TrackerClientImpl::KeepAlive()
 		req.MinMax = m_StatusInfo->MinMax;
 		req.SetStunServerInfo( m_NetInfo->NeedNAT(), m_NetInfo->GetStunServerAddress(), m_NetInfo->GetStunDetectedAddress() );
 		req.SourceTimeStamp = m_StatusInfo->CurrentTimeStamp;
-			m_StatusInfo->Degrees, m_StatusInfo->Status.SkipPercent, m_StatusInfo->MinMax,
+//			m_StatusInfo->Degrees, m_StatusInfo->Status.SkipPercent, m_StatusInfo->MinMax,
 		SendRequest(req, true);
 		m_Statistics->KeepAlive.RequestTimes++;
 	}
@@ -666,7 +666,8 @@ void PeerTrackerClient::DoJoin()
 		SendRequest(req, true);
 		m_Statistics->Join.RequestTimes++;
 	}
-	if ( tsse_insecure == m_TrackerSecurity || tsse_undetermined == m_TrackerSecurity )
+	// if ( tsse_insecure == m_TrackerSecurity || tsse_undetermined == m_TrackerSecurity )
+	else
 	{
 		PORT_PAIR outerPorts = m_NetInfo->GetOuterPorts();
 		TRACKER_DEBUG("DoJoin " << m_address << outerPorts);
@@ -751,7 +752,7 @@ void PeerTrackerClient::ListPeers()
 	}
 
 #if 1
-	else if ( ( IsUDP() && ( tsse_insecure == m_TrackerSecurity/* || tsse_undetermined == m_TrackerSecurity */) ) || IsTCP() )
+	else //if ( ( IsUDP() && ( tsse_insecure == m_TrackerSecurity/* || tsse_undetermined == m_TrackerSecurity */) ) || IsTCP() )
 	{
 		// 老的非安全协议
 		// 对于udp pos，在tsse_insecure和tsse_undetermined情况下发送老报文

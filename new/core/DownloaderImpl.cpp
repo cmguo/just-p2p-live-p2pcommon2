@@ -18,6 +18,9 @@
 
 #include <boost/static_assert.hpp>
 #include "ppl/util/time_counter.h"
+
+#include <ppl/diag/trace.h>
+
 using namespace ppl::util::detail;
 //BOOST_STATIC_ASSERT(LIGHT_MRP == 1 && MRP_SUPPORTED != 0);
 
@@ -297,6 +300,8 @@ void PeerDownloader::RequestNextPiece()
 				for (PeerConnectionCollection::const_iterator iter = m_Connections.begin(); iter != m_Connections.end(); ++iter)
 				{
 					(*iter)->RequestFirstByTS(startTS);
+
+					PPLTRACE("Tady -> Send First request [%d] \n", m_RequestTimer.get_times());
 				}
 			}
 		}
@@ -359,7 +364,7 @@ void PeerDownloader::RequestNextPiece()
 	/*static QuotaManager quotaManager( *this, m_Tunnels );*/
 
 
-	quotaManager.CalcTunnelReceiveTimes();
+	quotaManager.CalcTunnelReceiveTimes(); // Adjust windowsize of tunnel, and tunnel map.
 #if !_Savage
 	//if (!quotaManager.HasQuota())
 	if (!quotaManager.HasRecvTimeMap())
@@ -379,22 +384,27 @@ void PeerDownloader::RequestNextPiece()
 	
 #if _Savage
 
-	quotaManager.CalcHealthy2(m_healthyMap2, GetResourceMaxIndex(), m_SourceResource->GetMinMax());
-
-	if (quotaManager.RequestFromTaskQueue2())
+	PPLTRACE("Tady -> CalcHealthy [%d] \n", m_RequestTimer.get_times());
+	quotaManager.CalcHealthy2(m_healthyMap2, ResourceMaxIndex, m_SourceResource->GetMinMax()); // Calc tasks.
+	if (!m_healthyMap2.empty())
 	{
-		if ( 0 == m_Statistics.StartAssignTime )
+		if (quotaManager.RequestFromTaskQueue2()) // Start request.
 		{
-			m_Statistics.StartAssignTime = m_Statistics.StartTime.elapsed32();
+			if ( 0 == m_Statistics.StartAssignTime )
+			{
+				m_Statistics.StartAssignTime = m_Statistics.StartTime.elapsed32();
+			}
+			m_StartRequestTickCount = ::GetTickCount();
+
+			PPLTRACE("Tady -> Send some request [%d] \n", m_RequestTimer.get_times());
 		}
-		m_StartRequestTickCount = ::GetTickCount();
 	}
 
 #else // _Savage
 
 	if (quotaManager.HasRecvTimeMap())
 	{
-		quotaManager.CalcHealthy2(m_healthyMap, GetResourceMaxIndex(), m_SourceResource->GetMinMax());
+		quotaManager.CalcHealthy2(m_healthyMap, ResourceMaxIndex, m_SourceResource->GetMinMax());
 
 		static UINT maxMapLen = 0;
 		if (m_healthyMap.size() > maxMapLen)
@@ -702,7 +712,7 @@ bool PeerDownloader::NeedDownload(SubPieceUnit subPieceUnit) const
 
 UINT PeerDownloader::GetStartIndex() const
 {
-	return m_streamBuffer.GetDownloadStartIndex();
+	return max(m_streamBuffer.GetDownloadStartIndex(), GetResourceMinIndex());
 }
 
 bool PeerDownloader::IsRequested(UINT piece) const
@@ -773,6 +783,8 @@ UnfinishedMediaPiecePtr PeerDownloader::AddDataSubPiece(SubMediaPiecePtr subPiec
 		m_StartRequestTickCount = ::GetTickCount();	//PP_1.0.6.6_C06
 		m_LastPrelocateTickCount.sync();
 		m_LastCalcsPrelocateTickCount.sync();
+
+		RequestNextPiece();
 	}
 	LIMIT_MIN(m_MaxSubPieceCountPerPiece, subPiece->GetSubPieceCount());
 	//return m_unfinished.AddSubPiece(subPiece);
@@ -805,19 +817,17 @@ void PeerDownloader::GetConnectionStatistics(int& highConnectionCount, int& requ
 
 UINT PeerDownloader::GetResourceMinIndex() const
 {
-	const PEER_MINMAX& sourceMinMax = m_SourceResource->GetMinMax();
+	//const PEER_MINMAX& sourceMinMax = m_SourceResource->GetMinMax();
+    //    (void)sourceMinMax;
 	UINT ResourceMinIndex = 0xffffffff;
-        (void)sourceMinMax;
 	STL_FOR_EACH_CONST( PeerTunnelCollection, m_Tunnels, itr)
 	{
 		PeerTunnelPtr tunnel = *itr;
 		PeerConnection* pc = &tunnel->GetConnection();
 		if( // 非僵持节点判断
-			pc->GetMinIndex() > 0 
-			&&
-			pc->GetMinIndex() < ResourceMinIndex 
-			&&
-			//(pc->GetMinIndex()+2000 > sourceMinMax.MinIndex && pc->GetMinIndex() < sourceMinMax.MaxIndex+2*60*60*10) 
+		pc->GetMinIndex() > 0 
+		&& pc->GetMinIndex() < ResourceMinIndex 
+		&& //(pc->GetMinIndex()+2000 > sourceMinMax.MinIndex && pc->GetMinIndex() < sourceMinMax.MaxIndex+2*60*60*10) 
 			m_SourceResource->CheckPieceIndexValid(pc->GetMinIndex())
 		)
 		{
@@ -829,18 +839,16 @@ UINT PeerDownloader::GetResourceMinIndex() const
 
 UINT PeerDownloader::GetResourceMaxIndex() const
 {
-	const PEER_MINMAX& sourceMinMax = m_SourceResource->GetMinMax();
+	//const PEER_MINMAX& sourceMinMax = m_SourceResource->GetMinMax();
+    //    (void)sourceMinMax;
 	UINT ResourceMaxIndex = 0;
-        (void)sourceMinMax;
 	STL_FOR_EACH_CONST( PeerTunnelCollection, m_Tunnels, itr)
 	{
 		PeerTunnelPtr tunnel = *itr;
 		PeerConnection* pc = &tunnel->GetConnection();
 		if( pc->GetMaxIndex() > 0 
-			&& 
-			pc->GetMaxIndex() > ResourceMaxIndex 
-			&&
-			//(pc->GetMaxIndex()+2000 > sourceMinMax.MinIndex && pc->GetMaxIndex() < sourceMinMax.MaxIndex+2*60*60*10) 
+		&& pc->GetMaxIndex() > ResourceMaxIndex 
+		&& //(pc->GetMaxIndex()+2000 > sourceMinMax.MinIndex && pc->GetMaxIndex() < sourceMinMax.MaxIndex+2*60*60*10) 
 			m_SourceResource->CheckPieceIndexValid(pc->GetMaxIndex())
 		)
 		{
@@ -892,6 +900,16 @@ void PeerDownloader::AddTunnel( PeerConnection* pc )
 
 	m_Tunnels.insert( tunnel );
 	this->Verify();
+
+	PPLTRACE("Tady -> Added a Tunnel [%d] \n", m_RequestTimer.get_times());
+	if (m_healthyMap2.empty() /*&& m_Tunnels.size() == 1*/)
+	{
+		RequestNextPiece();
+	}
+	else
+	{
+		tunnel->RequestFromTaskQueue();
+	}
 }
 
 void PeerDownloader::RemoveTunnel( PeerConnection* pc )

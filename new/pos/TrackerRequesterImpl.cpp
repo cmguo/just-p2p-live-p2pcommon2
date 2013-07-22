@@ -328,15 +328,15 @@ void PeerTrackerRequester::ListPeers()
 	for (size_t i = 0; i < m_clients.size(); ++i)
 	{
 		TrackerClientPtr client = m_clients[i];
-		const TRACKER_ADDRESS& addr = client->GetServerAddress();
-		(void)addr;
-                if (client->IsUDP() || m_UseTCP || useTcp)
+		//const TRACKER_ADDRESS& addr = client->GetServerAddress();
+		//(void)addr;
+        if (client->IsUDP() || m_UseTCP || useTcp)
 		{
 			client->ListPeers();
 		}
 		else
 		{
-			TRACKER_DEBUG("DoList: ignore tcp tracker " << addr);
+			TRACKER_DEBUG("DoList: ignore tcp tracker " << client->GetServerAddress() /*addr*/);
 		}
 	}
 }

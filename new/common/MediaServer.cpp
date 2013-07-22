@@ -101,7 +101,7 @@ bool CMediaServer::AddMediaHeader( MonoMediaHeaderPiecePtr lpPacket)
 	if( m_NowHeaderIndex == 0 )
 	{
 		STREAMBUFFER_INFO( "This is the first to add mediaheader, so Change Header" );
-		//ChangeMediaHeader( lpPacket->GetPieceIndex() );
+		ChangeMediaHeader( lpPacket->GetPieceIndex() );
 	}
 
 	return true;

@@ -45,6 +45,7 @@ void ParseLiveTrackers(const vector<TrackerAddressInfo>& src, vector<TRACKERADDR
 			addr.Type = PPL_TRACKER_TYPE_HTTP;
 		if (addr.IP == INADDR_NONE || addr.IP == INADDR_ANY || addr.Port == 0 || addr.Type == 0xFF)
 			continue;
+
 		dst.push_back(addr);
 	}
 }
@@ -372,7 +373,7 @@ void LiveChannel::OnAppTimer()
 		//UINT32 peerCount = liveInfo.RemotePeerCount;
 		//int skipPercent = liveInfo.LocalPeerInfo.StatusInfo.Status.SkipPercent;
 		// 缓冲时间大于5秒开始播放
-		if (bufferTime > 0 && liveInfo.MediaType != 0)
+		if (/*bufferTime > 0 && */liveInfo.MediaType != 0)
 		{
 			if (m_callback != NULL)
 			{

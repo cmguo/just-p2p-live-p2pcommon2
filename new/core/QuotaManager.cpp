@@ -77,8 +77,7 @@ void QuotaManager::CalcTunnelReceiveTimes()
 		LIMIT_MIN(subStats.MaxRequestSuccedRate, reqSucceededRate);
 		LIMIT_MAX(subStats.MinRequestSuccedRate, reqSucceededRate);
 
-		DWORD startIndex = m_downloader.GetStartIndex();
-		if (pc->GetMaxIndex() < startIndex)
+		if (pc->GetMaxIndex() < m_streamBuffer.GetDownloadStartIndex()) 
 		{
 			subStats.DepletedTunnelCount++;
 			continue;
@@ -119,7 +118,7 @@ void QuotaManager::CalcTunnelReceiveTimes()
 #endif
 
 		if (pt->IsFreezing() 
-			|| pc->GetMaxIndex() < m_downloader.GetStartIndex())
+			|| pc->GetMaxIndex() < m_streamBuffer.GetDownloadStartIndex()) // Tady, 07182013: Need optimization. It's loop.
 		{	// 该Peer没有资源去下载,那么也跳过
 			continue;
 		}
@@ -294,7 +293,7 @@ void QuotaManager::CalcHealthy(HealthyDegreeCollection& HealthyMap, UINT Resourc
 
 //	UINT tryCount = 0;
 	//获得健康度（如果endIndex非常大，如僵尸节点，则此处会造成死循环!）
-	UINT startIndex = m_streamBuffer.GetDownloadStartIndex();
+	UINT startIndex = m_downloader.GetStartIndex(); // It's about max(skip, ResourceMinIndex).
 
 	UINT sourceLength = sourceMinMax.GetLength();	// 正常情况时120s
 	if (sourceLength <= 12) return;
@@ -451,7 +450,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection& HealthyMap, UINT Resour
 
 	//	UINT tryCount = 0;
 	//获得健康度（如果endIndex非常大，如僵尸节点，则此处会造成死循环!）
-	UINT startIndex = m_streamBuffer.GetDownloadStartIndex();
+	UINT startIndex = m_downloader.GetStartIndex(); // It's about max(skip, ResourceMinIndex).
 
 	UINT sourceLength = sourceMinMax.GetLength();	// 正常情况时120s
 	if (sourceLength <= 12) return;
@@ -600,7 +599,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 
 //	UINT tryCount = 0;
 	//获得健康度（如果endIndex非常大，如僵尸节点，则此处会造成死循环!）
-	UINT startIndex = m_streamBuffer.GetDownloadStartIndex();
+	UINT startIndex = m_downloader.GetStartIndex(); // It's about max(skip, ResourceMinIndex).
 
 	UINT sourceLength = sourceMinMax.GetLength();	// 正常情况时120s
 	if (sourceLength <= 12) return;
@@ -689,6 +688,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 	{
 		uiDoubleKick = 3;
 	}
+
 	UINT index = 0;
 	UINT maxIndex = min(ResourceMaxIndex, startIndex + max(static_cast<UINT>(2000), sourceLength*4));
 	for (index = startIndex; index <= maxIndex; index++)

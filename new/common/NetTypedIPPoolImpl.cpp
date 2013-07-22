@@ -660,10 +660,10 @@ bool NetTypedIPPoolImpl::GetForConnect(PeerItem& addr)
 		addr = *ipInfo;
 		ipInfo->LastGetForConnectTime = GetTimeCount();
 
-		const PEER_ADDRESS& peerAddr = addr.Info.Address;
-		//LIVE_ASSERT(peerAddr.IP != m_localAddress.IP || (peerAddr.TcpPort != m_localAddress.TcpPort && peerAddr.UdpPort != m_localAddress.UdpPort));
-		(void)peerAddr;
-                VIEW_DEBUG( "IPPool::GetForConnect " << peerAddr << " " << make_tuple( addr.ConnectTimes, addr.ConnectFlags, addr.CanDetect ) );
+//		const PEER_ADDRESS& peerAddr = addr.Info.Address;
+//		LIVE_ASSERT(peerAddr.IP != m_localAddress.IP || (peerAddr.TcpPort != m_localAddress.TcpPort && peerAddr.UdpPort != m_localAddress.UdpPort));
+
+        VIEW_DEBUG( "IPPool::GetForConnect " << addr.Info.Address << " " << make_tuple( addr.ConnectTimes, addr.ConnectFlags, addr.CanDetect ) );
 		return true;
 	}
 	m_statistics.ConnectCheckCount = (WORD)ConnectContinueCount;

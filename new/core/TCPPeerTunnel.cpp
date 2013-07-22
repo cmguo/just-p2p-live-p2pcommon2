@@ -302,6 +302,8 @@ bool TCPPeerTunnel::RequestTillFullWindow2()
 	SubPieceTask* pTask;
 	UINT uStartIndex = m_Connection.GetAppModule().GetStreamBuffer().GetDownloadStartIndex();
 
+	bool bGotSomeTask(false); //Added by Tady, 06172013.
+
 	if (!IsFreezing() // Modified by Tady, 011511: Spark!
 		&& m_taskCollectionPtr != NULL && !m_taskCollectionPtr->empty()
 		&& uStartIndex <= m_Connection.GetMaxIndex() )
@@ -333,6 +335,8 @@ bool TCPPeerTunnel::RequestTillFullWindow2()
 			}
 
 			m_taskCollectionPtr->erase(iter++);
+
+			bGotSomeTask = true;
 		}
 
 	}
@@ -342,5 +346,5 @@ bool TCPPeerTunnel::RequestTillFullWindow2()
 	// 			continue;
 	// 		}
 
-	return true;
+	return bGotSomeTask;
 }
