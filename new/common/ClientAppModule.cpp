@@ -914,6 +914,14 @@ void LiveAppModuleImpl::OnAppTimer()
 			<< ", buffer size=" << streamStat.BufferSize 
 			<< ", play position=" << m_mediaServer->GetStatistics().PlayToIndex 
 			<< ", minmax=" << m_PeerInformation->StatusInfo->MinMax );
+        std::cout << 
+            "stream stat: buffer time = " << streamStat.BufferTime 
+            << ", buffer size=" << streamStat.BufferSize 
+            << ", play position=" << m_mediaServer->GetStatistics().PlayToIndex 
+            << ", minmax=" << m_PeerInformation->StatusInfo->MinMax
+            << ", upbw=" << m_LiveInfo->LocalPeerInfo.Flow.GetRecentUploadSpeed()
+            << ", peercnt=" << m_LiveInfo->IPPoolInfo.TotalPoolSize
+            << std::endl;
 	}
 }
 
