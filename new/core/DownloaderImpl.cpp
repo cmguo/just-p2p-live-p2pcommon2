@@ -379,12 +379,11 @@ void PeerDownloader::RequestNextPiece()
 	//UINT timeout = REQUEST_MAX_TIMEOUT;
 	UINT StartIndex = m_streamBuffer.GetDownloadStartIndex();
 //	UINT index = StartIndex;
-//	size_t downCount = 0;
-//	int tryCount = 0;	// 尝试次数
+
 	
 #if _Savage
 
-	PPLTRACE("Tady -> CalcHealthy [%d] \n", m_RequestTimer.get_times());
+	//PPLTRACE("Tady -> CalcHealthy [%d] \n", m_RequestTimer.get_times());
 	quotaManager.CalcHealthy2(m_healthyMap2, ResourceMaxIndex, m_SourceResource->GetMinMax()); // Calc tasks.
 	if (!m_healthyMap2.empty())
 	{
@@ -396,11 +395,15 @@ void PeerDownloader::RequestNextPiece()
 			}
 			m_StartRequestTickCount = ::GetTickCount();
 
-			PPLTRACE("Tady -> Send some request [%d] \n", m_RequestTimer.get_times());
+			//PPLTRACE("Tady -> Send some request [%d] \n", m_RequestTimer.get_times());
 		}
 	}
 
 #else // _Savage
+	
+	// No idea, Tady, 08072013: Useless.
+	size_t downCount = 0;
+	int tryCount = 0;	// 尝试次数
 
 	if (quotaManager.HasRecvTimeMap())
 	{

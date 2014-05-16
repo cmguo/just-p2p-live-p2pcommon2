@@ -218,8 +218,8 @@ CNetWriter::CNetWriter(CMediaServer* lpMediaServer, MonoMediaHeaderPiecePtr lpPa
 	LIVE_ASSERT( lpPacket );
 	LIVE_ASSERT( lpPacket->GetPieceType() == PPDT_MEDIA_HEADER );
 
-	//m_DataUnitSize = AsfHelper::GetDataUnitSizeFromHeader(lpPacket->GetHeader(), lpPacket->GetHeaderLength());
-
+	m_DataUnitSize = AsfHelper::GetDataUnitSizeFromHeader(lpPacket->GetHeader(), lpPacket->GetHeaderLength());
+//	m_DataUnitSize = 0;
 	const BYTE* buffer = m_lpMediaHead->GetHeader();
 	int length = m_lpMediaHead->GetHeaderLength();
 	
@@ -487,7 +487,7 @@ CNetWriter* NetWriterFactory::Create(CMediaServer* mediaServer, MonoMediaHeaderP
 #if !defined(_WIN32_WCE)
 
 	int GraphMode = mediaServer->GetListener().GetGraphMode();
-        if( IsVBR(headerPiece) )
+        if( IsVBR(headerPiece))
 	{	// 如果是 VBR 完全采用 VistaMediaNetWriter 来构造
 		return CreateVistaMediaNetWriter(mediaServer, headerPiece);
 	}

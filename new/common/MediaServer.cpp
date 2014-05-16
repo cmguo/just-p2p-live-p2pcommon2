@@ -182,7 +182,7 @@ void CMediaServer::on_socket_accept(tcp_acceptor* sender, tcp_socket* newClient,
 		MEDIASERVER_ERROR( "THE WRITERCOLLECTION IS DIE, SO CAN NOT PLAY ANYTHING!" );
 		return;
 	}
-	client->set_send_timeout(10); // Added by Tady, 082609: : For VistaHttpNetWriter. The Asf-reader in DShow is a freak! 
+	client->set_send_timeout(30); // Added by Tady, 082609: : For VistaHttpNetWriter. The Asf-reader in DShow is a freak! 
 	m_netWriter->OnAcceptConnection(client, addr);
 }
 

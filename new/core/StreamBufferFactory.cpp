@@ -290,7 +290,7 @@ UINT StreamBufferImpl::GetPrepaDataLen()
 	UINT curIndex = 0;
 	if (m_base.GetTimeStamp() != 0)
 	{
-		UINT dataLen = m_SourceResource->GetTimedLength(m_base.GetElapsedTime());
+		UINT dataLen = m_SourceResource->GetTimedLength((UINT)m_base.GetElapsedTime());
 		curIndex =m_base.GetPieceIndex() + dataLen;
 	}
 	curIndex = max(minIndex,curIndex);
@@ -311,9 +311,8 @@ int StreamBufferImpl::GetPrepaDataTime()
 		MediaDataPiecePtr skipPiece = m_storage.GetDataPiece(GetDownloadStartIndex() - 1);
 		if (skipPiece != NULL)
 		{
-			UINT skipTS = skipPiece->GetTimeStamp();
-			UINT curTS = m_base.GetTimeStamp() + m_base.GetElapsedTime();
-			return skipTS - curTS;
+			return (UINT)skipPiece->GetTimeStamp() 
+				- (UINT)(m_base.GetTimeStamp() + m_base.GetElapsedTime()); // skipTS - curTS
 		}
 	}
 	return 0;

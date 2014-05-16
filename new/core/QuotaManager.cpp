@@ -663,7 +663,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 			urgentCount = (UINT)((15000 - iPrepaDataTime) * dataLenFor1s / 1000);
 		}
 	}
-
+PPLTRACE("Tady-> iPrepaDataTime[%d] urgentCount[%d]", iPrepaDataTime, urgentCount);
 
 	VIEW_INFO("LocalPeerGood "<<isGood<<" End");
 //	VIEW_INFO("UrgentCount "<<bufferTime<<" "<<urgentCount<<" End");
@@ -782,7 +782,7 @@ void QuotaManager::CalcHealthy2(HealthyDegreeCollection2& HealthyMap, UINT Resou
 				{
 					// 计算紧迫度参数
 					// 采用随机数的原因是 在相同健康度的资源中 随机制定优先级
-					UINT key = urgentCount + healthyCount*1000 + rnd.Next(999) + 2000;
+					UINT key = urgentCount + healthyCount*1000 /*+ rnd.Next(999) + 2000*/;
 //					UINT key = index - startIndex;
 					LIVE_ASSERT(key >= urgentCount);
 #endif // !NO_HEALTHCOUNTCALC

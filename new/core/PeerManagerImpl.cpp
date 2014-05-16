@@ -355,13 +355,13 @@ bool CPeerManager::DoStart()
 	m_uploader.reset(new Uploader(*this, m_storage, m_config.Uploader));
 
 	// Spark Test
-	{
+	/*{
 		PEER_ADDRESS addr;
-		if (PeerAddressUtil::ParseAddress( addr, "124.207.162.78:11087:11933"/*"192.168.43.129:3013:3340"*/ ))
+		if (PeerAddressUtil::ParseAddress( addr, "115.236.4.95:10103:10103"))
 		{
 			DialSpark(addr, 0);
 		}
-	}
+	}*/
 	DialSparks();
 	return true;
 }

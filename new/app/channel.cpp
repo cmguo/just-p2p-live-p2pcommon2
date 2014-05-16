@@ -326,7 +326,10 @@ void LiveChannel::DoStop()
 	m_AppModule.reset();
 	m_udp->close();
 	m_tcp->close();
-	m_playing = false;
+	if (m_playing == false && m_callback != NULL)
+		m_callback(m_channel_handle, UM_LIVEMSG_PLAYEROFF + 1, 0, 0);
+	else
+		m_playing = false;
 }
 
 void LiveChannel::OnUDPSenderResponse( BYTE* data, size_t size, const InetSocketAddress& sockAddr, UINT proxyType )

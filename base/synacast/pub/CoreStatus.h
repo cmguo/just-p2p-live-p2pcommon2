@@ -20,7 +20,7 @@ struct CCoreStatus
   	unsigned int	m_BufferTime;//缓冲时间 	  	
   	unsigned int	m_DownloadSpeed;//下载速度(Byte/sencond)
   	unsigned int	m_UploadSpeed;//上传速度(Byte/sencond)
-  	unsigned int	m_ConnectionCountt;//当前连接数(VOD则表示当前使用的peer数)
+  	unsigned int	m_ConnectionCount;//当前连接数(VOD则表示当前使用的peer数)
 	UINT64	m_TotalUploadBytes;		// 上传的数据总量(字节数)
 	UINT64	m_TotalDownloadBytes;	
 
