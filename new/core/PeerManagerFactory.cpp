@@ -75,7 +75,7 @@ int ClientPeerManager::GetMaxLocalPeerCount() const
 {
 	if( m_NetInfo->IsExposedIP() )
 	{	// 公网IP 只用少部分的节点去连接别人  调整为 最大连接数的 1/10, 并且最少保持20个 
-		return max(m_config.WANMinLocalPeerCount, m_PeerModule.GetMaxConnectionCount() * m_config.WANMinLocalPeerPercent / 100);
+		return max((size_t)m_config.WANMinLocalPeerCount, m_PeerModule.GetMaxConnectionCount() * m_config.WANMinLocalPeerPercent / 100);
 	}
 	else
 	{	// 内网IP 全力去连接别人

@@ -23,7 +23,7 @@
 
 #include <boost/static_assert.hpp>
 
-
+/*
 
 BOOST_STATIC_ASSERT( sizeof(bool) == 1 );
 BOOST_STATIC_ASSERT( sizeof(INT8) == 1 );
@@ -113,7 +113,7 @@ BOOST_STATIC_ASSERT( REDIRECT_PEER_INFO::object_size == 40 );
 
 BOOST_STATIC_ASSERT( PPL_IS_EMBEDDED_SYSTEM == 0 );
 
-
+*/
 
 
 

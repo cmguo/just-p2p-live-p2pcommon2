@@ -65,7 +65,7 @@ void TrackerRequesterImpl::Start(UINT count, const TRACKER_LOGIN_ADDRESS addrs[]
 	}
 }
 */
-void TrackerRequesterImpl::Start( TrackerRequesterListener& listener, size_t count, const TRACKER_LOGIN_ADDRESS addrs[], boost::shared_ptr<PeerInformation> peerInformation, boost::shared_ptr<TrackerPacketSender> packetSender )
+void TrackerRequesterImpl::Start( TrackerRequesterListener& listener, UINT count, const TRACKER_LOGIN_ADDRESS addrs[], boost::shared_ptr<PeerInformation> peerInformation, boost::shared_ptr<TrackerPacketSender> packetSender )
 {
 	LIVE_ASSERT(!m_isStarted);
 	m_listener = &listener;

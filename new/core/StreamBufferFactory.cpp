@@ -269,7 +269,7 @@ void StreamBufferImpl::OnAppTimer(UINT times, UINT downSpeed)
 	}
 }
 
-size_t StreamBufferImpl::GetRangeCount(  UINT rangeMinIndex, UINT rangeMaxIndex  ) const
+UINT StreamBufferImpl::GetRangeCount(  UINT rangeMinIndex, UINT rangeMaxIndex  ) const
 {
 	return m_storage.CountPieces(rangeMinIndex, rangeMaxIndex);
 }

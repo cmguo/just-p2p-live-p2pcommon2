@@ -43,7 +43,7 @@ public:
 
 
 	/// 获得一段范围之间的Piece个数
-	size_t GetRangeCount( UINT rangeMinIndex, UINT rangeMaxIndex ) const;
+	UINT GetRangeCount( UINT rangeMinIndex, UINT rangeMaxIndex ) const;
 
 	virtual const StreamBufferStatistics& GetStatistics() const { return m_statistics; }
 	//virtual pair<bool, PPMediaDataPacketPtr> AddSubPiece(SubPieceDataPacketPtr subPiece) { return make_pair(false, PPMediaDataPacketPtr()); }
