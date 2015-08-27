@@ -30,6 +30,8 @@
 class tcp_socket : public socket_base, public ppl::util::listenable<tcp_socket_listener, trivial_tcp_socket_listener>
 {
 public:
+typedef boost::system::error_code error_code;
+
 	explicit tcp_socket(boost::asio::io_service& ioservice = io_service_provider::default_service()) : m_impl(new tcp_socket_impl(ioservice))
 	{
 		this->init();

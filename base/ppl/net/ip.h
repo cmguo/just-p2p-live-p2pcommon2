@@ -25,7 +25,7 @@ struct MIB_IPADDRTABLE_DATA : public MIB_IPADDRTABLE
 };
 
 #else
-#include <net/if_arp.h>
+//#include <net/if_arp.h>
 #endif
 
 

@@ -3,7 +3,7 @@
 #define _LIVE_P2PCOMMON2_BASE_PPL_CONFIG_PLATFORM_H_
 
 
-#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__FreeBSD__)||defined(__ANDROID__)
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__FreeBSD__)||defined(__ANDROID__) || defined(__GNUC__)
 
 #include <ppl/config/platform/linux.h>
 

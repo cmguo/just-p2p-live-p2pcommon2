@@ -30,9 +30,9 @@
 
 #include <boost/version.hpp>
 
-#if BOOST_VERSION != 103600
-#error invalid boost library version, 1.36 is required
-#endif
+//#if BOOST_VERSION != 103600
+//#error invalid boost library version, 1.36 is required
+//#endif
 
 
 //#if defined(BOOST_SP_USE_QUICK_ALLOCATOR)

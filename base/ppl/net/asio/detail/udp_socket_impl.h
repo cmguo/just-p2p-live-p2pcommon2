@@ -19,6 +19,7 @@ using boost::system::error_code;
 class udp_socket_impl : private boost::noncopyable, public boost::enable_shared_from_this<udp_socket_impl>
 {
 public:
+typedef boost::system::error_code error_code;
 	struct udp_receive_session
 	{
 		byte_buffer buffer;

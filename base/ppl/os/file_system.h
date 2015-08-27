@@ -84,7 +84,7 @@ namespace ppl_detail {
 
 inline bool api_copy_file( const char* srcFilePath, const char* destFilePath )
 {
-	boost::system::error_code err = boost::filesystem::detail::copy_file_api( srcFilePath, destFilePath );
+	boost::system::error_code err; boost::filesystem::copy_file( srcFilePath, destFilePath , err);
 #ifdef _DEBUG
 	if ( err )
 	{

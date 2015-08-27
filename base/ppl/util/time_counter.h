@@ -178,17 +178,30 @@ private:
 #include <sys/time.h>
 #include <time.h>
 
+#if (defined __MACH__)
+#  include <mach/mach_time.h>
+#endif
+
 namespace ppl { namespace util {
 
 
 namespace detail {
 inline UINT64 GetTickCount64()
 {
+#ifdef __MACH__
+            struct mach_timebase_info info;
+            ::mach_timebase_info(&info);
+            boost::uint64_t t = mach_absolute_time() / 1000 / 1000;
+            if (info.numer != info.denom)
+                t = t * info.numer / info.denom;
+            return t;
+#else
 	struct timespec t = { 0 };
 	int res = clock_gettime(CLOCK_REALTIME, &t);
 	LIVE_ASSERT( 0 == res );
     UINT64 val = (UINT64)t.tv_sec * 1000 + (UINT64)t.tv_nsec / 1000000;
 	return val;
+#endif
 }
 
 

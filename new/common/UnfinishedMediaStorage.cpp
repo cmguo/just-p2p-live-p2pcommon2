@@ -87,7 +87,7 @@ bool UnfinishedSubPieceStorage::HasSubPiece(UINT pieceIndex, UINT8 subPieceIndex
 	UnfinishedMediaDataPieceCollection::const_iterator iter = m_subPieces.find(pieceIndex);
 	if (iter == m_subPieces.end())
 		return false;
-	return iter->second->GetSubPiece(subPieceIndex);
+	return !!iter->second->GetSubPiece(subPieceIndex);
 }
 
 UnfinishedMediaPiecePtr UnfinishedSubPieceStorage::AddSubPiece(SubMediaPiecePtr subPiece)

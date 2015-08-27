@@ -87,7 +87,7 @@ PieceInfo Storage::GetPieceInfo(UINT pieceIndex) const
 
 bool Storage::HasDataPiece(UINT pieceIndex) const
 {
-	return GetDataPiece(pieceIndex);
+	return !!GetDataPiece(pieceIndex);
 }
 
 UINT Storage::GetMinIndex() const
@@ -471,7 +471,7 @@ SubMediaPiecePtr Storage::GetSubPiece(UINT64 inTS) const
 
 bool Storage::HasHeader(UINT pieceIndex) const
 {
-	return GetHeader(pieceIndex);
+	return !!GetHeader(pieceIndex);
 }
 
 size_t Storage::RemoveOldHeaders(size_t maxCount, UINT upperBound)

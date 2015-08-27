@@ -10,7 +10,7 @@ bool PieceRequestManager::Add(UINT pieceIndex, PeerConnection* connection, UINT 
 {
 	LIVE_ASSERT(connection != NULL);
 	PieceTaskInfo request(pieceIndex, connection, timeout); 
-	std::pair<PieceTaskInfoCollection::iterator, bool> result = m_requests.insert(std::make_pair(pieceIndex, request));
+	std::pair<PieceTaskInfoCollection::iterator, bool> result = m_requests.insert(std::make_pair(SubPieceUnit(pieceIndex), request));
 	if (result.second)
 	{
 		//AddCount(pieceIndex, connection->IsUDPT() );

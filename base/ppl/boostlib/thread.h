@@ -102,7 +102,7 @@ public:
 
 	bool is_started() const
 	{
-		return m_thread;
+		return !!m_thread;
 	}
 	bool is_alive() const
 	{
@@ -118,7 +118,7 @@ public:
 		long secs = millis / 1000;
 		boost::xtime::xtime_nsec_t nsecs = ( millis % 1000 ) * nanoseconds_per_millisecond;
 		boost::xtime xt;
-		boost::xtime_get(&xt, boost::TIME_UTC);
+		boost::xtime_get(&xt, boost::TIME_UTC_);
 		xt.sec += secs;
 		xt.nsec += nsecs;
 		boost::thread::sleep(xt);

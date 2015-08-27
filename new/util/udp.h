@@ -2,10 +2,6 @@
 #define _LIVE_P2PCOMMON2_NEW_UTIL_UDP_H_
 
 
-#ifdef __MACH__
-typedef int socklen_t;
-#endif
-
 #include <errno.h>
 
 #ifdef WIN32

@@ -167,7 +167,7 @@ public:
 	{
 	}
 
-	bool IsValid() const { return m_subPiece; }
+	bool IsValid() const { return !!m_subPiece; }
 	MediaDataPiecePtr GetPiece() const { return m_subPiece; }
 	UINT64 GetReceiveTime() const { return m_receiveTime.get_count(); }
 

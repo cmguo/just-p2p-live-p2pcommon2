@@ -79,7 +79,7 @@ public:
 		string baseDir = localModule.get_file_directory();
 		string configDir = ppl::os::paths::combine( ShellFolders::CommonAppDataDirectory(), _T("PPLive\\Core") );
 #elif defined(_PPL_PLATFORM_LINUX)
-        string baseDir = ppl::os::paths::combine(boost::interprocess::detail::get_temporary_path(), "live");
+        string baseDir = ppl::os::paths::combine(boost::filesystem::temp_directory_path().string(), "live");
 		string configDir = ppl::os::paths::combine(baseDir, "config");
 #else
 #error invalid platform-------------------

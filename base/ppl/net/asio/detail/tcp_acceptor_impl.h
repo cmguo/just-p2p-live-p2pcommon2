@@ -19,6 +19,7 @@
 class tcp_acceptor_impl : private boost::noncopyable, public boost::enable_shared_from_this<tcp_acceptor_impl>
 {
 public:
+typedef boost::system::error_code error_code;
 	typedef boost::shared_ptr<tcp_socket_impl> tcp_socket_impl_ptr;
 
 	typedef boost::function<void (const error_code&, tcp_socket_impl_ptr)> callback_type;

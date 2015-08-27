@@ -17,6 +17,7 @@
 class udp_socket : public socket_base, public ppl::util::listenable<udp_socket_listener, trivial_udp_socket_listener>
 {
 public:
+typedef boost::system::error_code error_code;
 	udp_socket(boost::asio::io_service& ioservice = *io_service_provider::get_default())
 	{
 		m_impl.reset(new udp_socket_impl(ioservice, boost::bind(&udp_socket::on_receive, this, _1, _2, _3)));

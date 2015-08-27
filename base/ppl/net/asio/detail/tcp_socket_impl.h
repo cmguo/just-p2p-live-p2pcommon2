@@ -19,13 +19,10 @@
 #include <boost/asio/deadline_timer.hpp>
 //#include <boost/asio.hpp>
 
-
-using boost::system::error_code;
-
-
 class tcp_socket_impl : private boost::noncopyable, public boost::enable_shared_from_this<tcp_socket_impl>
 {
 public:
+typedef boost::system::error_code error_code;
 	typedef boost::shared_ptr<byte_buffer> byte_buffer_ptr;
 
 	typedef boost::function<void (const error_code&)> event_callback_type;
