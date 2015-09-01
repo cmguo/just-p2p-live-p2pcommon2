@@ -6,6 +6,9 @@
 
 #include <ppl/config.h>
 
+#if defined(_PPL_PLATFORM_LINUX)
+#include <signal.h>
+#endif
 
 namespace ppl { namespace boostlib {
 
